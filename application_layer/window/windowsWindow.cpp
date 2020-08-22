@@ -1,0 +1,126 @@
+#include "windowsWindow.h"
+
+#include <utilities/encoding.h>
+
+WindowsWindow::WindowsWindow(const std::string& appName)
+	: _hwnd(nullptr), _hinstance(nullptr), _appName(appName), _prevTime(0)
+{ }
+
+bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
+{
+	this->_hinstance = GetModuleHandleW(nullptr);
+	if (this->_hinstance == nullptr)
+		return false;
+
+	const std::wstring wAppName(Encoding::toUtf16(this->_appName));
+
+	// register the window class
+	WNDCLASSEXW wndclass;
+	wndclass.cbClsExtra = 0;
+	wndclass.cbSize = sizeof(wndclass);
+	wndclass.cbWndExtra = 0;
+	wndclass.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wndclass.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wndclass.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+	wndclass.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
+	wndclass.hInstance = this->_hinstance;
+	wndclass.lpfnWndProc = WindowsWindow::initialWndProc;
+	wndclass.lpszClassName = wAppName.c_str();
+	wndclass.lpszMenuName = nullptr;
+	wndclass.style = CS_HREDRAW | CS_VREDRAW;
+
+	if (!RegisterClassExW(&wndclass))
+	{
+		MessageBoxW(nullptr, L"Failed to register window class.", L"Error", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	// determine window dimensions
+	RECT dimensions = { 0, 0, (LONG)width, (LONG)height };
+	AdjustWindowRect(&dimensions, WS_OVERLAPPEDWINDOW, FALSE);
+
+	// create window
+	this->_hwnd = CreateWindowW(wAppName.c_str(), wAppName.c_str(), WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT, CW_USEDEFAULT, dimensions.right - dimensions.left,
+		dimensions.bottom - dimensions.top, nullptr, nullptr, this->_hinstance, this);
+
+	if (this->_hwnd == nullptr)
+	{
+		MessageBoxW(nullptr, L"Failed to create window.", L"Error", MB_OK | MB_ICONERROR);
+		return false;
+	}
+
+	ShowWindow(this->_hwnd, SW_NORMAL);
+	UpdateWindow(this->_hwnd);
+
+	return true;
+}
+
+int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc)
+{
+	MSG msg { 0 };
+	while (msg.message != WM_QUIT)
+	{
+		if (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessageW(&msg);
+		}
+		else
+		{
+			auto now = getCurrentTime();
+			auto delta = now - this->_prevTime;
+
+			updateFunc(delta);
+			renderFunc(now, delta);
+
+			this->_prevTime = now;
+		}
+	}
+
+	return static_cast<int>(msg.wParam);
+}
+
+LRESULT CALLBACK WindowsWindow::initialWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	if (msg == WM_NCCREATE)
+	{
+		LPCREATESTRUCT create_struct = reinterpret_cast<LPCREATESTRUCT>(lparam);
+		void* lpCreateParam = create_struct->lpCreateParams;
+		WindowsWindow* this_window = reinterpret_cast<WindowsWindow*>(lpCreateParam);
+		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this_window));
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowsWindow::staticWndProc));
+		return this_window->wndProc(hwnd, msg, wparam, lparam);
+	}
+
+	return DefWindowProcW(hwnd, msg, wparam, lparam);
+}
+
+LRESULT CALLBACK WindowsWindow::staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	auto user_data = GetWindowLongPtr(hwnd, GWLP_USERDATA);
+	WindowsWindow* this_window = reinterpret_cast<WindowsWindow*>(user_data);
+	return this_window->wndProc(hwnd, msg, wparam, lparam);
+}
+
+LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	switch (msg)
+	{
+	case WM_PAINT:
+	{
+		PAINTSTRUCT ps;
+		BeginPaint(hwnd, &ps);
+
+		EndPaint(hwnd, &ps);
+		return 0;
+	}
+	case WM_DESTROY:
+	{
+		PostQuitMessage(0);
+		return 0;
+	}
+	}
+
+	return DefWindowProcW(hwnd, msg, wparam, lparam);
+}

@@ -1,0 +1,30 @@
+#pragma once
+
+#include "IWindow.h"
+
+#include <utilities/time.h>
+
+#include <Windows.h>
+#include <string>
+
+class WindowsWindow : public IWindow
+{
+public:
+	explicit WindowsWindow(const std::string& appName);
+	virtual ~WindowsWindow() = default;
+
+	bool initialize(const uint16_t height, const uint16_t width) override;
+	int runLoop(UpdateFunction updateFunc, RenderFunction renderFunc) override;
+
+	static LRESULT CALLBACK initialWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	static LRESULT CALLBACK staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+	LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
+private:
+	WindowsWindow(WindowsWindow&);
+
+	HWND _hwnd;
+	HINSTANCE _hinstance;
+	std::string _appName;
+	Milliseconds _prevTime;
+};

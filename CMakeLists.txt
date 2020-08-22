@@ -8,12 +8,40 @@ include_directories(
 )
 
 set(main_srcs
+	platypus.h
 	platypus.cpp
+	settings.h
+	settings.cpp
 )
 source_group(source FILES ${main_srcs})
 
+set(application_srcs
+	application_layer/platform.h
+)
+source_group(source\\application_layer FILES ${application_srcs})
+
+set(application_window_srcs
+	application_layer/window/IWindow.h
+	application_layer/window/windowFactory.h
+	application_layer/window/windowFactory.cpp
+	application_layer/window/windowsWindow.h
+	application_layer/window/windowsWindow.cpp
+)
+source_group(source\\application_layer\\window FILES ${application_window_srcs})
+
+set(utilities_srcs
+	utilities/encoding.h
+	utilities/encoding.cpp
+	utilities/time.h
+	utilities/time.cpp
+)
+source_group(source\\utilities FILES ${utilities_srcs})
+
 set(all_srcs
 	${main_srcs}
+	${application_srcs}
+	${application_window_srcs}
+	${utilities_srcs}
 )
 
 add_library(${project} ${all_srcs})
