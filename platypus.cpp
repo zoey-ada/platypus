@@ -9,7 +9,11 @@ Platypus::Platypus(const std::string& appName)
 bool Platypus::initialize()
 {
 	this->_settings.loadSettings();
-	return this->_window->initialize(this->_settings.height(), this->_settings.width());
+
+	if (!this->_window->initialize(this->_settings.height(), this->_settings.width()))
+		return false;
+
+	return true;
 }
 
 int Platypus::run()
