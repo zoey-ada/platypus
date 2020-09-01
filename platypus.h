@@ -6,6 +6,7 @@
 #include <memory>
 #include <string>
 
+class BaseGameLogic;
 class IRenderer;
 
 class Platypus
@@ -14,16 +15,20 @@ public:
 	explicit Platypus(const std::string& appName);
 	virtual ~Platypus() = default;
 
-	//protected:
-	bool initialize();
-	int run();
+protected:
+	const bool initialize();
+	const int run();
 	void shutdown();
+
+	virtual const std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
+
+	EngineSettings _settings;
+	std::shared_ptr<IRenderer> _renderer;
 
 private:
 	UpdateFunction getUpdateFunction() const;
 	RenderFunction getRenderFunction() const;
 
-	EngineSettings _settings;
 	std::unique_ptr<IWindow> _window;
-	std::shared_ptr<IRenderer> _renderer;
+	std::shared_ptr<BaseGameLogic> _logic;
 };

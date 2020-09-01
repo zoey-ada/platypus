@@ -8,6 +8,8 @@ include_directories(
 )
 
 set(main_srcs
+	baseGameLogic.h
+	baseGameLogic.cpp
 	platypus.h
 	platypus.cpp
 	settings.h
@@ -28,6 +30,12 @@ set(application_window_srcs
 	application_layer/window/windowsWindow.cpp
 )
 source_group(source\\application_layer\\window FILES ${application_window_srcs})
+
+set(entities_srcs
+	entities/entity.h
+	entities/entity.cpp
+)
+source_group(source\\entities FILES ${entities_srcs})
 
 set(renderer_srcs
 	renderer/color.h
@@ -54,12 +62,22 @@ set(utilities_srcs
 )
 source_group(source\\utilities FILES ${utilities_srcs})
 
+set(views_srcs
+	views/humanView.h
+	views/humanView.cpp
+	views/IScreenElement.h
+	views/IView.h
+)
+source_group(source\\views FILES ${views_srcs})
+
 set(all_srcs
 	${main_srcs}
 	${application_srcs}
 	${application_window_srcs}
+	${entities_srcs}
 	${renderer_srcs}
 	${utilities_srcs}
+	${views_srcs}
 )
 
 add_library(${project} ${all_srcs})
