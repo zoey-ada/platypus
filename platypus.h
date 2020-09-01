@@ -6,6 +6,8 @@
 #include <memory>
 #include <string>
 
+class IRenderer;
+
 class Platypus
 {
 public:
@@ -23,4 +25,5 @@ private:
 
 	EngineSettings _settings;
 	std::unique_ptr<IWindow> _window;
+	std::shared_ptr<IRenderer> _renderer;
 };

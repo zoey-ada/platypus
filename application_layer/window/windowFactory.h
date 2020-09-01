@@ -11,5 +11,5 @@ public:
 	WindowFactory() = default;
 	virtual ~WindowFactory() = default;
 
-	std::unique_ptr<IWindow> createWindow(const std::string& appName) const;
+	static std::unique_ptr<IWindow> createWindow(const std::string& appName);
 };

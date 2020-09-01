@@ -1,8 +1,10 @@
 #include "windowFactory.h"
 
-#include "windowsWindow.h"
+#ifdef _WIN32
+	#include "windowsWindow.h"
+#endif
 
-std::unique_ptr<IWindow> WindowFactory::createWindow(const std::string& appName) const
+std::unique_ptr<IWindow> WindowFactory::createWindow(const std::string& appName)
 {
 #ifdef _WIN32
 	return std::make_unique<WindowsWindow>(appName);

@@ -1,10 +1,17 @@
 #include "settings.h"
 
+RendererSettings::RendererSettings()
+	: _rendererType(RendererType::DirectX), _frameRate(60.0), _backgroundColor(Color::cyan), _fullScreenMode(false)
+{ }
+
+void RendererSettings::loadSettings()
+{ }
+
 EngineSettings::EngineSettings()
-	: _frameRate(60.0), _height(720), _width(1280)
+	: _rendererSettings(), _height(720), _width(1280)
 { }
 
 void EngineSettings::loadSettings()
 {
-	//this->frame_rate = 60.0;
+	this->_rendererSettings.loadSettings();
 }

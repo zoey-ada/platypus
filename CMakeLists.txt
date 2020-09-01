@@ -29,6 +29,23 @@ set(application_window_srcs
 )
 source_group(source\\application_layer\\window FILES ${application_window_srcs})
 
+set(renderer_srcs
+	renderer/color.h
+	renderer/color.cpp
+	renderer/IRenderer.h
+	renderer/rendererFactory.h
+	renderer/rendererFactory.cpp
+)
+
+if(WIN32)
+	set(renderer_srcs
+		${renderer_srcs}
+		renderer/directXRenderer.h
+		renderer/directXrenderer.cpp
+	)
+endif()
+source_group(source\\renderer FILES ${renderer_srcs})
+
 set(utilities_srcs
 	utilities/encoding.h
 	utilities/encoding.cpp
@@ -41,11 +58,23 @@ set(all_srcs
 	${main_srcs}
 	${application_srcs}
 	${application_window_srcs}
+	${renderer_srcs}
 	${utilities_srcs}
 )
 
 add_library(${project} ${all_srcs})
 
+set(link_libs
+	#platypus-proto
+)
+
+if(WIN32)
+	set(link_libs
+		${link_libs}
+		d3d11.lib
+	)
+endif()
+
 target_link_libraries(${project}
-#	platypus-proto
+	${link_libs}
 )

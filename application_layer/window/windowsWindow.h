@@ -20,6 +20,9 @@ public:
 	static LRESULT CALLBACK staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
+	HWND hwnd() const { return this->_hwnd; }
+	HINSTANCE hinstance() const { return this->_hinstance; }
+
 private:
 	WindowsWindow(WindowsWindow&);
 
