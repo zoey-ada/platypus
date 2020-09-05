@@ -2,6 +2,7 @@
 
 #include <application_layer/window/windowFactory.h>
 #include <renderer/rendererFactory.h>
+#include <utilities/logging/logger.h>
 #include <views/IView.h>
 #include "baseGameLogic.h"
 
@@ -12,6 +13,8 @@ Platypus::Platypus(const std::string& appName)
 const bool Platypus::initialize()
 {
 	this->_settings.loadSettings();
+
+	configureLogger(this->_settings.loggingSettings());
 
 	if (!this->_window->initialize(this->_settings.height(), this->_settings.width()))
 		return false;

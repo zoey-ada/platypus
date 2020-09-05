@@ -3,6 +3,8 @@
 #include "renderer/color.h"
 
 #include <cstdint>
+#include <list>
+#include <string>
 
 enum class RendererType
 {
@@ -33,6 +35,27 @@ private:
 	bool _fullScreenMode;
 };
 
+struct LoggerSettings
+{
+	std::string type;
+	std::string level;
+	std::string fileRoot;
+	bool useSingleFile;
+};
+
+class LoggingSettings
+{
+public:
+	LoggingSettings();
+
+	void loadSettings();
+
+	const std::list<LoggerSettings> loggers() const { return this->_loggers; }
+
+private:
+	std::list<LoggerSettings> _loggers;
+};
+
 class EngineSettings
 {
 public:
@@ -42,12 +65,14 @@ public:
 	void loadSettings();
 
 	const RendererSettings rendererSettings() const { return this->_rendererSettings; }
+	const LoggingSettings loggingSettings() const { return this->_loggingSettings; }
 
 	const uint16_t height() const { return this->_height; }
 	const uint16_t width() const { return this->_width; }
 
 private:
 	RendererSettings _rendererSettings;
+	LoggingSettings _loggingSettings;
 	uint16_t _height;
 	uint16_t _width;
 };
