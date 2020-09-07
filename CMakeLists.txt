@@ -29,6 +29,8 @@ endif()
 
 include(cmake/funcs.cmake)
 
+# FetchContent -> downloads content durning config step
+
 if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
 	AND BUILD_TESTING)
 	# add_subdirectory(tests)
@@ -137,6 +139,7 @@ _p__link_static(platypus)
 
 target_compile_definitions(platypus
 	PUBLIC
+		ENABLE_WINDOWS_CONSOLE=0
 		_CRT_SECURE_NO_WARNINGS
 )
 

@@ -2,12 +2,21 @@
 
 #include <utilities/encoding.h>
 
+#include <iostream>
+
 WindowsWindow::WindowsWindow(const std::string& appName)
 	: _hwnd(nullptr), _hinstance(nullptr), _appName(appName), _prevTime(0)
 { }
 
 bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
 {
+// defined in cmake file
+#if ENABLE_WINDOWS_CONSOLE
+	#ifdef _DEBUG
+	this->openConsole();
+	#endif
+#endif
+
 	this->_hinstance = GetModuleHandleW(nullptr);
 	if (this->_hinstance == nullptr)
 		return false;
@@ -123,4 +132,26 @@ LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 	}
 
 	return DefWindowProcW(hwnd, msg, wparam, lparam);
+}
+
+void WindowsWindow::openConsole()
+{
+	AllocConsole();
+
+	CONSOLE_SCREEN_BUFFER_INFOEX coninfo;
+	GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+	coninfo.dwSize.Y = 500;
+	SetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
+
+	freopen("CONIN$", "r", stdin);
+	freopen("CONOUT$", "w", stdout);
+	freopen("CONOUT$", "w", stderr);
+
+	std::cout.clear();
+	std::cerr.clear();
+	std::cin.clear();
+
+	std::wcout.clear();
+	std::wcerr.clear();
+	std::wcin.clear();
 }

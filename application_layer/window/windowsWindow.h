@@ -24,7 +24,8 @@ public:
 	HINSTANCE hinstance() const { return this->_hinstance; }
 
 private:
-	WindowsWindow(WindowsWindow&);
+	WindowsWindow(WindowsWindow&) = delete;
+	void openConsole();
 
 	HWND _hwnd;
 	HINSTANCE _hinstance;
