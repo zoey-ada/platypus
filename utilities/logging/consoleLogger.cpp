@@ -10,12 +10,12 @@ ConsoleLogger::ConsoleLogger()
 
 void ConsoleLogger::log(std::string_view message)
 {
-	std::lock_guard(this->_mutex);
+	auto lock_guard = std::lock_guard(this->_mutex);
 	std::cout << "[" << getCurrentTimestamp() << "] " << message << std::endl;
 }
 
 void ConsoleLogger::log(std::string_view message, std::string_view channel)
 {
-	std::lock_guard(this->_mutex);
+	auto lock_guard = std::lock_guard(this->_mutex);
 	std::cout << "[" << getCurrentTimestamp() << "] <" << channel << "> " << message << std::endl;
 }

@@ -21,7 +21,7 @@ bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
 	if (this->_hinstance == nullptr)
 		return false;
 
-	const std::wstring wAppName(Encoding::toUtf16(this->_appName));
+	const std::wstring wAppName(Encoding::toWindowsString(this->_appName));
 
 	// register the window class
 	WNDCLASSEXW wndclass;

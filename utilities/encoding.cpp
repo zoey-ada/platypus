@@ -1,19 +1,34 @@
 #include "encoding.h"
 
+#include <utf8.h>
+
 #include <codecvt>
 #include <locale>
 
 namespace Encoding
 {
-const std::string toUtf8(const std::wstring& str)
+const std::string toUtf8(const std::u16string& str)
 {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
-	return converter.to_bytes(str);
+	return utf8::utf16to8(str);
 }
 
-const std::wstring toUtf16(const std::string& str)
+const std::u16string toUtf16(const std::string& str)
 {
-	std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>, wchar_t> converter;
-	return converter.from_bytes(str);
+	return utf8::utf8to16(str);
 }
+
+#ifdef _WIN32
+	const std::string fromWindowsString(const std::wstring& str)
+	{
+		std::u16string wstr(str.begin(), str.end());
+		return toUtf8(wstr);
+	}
+
+	const std::wstring toWindowsString(const std::string& str)
+	{
+		std::u16string wstr = utf8::utf8to16(str);
+		return std::wstring(wstr.begin(), wstr.end());
+	}
+#endif
+
 }

@@ -19,13 +19,13 @@ VerbosityLogger::VerbosityLogger(const std::shared_ptr<ILogger>& logger)
 
 void VerbosityLogger::setVerbosity(VerbosityLevel level)
 {
-	std::lock_guard(this->_mutex);
+	auto lg = std::lock_guard(this->_mutex);
 	this->_level = level;
 }
 
 void VerbosityLogger::setChannelVerbosity(std::string_view channel, VerbosityLevel level)
 {
-	std::lock_guard(this->_mutex);
+	auto lg = std::lock_guard(this->_mutex);
 	this->_channelLevels[channel] = level;
 }
 
@@ -36,7 +36,7 @@ void VerbosityLogger::log(std::string_view message)
 
 void VerbosityLogger::log(std::string_view message, VerbosityLevel level)
 {
-	std::lock_guard(this->_mutex);
+	auto lg = std::lock_guard(this->_mutex);
 
 	if (level >= this->_level)
 	{
@@ -59,7 +59,7 @@ void VerbosityLogger::log(std::string_view message, std::string_view channel)
 
 void VerbosityLogger::log(std::string_view message, std::string_view channel, VerbosityLevel level)
 {
-	std::lock_guard(this->_mutex);
+	auto lg = std::lock_guard(this->_mutex);
 
 	auto channelLevel = this->_channelLevels.find(channel);
 	auto resolvedLevel = (channelLevel != this->_channelLevels.end()) ? channelLevel->second : this->_level;

@@ -8,7 +8,7 @@ std::unique_ptr<IWindow> WindowFactory::createWindow(const std::string& appName)
 {
 #ifdef _WIN32
 	return std::make_unique<WindowsWindow>(appName);
-#endif
-
+#else
 	return std::unique_ptr<IWindow>(nullptr);
+#endif
 }

@@ -11,11 +11,11 @@ FileLogger::FileLogger(std::string_view rootDir, const bool useSingleFile)
 
 FileLogger::~FileLogger()
 {
-	std::lock_guard(this->_mutex);
+	const std::lock_guard outer_lg(this->_mutex);
 
 	for (auto& f : this->_files)
 	{
-		std::lock_guard(f.second.mutex);
+		const std::lock_guard inner_lg(f.second.mutex);
 		f.second.file.close();
 	}
 
