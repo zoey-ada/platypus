@@ -152,6 +152,8 @@ target_include_directories(platypus
 target_link_libraries(platypus
 	PUBLIC
 		platypus-proto
+	PRIVATE
+		utf8cpp
 )
 
 if(WIN32)
