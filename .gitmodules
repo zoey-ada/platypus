@@ -1,3 +1,6 @@
+[submodule "libraries/freetype"]
+	path = libraries/freetype
+	url = https://github.com/freetype/freetype.git
 [submodule "libraries/platypus-proto"]
 	path = libraries/platypus-proto
 	url = git@github.com:zoey-ada/platypus-proto.git
