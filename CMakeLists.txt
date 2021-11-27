@@ -28,6 +28,7 @@ if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
 include(cmake/funcs.cmake)
+add_subdirectory(libraries)
 
 # FetchContent -> downloads content durning config step
 
@@ -146,6 +147,11 @@ target_compile_definitions(platypus
 target_include_directories(platypus
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}
+)
+
+target_link_libraries(platypus
+	PUBLIC
+		platypus-proto
 )
 
 if(WIN32)
