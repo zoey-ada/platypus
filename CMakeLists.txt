@@ -153,6 +153,7 @@ target_link_libraries(platypus
 	PUBLIC
 		platypus-proto
 	PRIVATE
+		freetype
 		utf8cpp
 )
 

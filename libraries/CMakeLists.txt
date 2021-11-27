@@ -1,3 +1,12 @@
+# freetype
+add_subdirectory(freetype)
+_p__ignore_warnings(freetype)
+_p__link_static(freetype)
+set_target_properties(freetype
+	PROPERTIES
+	FOLDER libraries
+)
+
 # platypus-proto
 add_subdirectory("platypus-proto")
 
