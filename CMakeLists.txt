@@ -1,11 +1,38 @@
-set(project platypus)
-project(${project})
+cmake_minimum_required(VERSION 3.18)
 
-include_directories(
-	${CMAKE_BINARY_DIR}
-	${CMAKE_SOURCE_DIR}
-	${CMAKE_CURRENT_SOURCE_DIR}
+project(
+	Platypus
+	VERSION 0.1
+	DESCRIPTION "Platypus game engine."
+	LANGUAGES CXX
 )
+
+if(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+	include(cmake/config.cmake)
+
+	# # Testing only available if this is the main app
+	# # Note this needs to be done in the main CMakeLists
+	# # since it calls enable_testing, which must be in the
+	# # main CMakeLists.
+	# include(CTest)
+	# add_subdirectory(tests)
+
+	# # Docs only available if this is the main app
+	# find_package(Doxygen)
+	# if(Doxygen_FOUND)
+	# 	add_subdirectory(docs)
+	# else()
+	# 	message(STATUS "Doxygen not found, not building docs")
+	# endif()
+
+endif()
+
+include(cmake/funcs.cmake)
+
+if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
+	AND BUILD_TESTING)
+	# add_subdirectory(tests)
+endif()
 
 set(main_srcs
 	baseGameLogic.h
@@ -104,19 +131,23 @@ set(all_srcs
 	${views_srcs}
 )
 
-add_library(${project} ${all_srcs})
+add_library(platypus ${all_srcs})
+_p__warnings_as_errors(platypus)
+_p__link_static(platypus)
 
-set(link_libs
-	#platypus-proto
+target_compile_definitions(platypus
+	PUBLIC
+		_CRT_SECURE_NO_WARNINGS
+)
+
+target_include_directories(platypus
+	PUBLIC
+		${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 if(WIN32)
-	set(link_libs
-		${link_libs}
-		d3d11.lib
+	target_link_libraries(platypus
+		PRIVATE
+			d3d11.lib
 	)
 endif()
-
-target_link_libraries(${project}
-	${link_libs}
-)
