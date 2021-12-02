@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ILogger.h"
+#include "ILogger.hpp"
 
 #include <mutex>
 

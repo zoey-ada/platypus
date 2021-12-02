@@ -1,6 +1,6 @@
 #pragma once
 
-#include "renderer/color.h"
+#include "renderer/color.hpp"
 
 #include <cstdint>
 #include <list>

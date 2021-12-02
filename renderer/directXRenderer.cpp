@@ -1,4 +1,4 @@
-#include "directXRenderer.h"
+#include "directXRenderer.hpp"
 
 #include <array>
 

@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../entities/entity.h"
-#include "../utilities/time.h"
+#include "../entities/entity.hpp"
+#include "../utilities/time.hpp"
 
 #include <cstdint>
 

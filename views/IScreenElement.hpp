@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../utilities/time.h"
+#include "../utilities/time.hpp"
 
 class IScreenElement
 {

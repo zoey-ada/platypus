@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../../settings.h"
-#include "consoleLogger.h"
-#include "fileLogger.h"
-#include "verbosityDecorator.h"
+#include "../../settings.hpp"
+#include "consoleLogger.hpp"
+#include "fileLogger.hpp"
+#include "verbosityDecorator.hpp"
 
 #include <functional>
 #include <iostream>

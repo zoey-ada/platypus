@@ -1,7 +1,7 @@
-#include "fileLogger.h"
+#include "fileLogger.hpp"
 
-#include "../../application_layer/file_system/standardFileSystem.h"
-#include "../time.h"
+#include "../../application_layer/file_system/standardFileSystem.hpp"
+#include "../time.hpp"
 
 #include <fstream>
 

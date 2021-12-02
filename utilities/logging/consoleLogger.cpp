@@ -1,6 +1,6 @@
-#include "consoleLogger.h"
+#include "consoleLogger.hpp"
 
-#include "../time.h"
+#include "../time.hpp"
 
 #include <iostream>
 

@@ -1,6 +1,7 @@
-#include "baseGameLogic.h"
+#include "baseGameLogic.hpp"
 
-#include "views/IView.h"
+#include "views/IView.hpp"
+#include <utilities/logging/logger.hpp>
 
 BaseGameLogic::BaseGameLogic()
 { }

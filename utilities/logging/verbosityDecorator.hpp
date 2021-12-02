@@ -1,8 +1,8 @@
 #pragma once
 
-#include "ILogger.h"
+#include "ILogger.hpp"
 
-#include "consoleFormat.h"
+#include "consoleFormat.hpp"
 
 #include <map>
 #include <memory>

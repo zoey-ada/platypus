@@ -1,6 +1,6 @@
-#include "windowsWindow.h"
+#include "windowsWindow.hpp"
 
-#include <utilities/encoding.h>
+#include <utilities/encoding.hpp>
 
 #include <iostream>
 

@@ -1,10 +1,10 @@
-#include "platypus.h"
+#include "platypus.hpp"
 
-#include <application_layer/window/windowFactory.h>
-#include <renderer/rendererFactory.h>
-#include <utilities/logging/logger.h>
-#include <views/IView.h>
-#include "baseGameLogic.h"
+#include <application_layer/window/windowFactory.hpp>
+#include <renderer/rendererFactory.hpp>
+#include <utilities/logging/logger.hpp>
+#include <views/IView.hpp>
+#include "baseGameLogic.hpp"
 
 Platypus::Platypus(const std::string& appName)
 	: _settings(), _renderer(nullptr), _window(WindowFactory().createWindow(appName)), _logic(nullptr)

@@ -1,7 +1,7 @@
-#include "windowFactory.h"
+#include "windowFactory.hpp"
 
 #ifdef _WIN32
-	#include "windowsWindow.h"
+	#include "windowsWindow.hpp"
 #endif
 
 std::unique_ptr<IWindow> WindowFactory::createWindow(const std::string& appName)

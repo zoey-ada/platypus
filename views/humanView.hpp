@@ -1,10 +1,10 @@
 #pragma once
 
-#include "IView.h"
+#include "IView.hpp"
 
-#include "IScreenElement.h"
+#include "IScreenElement.hpp"
 
-#include "../settings.h"
+#include "../settings.hpp"
 
 #include <list>
 #include <memory>

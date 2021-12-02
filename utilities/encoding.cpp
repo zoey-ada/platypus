@@ -1,4 +1,4 @@
-#include "encoding.h"
+#include "encoding.hpp"
 
 #include <utf8.h>
 

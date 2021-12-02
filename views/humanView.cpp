@@ -1,7 +1,7 @@
-#include "humanView.h"
+#include "humanView.hpp"
 
-#include "../renderer/IRenderer.h"
-#include "../utilities/time.h"
+#include "../renderer/IRenderer.hpp"
+#include "../utilities/time.hpp"
 #include <algorithm>
 
 HumanView::HumanView(const std::shared_ptr<IRenderer>& renderer, const EngineSettings& settings)

@@ -1,3 +1,3 @@
-#include "entity.h"
+#include "entity.hpp"
 
 const EntityId InvalidEntityId = 0;

@@ -1,4 +1,4 @@
-#include "settings.h"
+#include "settings.hpp"
 
 RendererSettings::RendererSettings()
 	: _rendererType(RendererType::DirectX), _frameRate(60.0), _backgroundColor(Color::cyan), _fullScreenMode(false)

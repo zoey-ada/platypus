@@ -1,4 +1,4 @@
-#include "color.h"
+#include "color.hpp"
 
 const std::array<float, 4> Color::toFloat() const
 {

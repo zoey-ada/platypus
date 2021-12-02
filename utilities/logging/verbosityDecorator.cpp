@@ -1,5 +1,5 @@
-#include "verbosityDecorator.h"
-#include "consoleFormat.h"
+#include "verbosityDecorator.hpp"
+#include "consoleFormat.hpp"
 
 std::map<VerbosityLevel, FormattingOptions> formattingOptionsInit()
 {

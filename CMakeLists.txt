@@ -38,87 +38,88 @@ if((CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME OR MODERN_CMAKE_BUILD_TESTING)
 endif()
 
 set(main_srcs
-	baseGameLogic.h
+	baseGameLogic.hpp
 	baseGameLogic.cpp
-	platypus.h
+	platypus.hpp
 	platypus.cpp
-	settings.h
+	settings.hpp
 	settings.cpp
 )
 source_group(source FILES ${main_srcs})
 
 set(application_srcs
-	application_layer/platform.h
+	application_layer/platform.hpp
+	application_layer/platform.cpp
 )
 source_group(source\\application_layer FILES ${application_srcs})
 
 set(application_filesys_srcs
-	application_layer/file_system/IFileSystem.h
-	application_layer/file_system/standardFileSystem.h
+	application_layer/file_system/IFileSystem.hpp
+	application_layer/file_system/standardFileSystem.hpp
 	application_layer/file_system/standardFileSystem.cpp
 )
 source_group(source\\application_layer\\file_system FILES ${application_filesys_srcs})
 
 set(application_window_srcs
-	application_layer/window/IWindow.h
-	application_layer/window/windowFactory.h
+	application_layer/window/IWindow.hpp
+	application_layer/window/windowFactory.hpp
 	application_layer/window/windowFactory.cpp
-	application_layer/window/windowsWindow.h
+	application_layer/window/windowsWindow.hpp
 	application_layer/window/windowsWindow.cpp
 )
 source_group(source\\application_layer\\window FILES ${application_window_srcs})
 
 set(entities_srcs
-	entities/entity.h
+	entities/entity.hpp
 	entities/entity.cpp
 )
 source_group(source\\entities FILES ${entities_srcs})
 
 set(renderer_srcs
-	renderer/color.h
+	renderer/color.hpp
 	renderer/color.cpp
-	renderer/IRenderer.h
-	renderer/rendererFactory.h
+	renderer/IRenderer.hpp
+	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
 )
 
 if(WIN32)
 	set(renderer_srcs
 		${renderer_srcs}
-		renderer/directXRenderer.h
+		renderer/directXRenderer.hpp
 		renderer/directXrenderer.cpp
 	)
 endif()
 source_group(source\\renderer FILES ${renderer_srcs})
 
 set(utilities_srcs
-	utilities/encoding.h
+	utilities/encoding.hpp
 	utilities/encoding.cpp
-	utilities/time.h
+	utilities/time.hpp
 	utilities/time.cpp
 )
 source_group(source\\utilities FILES ${utilities_srcs})
 
 set(utilities_logging_srcs
-	utilities/logging/consoleFormat.h
+	utilities/logging/consoleFormat.hpp
 	utilities/logging/consoleFormat.cpp
-	utilities/logging/consoleLogger.h
+	utilities/logging/consoleLogger.hpp
 	utilities/logging/consoleLogger.cpp
-	utilities/logging/fileLogger.h
+	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
-	utilities/logging/ILogger.h
-	utilities/logging/logger.h
+	utilities/logging/ILogger.hpp
+	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
-	utilities/logging/verbosityDecorator.h
+	utilities/logging/verbosityDecorator.hpp
 	utilities/logging/verbosityDecorator.cpp
 )
 source_group(source\\utilities\\logging FILES ${utilities_logging_srcs})
 
 set(views_srcs
-	views/humanView.h
+	views/humanView.hpp
 	views/humanView.cpp
-	views/IScreenElement.h
-	views/IView.h
+	views/IScreenElement.hpp
+	views/IView.hpp
 )
 source_group(source\\views FILES ${views_srcs})
 

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IWindow.h"
+#include "IWindow.hpp"
 
-#include <utilities/time.h>
+#include <utilities/time.hpp>
 
 #include <Windows.h>
 #include <string>

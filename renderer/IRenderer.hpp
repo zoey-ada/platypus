@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../settings.h"
-#include "color.h"
+#include "../settings.hpp"
+#include "color.hpp"
 
 class IRenderer
 {

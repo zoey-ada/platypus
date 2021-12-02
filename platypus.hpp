@@ -1,7 +1,7 @@
 #pragma once
 
-#include <application_layer/window/IWindow.h>
-#include "settings.h"
+#include <application_layer/window/IWindow.hpp>
+#include "settings.hpp"
 
 #include <memory>
 #include <string>

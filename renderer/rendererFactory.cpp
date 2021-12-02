@@ -1,10 +1,11 @@
-#include "rendererFactory.h"
+#include "rendererFactory.hpp"
 
-#include "../application_layer/window/IWindow.h"
+#include <utilities/logging/logger.hpp>
+#include "../application_layer/window/IWindow.hpp"
 
 #ifdef _WIN32
-	#include "directXRenderer.h"
-	#include "../application_layer/window/windowsWindow.h"
+	#include "directXRenderer.hpp"
+	#include "../application_layer/window/windowsWindow.hpp"
 #endif
 
 std::shared_ptr<IRenderer> RendererFactory::createRenderer(const IWindow* window, const RendererSettings& settings)

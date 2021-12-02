@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IRenderer.h"
+#include "IRenderer.hpp"
 
 #include <d3d11.h>
 

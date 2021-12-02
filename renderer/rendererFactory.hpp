@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../settings.h"
-#include "IRenderer.h"
+#include "../settings.hpp"
+#include "IRenderer.hpp"
 
 #include <memory>
 

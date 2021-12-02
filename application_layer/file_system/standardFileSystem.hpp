@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IFileSystem.h"
+#include "IFileSystem.hpp"
 
 class StandardFileSystem : public IFileSystem
 {
