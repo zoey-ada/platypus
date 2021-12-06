@@ -11,6 +11,7 @@ class WindowsWindow : public IWindow
 {
 public:
 	explicit WindowsWindow(const std::string& appName);
+	WindowsWindow(WindowsWindow&) = delete;
 	virtual ~WindowsWindow() = default;
 
 	bool initialize(const uint16_t height, const uint16_t width) override;
@@ -20,15 +21,15 @@ public:
 	static LRESULT CALLBACK staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	LRESULT CALLBACK wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-	HWND hwnd() const { return this->_hwnd; }
-	HINSTANCE hinstance() const { return this->_hinstance; }
+	[[nodiscard]] HWND hwnd() const { return this->_hwnd; }
+	[[nodiscard]] HINSTANCE hinstance() const { return this->_hinstance; }
 
 private:
-	WindowsWindow(WindowsWindow&) = delete;
 	void openConsole();
 
 	HWND _hwnd;
 	HINSTANCE _hinstance;
 	std::string _appName;
 	Milliseconds _prevTime;
+	int16_t _max_console_history;
 };

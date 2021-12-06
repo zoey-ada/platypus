@@ -2,8 +2,7 @@
 
 #include <cstdint>
 
-typedef unsigned int ActorId;
+using ActorId = uint32_t;
 constexpr ActorId invalid_actor_id = 0;
 
-typedef unsigned int GameViewId;
-typedef std::int64_t Milliseconds;
+using GameViewId = uint16_t;

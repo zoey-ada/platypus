@@ -10,18 +10,18 @@ enum class ViewType
 	Human
 };
 
-typedef uint16_t ViewId;
+using ViewId = uint16_t;
 
 class IView
 {
 public:
 	virtual ~IView() = default;
 
-	virtual const bool onRestore() = 0;
+	virtual bool onRestore() = 0;
 	virtual void onDeviceLost() = 0;
 
-	virtual void onUpdate(const Milliseconds delta) = 0;
-	virtual void onRender(const Milliseconds now, const Milliseconds delta) = 0;
+	virtual void onUpdate(Milliseconds delta) = 0;
+	virtual void onRender(Milliseconds now, Milliseconds delta) = 0;
 
-	virtual void onAttach(const ViewId viewId, const EntityId entityId) = 0;
+	virtual void onAttach(ViewId viewId, EntityId entityId) = 0;
 };

@@ -44,7 +44,8 @@ void FileLogger::log(std::string_view message, std::string_view channel)
 	{
 		StandardFileSystem sfs;
 		if (!sfs.directoryExists(this->_rootDir))
-			sfs.createDirectory(this->_rootDir);
+			if (!sfs.createDirectory(this->_rootDir))
+				throw std::exception("could not create log directory");
 
 		cFile.file.open(this->_rootDir / (entry + ".log"), std::ios_base::app);
 	}

@@ -11,18 +11,18 @@ class IView;
 class BaseGameLogic
 {
 public:
-	BaseGameLogic();
-	virtual ~BaseGameLogic();
+	BaseGameLogic() = default;
+	virtual ~BaseGameLogic() = default;
 
-	const bool initialize();
+	bool initialize();
 
 	virtual void addView(const std::shared_ptr<IView>& view, const EntityId entityId = InvalidEntityId);
 	virtual void removeView(const std::shared_ptr<IView>& view);
 
 	virtual void onUpdate(Milliseconds delta);
 
-	const std::list<std::shared_ptr<IView>> views() const { return this->_views; }
+	[[nodiscard]] std::list<std::shared_ptr<IView>> views() const { return this->_views; }
 
-protected:
+private:
 	std::list<std::shared_ptr<IView>> _views;
 };

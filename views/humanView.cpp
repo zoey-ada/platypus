@@ -2,11 +2,12 @@
 
 #include "../renderer/IRenderer.hpp"
 #include "../utilities/time.hpp"
+#include <utilities/logging/logger.hpp>
 #include <algorithm>
 
-HumanView::HumanView(const std::shared_ptr<IRenderer>& renderer, const EngineSettings& settings)
+HumanView::HumanView(std::shared_ptr<IRenderer> renderer, const EngineSettings& settings)
 	: _lastDraw(0), _refreshRate(settings.rendererSettings().refreshRateMs()),
-	  _renderer(renderer), _screenElements()
+	  _renderer(std::move(renderer))
 { }
 
 HumanView::~HumanView()
@@ -15,7 +16,7 @@ HumanView::~HumanView()
 		this->_screenElements.pop_front();
 }
 
-const bool HumanView::onRestore()
+bool HumanView::onRestore()
 {
 	return std::all_of(this->_screenElements.begin(), this->_screenElements.end(),
 		[](const std::shared_ptr<IScreenElement>& element) { return element->onRestore(); });
@@ -47,7 +48,7 @@ struct SortBy_SharedPtr_Content
 
 void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 {
-	if ((now - this->_lastDraw) > this->_refreshRate)
+	if (static_cast<float>(now - this->_lastDraw) > this->_refreshRate)
 	{
 		if (this->_renderer->preRender())
 		{
@@ -58,7 +59,7 @@ void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 				if (element->isVisible())
 				{
 					if (!element->onRender(now, delta))
-						printf("error");  // WARNING: log rendering failure
+						logWarning("error");  // WARNING: log rendering failure
 				}
 			}
 
@@ -66,11 +67,11 @@ void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 		}
 		else
 		{
-			printf("error");  // WARNING: log pre-render failure
+			logWarning("error");  // WARNING: log pre-render failure
 		}
 
 		if (!this->_renderer->postRender())
-			printf("error");  // WARNING: log post-render failure
+			logWarning("error");  // WARNING: log post-render failure
 	}
 }
 

@@ -10,15 +10,15 @@
 #include <memory>
 
 class IRenderer;
-typedef std::list<std::shared_ptr<IScreenElement>> ScreenElementList;
+using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 
 class HumanView : public IView
 {
 public:
-	HumanView(const std::shared_ptr<IRenderer>& renderer, const EngineSettings& settings);
+	HumanView(std::shared_ptr<IRenderer> renderer, const EngineSettings& settings);
 	virtual ~HumanView();
 
-	const bool onRestore() override;
+	bool onRestore() override;
 	void onDeviceLost() override;
 
 	void onUpdate(const Milliseconds delta) override;

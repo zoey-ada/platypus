@@ -1,5 +1,8 @@
 #pragma once
 
+#include <map>
+#include <string>
+
 enum class ConsoleColor
 {
 	Black,
@@ -30,4 +33,9 @@ private:
 	void setForegroundColor(const ConsoleColor color) const;
 	void setBackgroundColor(const ConsoleColor color) const;
 	void resetColors() const;
+
+	void loadColorMaps();
+
+	std::map<ConsoleColor, std::string> _foreground_color_map;
+	std::map<ConsoleColor, std::string> _background_color_map;
 };

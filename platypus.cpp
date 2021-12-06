@@ -7,10 +7,10 @@
 #include "baseGameLogic.hpp"
 
 Platypus::Platypus(const std::string& appName)
-	: _settings(), _renderer(nullptr), _window(WindowFactory().createWindow(appName)), _logic(nullptr)
+	: _renderer(nullptr), _window(WindowFactory::createWindow(appName)), _logic(nullptr)
 { }
 
-const bool Platypus::initialize()
+bool Platypus::initialize()
 {
 	this->_settings.loadSettings();
 
@@ -29,7 +29,7 @@ const bool Platypus::initialize()
 	return true;
 }
 
-const int Platypus::run()
+int Platypus::run()
 {
 	return this->_window->runLoop(this->getUpdateFunction(), this->getRenderFunction());
 }

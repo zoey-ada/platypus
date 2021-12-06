@@ -13,5 +13,5 @@ public:
 	RendererFactory() = default;
 	virtual ~RendererFactory() = default;
 
-	static std::shared_ptr<IRenderer> createRenderer(const IWindow* window, const RendererSettings& settings);
+	[[nodiscard]] static std::shared_ptr<IRenderer> createRenderer(const IWindow* window, const RendererSettings& settings);
 };
