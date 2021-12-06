@@ -20,18 +20,17 @@ enum class VerbosityLevel
 struct FormattingOptions
 {
 	std::string tag;
-	ConsoleColor color;
+	ConsoleColor color = ConsoleColor::White;
 
-	FormattingOptions()
-		: tag(""), color(ConsoleColor::White) { }
-	FormattingOptions(const std::string& tag, const ConsoleColor color)
-		: tag(tag), color(color) { }
+	FormattingOptions() = default;
+	FormattingOptions(std::string tag, const ConsoleColor color)
+		: tag(std::move(tag)), color(color) { }
 };
 
 class VerbosityLogger : public ILogger
 {
 public:
-	explicit VerbosityLogger(const std::shared_ptr<ILogger>& logger);
+	explicit VerbosityLogger(std::shared_ptr<ILogger> logger);
 	virtual ~VerbosityLogger() = default;
 
 	void setVerbosity(const VerbosityLevel level);
@@ -57,7 +56,7 @@ public:
 	void error(std::string_view message);
 	void error(std::string_view message, std::string_view channel);
 
-	const bool supportsColor() const override { return this->_logger->supportsColor(); }
+	[[nodiscard]] bool supportsColor() const override { return this->_logger->supportsColor(); }
 
 private:
 	std::shared_ptr<ILogger> _logger;

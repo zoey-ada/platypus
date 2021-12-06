@@ -4,8 +4,11 @@
 
 #include <iostream>
 
+const int16_t max_console_history = 500;
+
 WindowsWindow::WindowsWindow(const std::string& appName)
-	: _hwnd(nullptr), _hinstance(nullptr), _appName(appName), _prevTime(0)
+	: _hwnd(nullptr), _hinstance(nullptr), _appName(appName), _prevTime(0),
+	_max_console_history(max_console_history)
 { }
 
 bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
@@ -67,10 +70,11 @@ bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
 
 int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc)
 {
-	MSG msg { 0 };
+	MSG msg;
+	ZeroMemory(&msg, sizeof(MSG));
 	while (msg.message != WM_QUIT)
 	{
-		if (PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
+		if (TRUE == PeekMessageW(&msg, nullptr, 0, 0, PM_REMOVE))
 		{
 			TranslateMessage(&msg);
 			DispatchMessageW(&msg);
@@ -108,7 +112,7 @@ LRESULT CALLBACK WindowsWindow::initialWndProc(HWND hwnd, UINT msg, WPARAM wpara
 LRESULT CALLBACK WindowsWindow::staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
 	auto user_data = GetWindowLongPtr(hwnd, GWLP_USERDATA);
-	WindowsWindow* this_window = reinterpret_cast<WindowsWindow*>(user_data);
+	auto* this_window = reinterpret_cast<WindowsWindow*>(user_data);
 	return this_window->wndProc(hwnd, msg, wparam, lparam);
 }
 
@@ -129,9 +133,12 @@ LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		PostQuitMessage(0);
 		return 0;
 	}
+	default:
+	{
+		return DefWindowProcW(hwnd, msg, wparam, lparam);
+	}
 	}
 
-	return DefWindowProcW(hwnd, msg, wparam, lparam);
 }
 
 void WindowsWindow::openConsole()
@@ -140,7 +147,7 @@ void WindowsWindow::openConsole()
 
 	CONSOLE_SCREEN_BUFFER_INFOEX coninfo;
 	GetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
-	coninfo.dwSize.Y = 500;
+	coninfo.dwSize.Y = this->_max_console_history;
 	SetConsoleScreenBufferInfoEx(GetStdHandle(STD_OUTPUT_HANDLE), &coninfo);
 
 	freopen("CONIN$", "r", stdin);

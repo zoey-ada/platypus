@@ -13,15 +13,13 @@ std::shared_ptr<IRenderer> RendererFactory::createRenderer(const IWindow* window
 #ifdef _WIN32
 	if (settings.rendererType() == RendererType::DirectX)
 	{
-		auto windowsWindow = dynamic_cast<const WindowsWindow*>(window);
-		if (windowsWindow)
+		const auto* windows_window = dynamic_cast<const WindowsWindow*>(window);
+		if (windows_window == nullptr)
 		{
-			return std::make_shared<DirectXRenderer>(windowsWindow->hwnd(), windowsWindow->hinstance());
+			logWarning("renderer", "Attempted to use DirectX renderer on an unsupported platform.");
 		}
-		else
-		{
-			// WARNING: engine configured to directX on non-Windows system
-		}
+
+		return std::make_shared<DirectXRenderer>(windows_window->hwnd(), windows_window->hinstance());
 	}
 #endif
 

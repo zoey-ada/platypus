@@ -9,13 +9,13 @@ class DirectXRenderer : public IRenderer
 public:
 	DirectXRenderer() = delete;
 	DirectXRenderer(HWND hwnd, HINSTANCE hinstance);
-	virtual ~DirectXRenderer() { this->shutdown(); }
+	virtual ~DirectXRenderer() { DirectXRenderer::shutdown(); }
 
-	const bool initialize(const RendererSettings& settings) override;
+	bool initialize(const RendererSettings& settings) override;
 	void shutdown() override;
 
-	const bool preRender() override;
-	const bool postRender() override;
+	bool preRender() override;
+	bool postRender() override;
 
 	void setBackgroundColor(const Color& backgroundColor) override;
 

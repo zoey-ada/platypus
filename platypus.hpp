@@ -16,18 +16,18 @@ public:
 	virtual ~Platypus() = default;
 
 protected:
-	const bool initialize();
-	const int run();
+	bool initialize();
+	int run();
 	void shutdown();
 
-	virtual const std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
+	virtual std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
 
 	EngineSettings _settings;
 	std::shared_ptr<IRenderer> _renderer;
 
 private:
-	UpdateFunction getUpdateFunction() const;
-	RenderFunction getRenderFunction() const;
+	[[nodiscard]] UpdateFunction getUpdateFunction() const;
+	[[nodiscard]] RenderFunction getRenderFunction() const;
 
 	std::unique_ptr<IWindow> _window;
 	std::shared_ptr<BaseGameLogic> _logic;

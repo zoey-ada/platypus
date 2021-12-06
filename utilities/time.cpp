@@ -3,7 +3,7 @@
 #include <chrono>
 namespace chrono = std::chrono;
 
-const Milliseconds getCurrentTime()
+Milliseconds getCurrentTime()
 {
 	auto now = chrono::system_clock::now();
 	auto now_ms = chrono::time_point_cast<chrono::milliseconds>(now);
@@ -12,28 +12,27 @@ const Milliseconds getCurrentTime()
 	return static_cast<Milliseconds>(value.count());
 }
 
-const std::string getCurrentTimestamp()
+std::string getCurrentTimestamp()
 {
 	return toTimestamp(getCurrentTime());
 }
 
-const std::string toTimestamp(const Milliseconds time)
+std::string toTimestamp(const Milliseconds time)
 {
-	time_t secs = time / 1000;
+	time_t secs = time / milliseconds_in_second;
 	char timestamp[25] = "";
 	tm* ptm = gmtime(&secs);
 	size_t len = strftime(timestamp, 20, "%FT%T", ptm);
 
 	ptm->tm_isdst = -1;
 	time_t gmt = mktime(ptm);
-	int offset = (int)difftime(secs, gmt) / 60;
-	std::string hrOffset = std::to_string(offset / 60);
-
-	std::string minOffset = std::to_string(abs(offset % 60));
+	int offset = static_cast<int>(difftime(secs, gmt) / seconds_in_minute);
+	std::string hrOffset = std::to_string(offset / minutes_in_hour);
+	std::string minOffset = std::to_string(abs(offset % static_cast<int>(minutes_in_hour)));
 	if (minOffset.length() == 1)
 		minOffset = "0" + minOffset;
 
-	unsigned int ms = time % 1000;
+	unsigned int ms = time % milliseconds_in_second;
 	sprintf(timestamp + len, ".%03u", ms);
 
 	return std::string(timestamp).append(hrOffset).append(":").append(minOffset);

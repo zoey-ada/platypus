@@ -2,5 +2,5 @@
 
 #include <cstdint>
 
-typedef uint64_t EntityId;
+using EntityId = uint64_t;
 extern const EntityId InvalidEntityId;

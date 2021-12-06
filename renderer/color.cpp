@@ -1,6 +1,6 @@
 #include "color.hpp"
 
-const std::array<float, 4> Color::toFloat() const
+std::array<float, 4> Color::toFloat() const
 {
 	return {
 		this->_r,

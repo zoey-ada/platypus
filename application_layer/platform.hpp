@@ -5,11 +5,4 @@ enum class Platform {
 	Unknown
 };
 
-Platform detectPlatform()
-{
-#ifdef _WIN32
-	return Platform::Windows;
-#endif
-
-	return Platform::Unknown;
-}
+[[nodiscard]] Platform detectPlatform();

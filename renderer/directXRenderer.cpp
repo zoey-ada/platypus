@@ -9,7 +9,7 @@ DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 	  _backgroundColor(Color::black)
 { }
 
-const bool DirectXRenderer::initialize(const RendererSettings& settings)
+bool DirectXRenderer::initialize(const RendererSettings& settings)
 {
 	this->setBackgroundColor(settings.backgroundColor());
 
@@ -29,13 +29,15 @@ const bool DirectXRenderer::initialize(const RendererSettings& settings)
 	};
 
 	// get the window dimensions
-	RECT dimensions = { 0 };
+	RECT dimensions;
+	ZeroMemory(&dimensions, sizeof(RECT));
 	GetClientRect(this->_hwnd, &dimensions);
 	unsigned int height = dimensions.bottom - dimensions.top;
 	unsigned int width = dimensions.right - dimensions.left;
 
 	// swap chain description
-	DXGI_SWAP_CHAIN_DESC swapChainDesc { 0 };
+	DXGI_SWAP_CHAIN_DESC swapChainDesc;
+	ZeroMemory(&swapChainDesc, sizeof(DXGI_SWAP_CHAIN_DESC));
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.Height = height;
@@ -46,7 +48,7 @@ const bool DirectXRenderer::initialize(const RendererSettings& settings)
 	swapChainDesc.OutputWindow = this->_hwnd;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.Windowed = !settings.fullScreenMode();
+	swapChainDesc.Windowed = settings.fullScreenMode() ? FALSE : TRUE;
 
 	// set the creation flags
 	unsigned int creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -56,16 +58,16 @@ const bool DirectXRenderer::initialize(const RendererSettings& settings)
 
 	// create the device, context, and swap chain
 	HRESULT hr = S_OK;
-	for (auto driver = 0u; driver < driverTypes.size(); driver++)
+	for (const auto driver : driverTypes)
 	{
-		hr = D3D11CreateDeviceAndSwapChain(nullptr, driverTypes[driver], nullptr,
+		hr = D3D11CreateDeviceAndSwapChain(nullptr, driver, nullptr,
 			creationFlags, featureLevels._Elems, static_cast<UINT>(featureLevels.size()),
 			D3D11_SDK_VERSION, &swapChainDesc, &this->_swapChain, &this->_device,
 			&this->_featureLevel, &this->_context);
 
 		if (SUCCEEDED(hr))
 		{
-			this->_driverType = driverTypes[driver];
+			this->_driverType = driver;
 			break;
 		}
 	}
@@ -82,7 +84,7 @@ const bool DirectXRenderer::initialize(const RendererSettings& settings)
 
 	hr = this->_device->CreateRenderTargetView(backBufferTexture, nullptr, &this->_backBufferTarget);
 
-	if (backBufferTexture)
+	if (backBufferTexture != nullptr)
 		backBufferTexture->Release();
 	backBufferTexture = nullptr;
 
@@ -107,19 +109,19 @@ const bool DirectXRenderer::initialize(const RendererSettings& settings)
 
 void DirectXRenderer::shutdown()
 {
-	if (this->_backBufferTarget)
+	if (this->_backBufferTarget != nullptr)
 		this->_backBufferTarget->Release();
 	this->_backBufferTarget = nullptr;
 
-	if (this->_swapChain)
+	if (this->_swapChain != nullptr)
 		this->_swapChain->Release();
 	this->_swapChain = nullptr;
 
-	if (this->_context)
+	if (this->_context != nullptr)
 		this->_context->Release();
 	this->_context = nullptr;
 
-	if (this->_device)
+	if (this->_device != nullptr)
 		this->_device->Release();
 	this->_device = nullptr;
 
@@ -127,9 +129,9 @@ void DirectXRenderer::shutdown()
 	_hinstance = nullptr;
 }
 
-const bool DirectXRenderer::preRender()
+bool DirectXRenderer::preRender()
 {
-	if (_context && _backBufferTarget)
+	if (_context != nullptr && _backBufferTarget != nullptr)
 	{
 		_context->ClearRenderTargetView(_backBufferTarget, this->_backgroundColor.toFloat()._Elems);
 	}
@@ -137,7 +139,7 @@ const bool DirectXRenderer::preRender()
 	return true;
 }
 
-const bool DirectXRenderer::postRender()
+bool DirectXRenderer::postRender()
 {
 	HRESULT hr = _swapChain->Present(0, 0);
 	return SUCCEEDED(hr);

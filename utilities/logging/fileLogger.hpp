@@ -23,7 +23,7 @@ public:
 	void log(std::string_view message) override;
 	void log(std::string_view message, std::string_view channel) override;
 
-	const bool supportsColor() const override { return false; }
+	[[nodiscard]] bool supportsColor() const override { return false; }
 
 private:
 	std::mutex _mutex;

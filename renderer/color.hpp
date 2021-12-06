@@ -17,7 +17,7 @@ public:
 		: _r(r), _g(g), _b(b), _a(a)
 	{ }
 
-	const std::array<float, 4> toFloat() const;
+	[[nodiscard]] std::array<float, 4> toFloat() const;
 
 	static const Color white;
 	static const Color black;
