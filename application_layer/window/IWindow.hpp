@@ -1,6 +1,8 @@
 #pragma once
 
+#include <platypus_proto/settings.hpp>
 #include <utilities/time.hpp>
+
 #include <cstdint>
 #include <functional>
 
@@ -12,6 +14,6 @@ public:
 	IWindow() = default;
 	virtual ~IWindow() = default;
 
-	[[nodiscard]] virtual bool initialize(uint16_t height, uint16_t width) = 0;
+	[[nodiscard]] virtual bool initialize(const platypus::RectSize& dimensions) = 0;
 	virtual int runLoop(UpdateFunction updateFunc, RenderFunction renderFunc) = 0;
 };

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../settings.hpp"
+#include <platypus_proto/settings.hpp>
 #include "consoleLogger.hpp"
 #include "fileLogger.hpp"
 #include "verbosityDecorator.hpp"
@@ -9,6 +9,8 @@
 #include <iostream>
 #include <list>
 #include <mutex>
+
+using LoggerSettingsList = google::protobuf::RepeatedPtrField<platypus::LoggerSettings>;
 
 class Logger
 {
@@ -56,33 +58,32 @@ public:
 		Logger::forEachLogger([&](auto l) { l->error(message, channel); });
 	}
 
-	static void configureLogger(const LoggingSettings& settings)
+	static void configureLogger(const LoggerSettingsList& settings)
 	{
 		Logger::_mutex.lock();
 
-		std::cout << "configuring logger" << std::endl;
 		Logger::_settings = settings;
 
 		Logger::_logger = std::unique_ptr<Logger>(new (std::nothrow) Logger);
 
-		for (const auto& l : settings.loggers())
+		for (const auto& l : settings)
 		{
 			std::shared_ptr<VerbosityLogger> logger = nullptr;
 
-			if (l.type == "console")
+			if (l.type() == "console")
 				logger = std::make_shared<VerbosityLogger>(std::make_shared<ConsoleLogger>());
-			else if (l.type == "file")
-				logger = std::make_shared<VerbosityLogger>(std::make_shared<FileLogger>(l.fileRoot, l.useSingleFile));
+			else if (l.type() == "file")
+				logger = std::make_shared<VerbosityLogger>(std::make_shared<FileLogger>(l.file_logger_settings()));
 
-			if (l.level == "debug")
+			if (l.level() == "debug")
 				logger->setVerbosity(VerbosityLevel::Debug);
-			else if (l.level == "verbose")
+			else if (l.level() == "verbose")
 				logger->setVerbosity(VerbosityLevel::Verbose);
-			else if (l.level == "info")
+			else if (l.level() == "info")
 				logger->setVerbosity(VerbosityLevel::Info);
-			else if (l.level == "warning")
+			else if (l.level() == "warning")
 				logger->setVerbosity(VerbosityLevel::Warning);
-			else if (l.level == "error")
+			else if (l.level() == "error")
 				logger->setVerbosity(VerbosityLevel::Error);
 
 			Logger::_logger->attachLogger(logger);
@@ -124,10 +125,10 @@ private:
 	static std::mutex _mutex;
 	static std::unique_ptr<Logger> _logger;
 	std::list<std::shared_ptr<VerbosityLogger>> _attachedLoggers;
-	static LoggingSettings _settings;
+	static LoggerSettingsList _settings;
 };
 
-inline void configureLogger(const LoggingSettings& settings)
+inline void configureLogger(const LoggerSettingsList& settings)
 {
 	Logger::configureLogger(settings);
 }

@@ -42,8 +42,6 @@ set(main_srcs
 	baseGameLogic.cpp
 	platypus.hpp
 	platypus.cpp
-	settings.hpp
-	settings.cpp
 )
 source_group(source FILES ${main_srcs})
 

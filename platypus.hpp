@@ -1,7 +1,7 @@
 #pragma once
 
 #include <application_layer/window/IWindow.hpp>
-#include "settings.hpp"
+#include <platypus_proto/settings.hpp>
 
 #include <memory>
 #include <string>
@@ -22,7 +22,10 @@ protected:
 
 	virtual std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
 
-	EngineSettings _settings;
+	void LoadSettings();
+	platypus::Settings DefaultSettings();
+
+	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer;
 
 private:

@@ -11,7 +11,7 @@ public:
 	DirectXRenderer(HWND hwnd, HINSTANCE hinstance);
 	virtual ~DirectXRenderer() { DirectXRenderer::shutdown(); }
 
-	bool initialize(const RendererSettings& settings) override;
+	bool initialize(const platypus::RendererSettings& settings) override;
 	void shutdown() override;
 
 	bool preRender() override;

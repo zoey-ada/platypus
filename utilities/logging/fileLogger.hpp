@@ -2,6 +2,8 @@
 
 #include "ILogger.hpp"
 
+#include <platypus_proto/settings.hpp>
+
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -17,6 +19,10 @@ struct ChannelFile
 class FileLogger : public ILogger
 {
 public:
+	explicit FileLogger(const platypus::FileLoggerSettings& settings):
+		FileLogger(settings.root_dir(), settings.use_single_file())
+	{ }
+
 	explicit FileLogger(std::string_view rootDir, const bool useSingleFile = false);
 	virtual ~FileLogger();
 

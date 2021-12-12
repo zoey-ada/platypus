@@ -5,8 +5,8 @@
 #include <utilities/logging/logger.hpp>
 #include <algorithm>
 
-HumanView::HumanView(std::shared_ptr<IRenderer> renderer, const EngineSettings& settings)
-	: _lastDraw(0), _refreshRate(settings.rendererSettings().refreshRateMs()),
+HumanView::HumanView(std::shared_ptr<IRenderer> renderer, const platypus::Settings& settings)
+	: _lastDraw(0), _refreshRate((settings.renderer_settings().frame_rate().denominator() * static_cast<float>(milliseconds_in_second)) / settings.renderer_settings().frame_rate().numerator()),
 	  _renderer(std::move(renderer))
 { }
 

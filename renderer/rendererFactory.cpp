@@ -8,10 +8,10 @@
 	#include "../application_layer/window/windowsWindow.hpp"
 #endif
 
-std::shared_ptr<IRenderer> RendererFactory::createRenderer(const IWindow* window, const RendererSettings& settings)
+std::shared_ptr<IRenderer> RendererFactory::createRenderer(const IWindow* window, const platypus::RendererSettings& settings)
 {
 #ifdef _WIN32
-	if (settings.rendererType() == RendererType::DirectX)
+	if (settings.renderer_type() == "direct_x")
 	{
 		const auto* windows_window = dynamic_cast<const WindowsWindow*>(window);
 		if (windows_window == nullptr)

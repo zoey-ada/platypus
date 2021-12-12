@@ -14,7 +14,7 @@ public:
 	WindowsWindow(WindowsWindow&) = delete;
 	virtual ~WindowsWindow() = default;
 
-	bool initialize(const uint16_t height, const uint16_t width) override;
+	bool initialize(const platypus::RectSize& dimensions) override;
 	int runLoop(UpdateFunction updateFunc, RenderFunction renderFunc) override;
 
 	static LRESULT CALLBACK initialWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

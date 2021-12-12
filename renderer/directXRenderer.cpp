@@ -9,9 +9,9 @@ DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 	  _backgroundColor(Color::black)
 { }
 
-bool DirectXRenderer::initialize(const RendererSettings& settings)
+bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
 {
-	this->setBackgroundColor(settings.backgroundColor());
+	this->setBackgroundColor(Color::fromHex(settings.background_color()));
 
 	// prioritized list of feature levels
 	std::array<D3D_FEATURE_LEVEL, 4> featureLevels = {
@@ -41,14 +41,14 @@ bool DirectXRenderer::initialize(const RendererSettings& settings)
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.Height = height;
-	swapChainDesc.BufferDesc.RefreshRate.Numerator = static_cast<UINT>(settings.frameRate());
-	swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+	swapChainDesc.BufferDesc.RefreshRate.Numerator = static_cast<UINT>(settings.frame_rate().numerator());
+	swapChainDesc.BufferDesc.RefreshRate.Denominator = static_cast<UINT>(settings.frame_rate().denominator());
 	swapChainDesc.BufferDesc.Width = width;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.OutputWindow = this->_hwnd;
 	swapChainDesc.SampleDesc.Count = 1;
 	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.Windowed = settings.fullScreenMode() ? FALSE : TRUE;
+	swapChainDesc.Windowed = settings.full_screen() ? FALSE : TRUE;
 
 	// set the creation flags
 	unsigned int creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;

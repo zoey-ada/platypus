@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../settings.hpp"
+#include <platypus_proto/settings.hpp>
 #include "color.hpp"
 
 class IRenderer
@@ -8,7 +8,7 @@ class IRenderer
 public:
 	virtual ~IRenderer() = default;
 
-	virtual bool initialize(const RendererSettings& settings) = 0;
+	virtual bool initialize(const platypus::RendererSettings& settings) = 0;
 	virtual void shutdown() = 0;
 
 	virtual bool preRender() = 0;

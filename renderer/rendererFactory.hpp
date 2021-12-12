@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../settings.hpp"
+#include <platypus_proto/settings.hpp>
 #include "IRenderer.hpp"
 
 #include <memory>
@@ -13,5 +13,5 @@ public:
 	RendererFactory() = default;
 	virtual ~RendererFactory() = default;
 
-	[[nodiscard]] static std::shared_ptr<IRenderer> createRenderer(const IWindow* window, const RendererSettings& settings);
+	[[nodiscard]] static std::shared_ptr<IRenderer> createRenderer(const IWindow* window, const platypus::RendererSettings& settings);
 };

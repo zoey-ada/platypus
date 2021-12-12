@@ -11,7 +11,7 @@ WindowsWindow::WindowsWindow(const std::string& appName)
 	_max_console_history(max_console_history)
 { }
 
-bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
+bool WindowsWindow::initialize(const platypus::RectSize& dimensions)
 {
 // defined in cmake file
 #if ENABLE_WINDOWS_CONSOLE
@@ -48,13 +48,13 @@ bool WindowsWindow::initialize(const uint16_t height, const uint16_t width)
 	}
 
 	// determine window dimensions
-	RECT dimensions = { 0, 0, (LONG)width, (LONG)height };
-	AdjustWindowRect(&dimensions, WS_OVERLAPPEDWINDOW, FALSE);
+	RECT rect_dimensions = { 0, 0, (LONG)dimensions.width(), (LONG)dimensions.height() };
+	AdjustWindowRect(&rect_dimensions, WS_OVERLAPPEDWINDOW, FALSE);
 
 	// create window
 	this->_hwnd = CreateWindowW(wAppName.c_str(), wAppName.c_str(), WS_OVERLAPPEDWINDOW,
-		CW_USEDEFAULT, CW_USEDEFAULT, dimensions.right - dimensions.left,
-		dimensions.bottom - dimensions.top, nullptr, nullptr, this->_hinstance, this);
+		CW_USEDEFAULT, CW_USEDEFAULT, rect_dimensions.right - rect_dimensions.left,
+		rect_dimensions.bottom - rect_dimensions.top, nullptr, nullptr, this->_hinstance, this);
 
 	if (this->_hwnd == nullptr)
 	{

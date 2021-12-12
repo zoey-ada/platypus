@@ -4,7 +4,7 @@
 
 #include "IScreenElement.hpp"
 
-#include "../settings.hpp"
+#include <platypus_proto/settings.hpp>
 
 #include <list>
 #include <memory>
@@ -15,7 +15,7 @@ using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 class HumanView : public IView
 {
 public:
-	HumanView(std::shared_ptr<IRenderer> renderer, const EngineSettings& settings);
+	HumanView(std::shared_ptr<IRenderer> renderer, const platypus::Settings& settings);
 	virtual ~HumanView();
 
 	bool onRestore() override;
