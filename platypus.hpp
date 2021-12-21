@@ -1,6 +1,6 @@
 #pragma once
 
-#include <application_layer/window/IWindow.hpp>
+#include <application_layer/window/iWindow.hpp>
 #include <platypus_proto/settings.hpp>
 
 #include <memory>

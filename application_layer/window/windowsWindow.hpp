@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IWindow.hpp"
+#include "iWindow.hpp"
 
 #include <utilities/time.hpp>
 

@@ -4,7 +4,7 @@
 #include <platypus_proto/util.hpp>
 #include <renderer/rendererFactory.hpp>
 #include <utilities/logging/logger.hpp>
-#include <views/IView.hpp>
+#include <views/iView.hpp>
 #include "baseGameLogic.hpp"
 
 Platypus::Platypus(const std::string& appName)

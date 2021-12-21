@@ -1,30 +1,40 @@
 #include "humanView.hpp"
 
-#include "../renderer/IRenderer.hpp"
-#include "../utilities/time.hpp"
-#include <utilities/logging/logger.hpp>
 #include <algorithm>
 
+#include <renderer/screenElementScene.hpp>
+#include <utilities/logging/logger.hpp>
+
+#include "../renderer/iRenderer.hpp"
+#include "../utilities/time.hpp"
+
 HumanView::HumanView(std::shared_ptr<IRenderer> renderer, const platypus::Settings& settings)
-	: _lastDraw(0), _refreshRate((settings.renderer_settings().frame_rate().denominator() * static_cast<float>(milliseconds_in_second)) / settings.renderer_settings().frame_rate().numerator()),
-	  _renderer(std::move(renderer))
-{ }
+	: _last_draw(0), _frametime(-1.0), _renderer(renderer)
+{
+	this->_frametime = frametimeFromFrameRate(settings.renderer_settings().frame_rate());
+
+	auto scene = std::make_shared<ScreenElementScene>(renderer);
+	this->_scene = scene;
+	this->_screen_elements.push_back(scene);
+
+	// setup camera
+}
 
 HumanView::~HumanView()
 {
-	while (!this->_screenElements.empty())
-		this->_screenElements.pop_front();
+	while (!this->_screen_elements.empty())
+		this->_screen_elements.pop_front();
 }
 
 bool HumanView::onRestore()
 {
-	return std::all_of(this->_screenElements.begin(), this->_screenElements.end(),
+	return std::all_of(this->_screen_elements.begin(), this->_screen_elements.end(),
 		[](const std::shared_ptr<IScreenElement>& element) { return element->onRestore(); });
 }
 
 void HumanView::onDeviceLost()
 {
-	for (const auto& element : this->_screenElements)
+	for (const auto& element : this->_screen_elements)
 		element->onDeviceLost();
 }
 
@@ -33,7 +43,7 @@ void HumanView::onUpdate(const Milliseconds delta)
 	// process jobs
 	// read input
 
-	for (const auto& element : this->_screenElements)
+	for (const auto& element : this->_screen_elements)
 		element->onUpdate(delta);
 }
 
@@ -48,13 +58,13 @@ struct SortBy_SharedPtr_Content
 
 void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 {
-	if (static_cast<float>(now - this->_lastDraw) > this->_refreshRate)
+	if (static_cast<float>(now - this->_last_draw) > this->_frametime)
 	{
 		if (this->_renderer->preRender())
 		{
-			this->_screenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
+			this->_screen_elements.sort(SortBy_SharedPtr_Content<IScreenElement>());
 
-			for (const auto& element : this->_screenElements)
+			for (const auto& element : this->_screen_elements)
 			{
 				if (element->isVisible())
 				{
@@ -63,7 +73,7 @@ void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 				}
 			}
 
-			this->_lastDraw = now;
+			this->_last_draw = now;
 		}
 		else
 		{

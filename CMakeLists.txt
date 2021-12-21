@@ -52,14 +52,14 @@ set(application_srcs
 source_group(source\\application_layer FILES ${application_srcs})
 
 set(application_filesys_srcs
-	application_layer/file_system/IFileSystem.hpp
+	application_layer/file_system/iFileSystem.hpp
 	application_layer/file_system/standardFileSystem.hpp
 	application_layer/file_system/standardFileSystem.cpp
 )
 source_group(source\\application_layer\\file_system FILES ${application_filesys_srcs})
 
 set(application_window_srcs
-	application_layer/window/IWindow.hpp
+	application_layer/window/iWindow.hpp
 	application_layer/window/windowFactory.hpp
 	application_layer/window/windowFactory.cpp
 	application_layer/window/windowsWindow.hpp
@@ -76,19 +76,34 @@ source_group(source\\entities FILES ${entities_srcs})
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
-	renderer/IRenderer.hpp
+	renderer/iRenderer.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
+	renderer/scene.hpp
+	renderer/scene.cpp
+	renderer/screenElementScene.hpp
 )
+source_group(source\\renderer FILES ${renderer_srcs})
 
 if(WIN32)
-	set(renderer_srcs
+	set(directx_srcs
 		${renderer_srcs}
-		renderer/directXRenderer.hpp
-		renderer/directXrenderer.cpp
+		renderer/directx/directXRenderer.hpp
+		renderer/directx/directXrenderer.cpp
 	)
 endif()
-source_group(source\\renderer FILES ${renderer_srcs})
+source_group(source\\renderer\\directx FILES ${directx_srcs})
+
+set(scene_node_srcs
+	renderer/scene_nodes/iSceneNode.hpp
+	renderer/scene_nodes/renderPass.hpp
+	renderer/scene_nodes/rootNode.hpp
+	renderer/scene_nodes/rootNode.cpp
+	renderer/scene_nodes/sceneNode.hpp
+	renderer/scene_nodes/sceneNode.cpp
+	renderer/scene_nodes/sceneNodeProperties.hpp
+)
+source_group(source\\scene_nodes FILES ${scene_node_srcs})
 
 set(utilities_srcs
 	utilities/encoding.hpp
@@ -105,7 +120,7 @@ set(utilities_logging_srcs
 	utilities/logging/consoleLogger.cpp
 	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
-	utilities/logging/ILogger.hpp
+	utilities/logging/iLogger.hpp
 	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
 	utilities/logging/verbosityDecorator.hpp
@@ -116,8 +131,8 @@ source_group(source\\utilities\\logging FILES ${utilities_logging_srcs})
 set(views_srcs
 	views/humanView.hpp
 	views/humanView.cpp
-	views/IScreenElement.hpp
-	views/IView.hpp
+	views/iScreenElement.hpp
+	views/iView.hpp
 )
 source_group(source\\views FILES ${views_srcs})
 
@@ -128,6 +143,8 @@ set(all_srcs
 	${application_window_srcs}
 	${entities_srcs}
 	${renderer_srcs}
+	${scene_node_srcs}
+	${directx_srcs}
 	${utilities_srcs}
 	${utilities_logging_srcs}
 	${views_srcs}

@@ -19,13 +19,14 @@ public:
 	{ }
 
 	explicit Color(const uint16_t r, const uint16_t g, const uint16_t b, const uint16_t a = 255)
-		: _r(static_cast<float>(r)/255.0f), _g(static_cast<float>(g)/255.0f),
-		_b(static_cast<float>(b)/255.0f), _a(static_cast<float>(a)/255.0f)
+		: _r(intToFloat(r)), _g(intToFloat(g)), _b(intToFloat(b)), _a(intToFloat(a))
 	{ }
 
 	[[nodiscard]] std::array<float, 4> toFloat() const;
 
 	[[nodiscard]] static Color fromHex(const std::string& hex_code);
+	[[nodiscard]] static float intToFloat(const uint16_t value);
+	[[nodiscard]] static uint16_t floatToInt(const float& value);
 
 	static const Color white;
 	static const Color black;

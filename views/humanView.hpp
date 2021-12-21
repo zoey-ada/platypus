@@ -1,8 +1,8 @@
 #pragma once
 
-#include "IView.hpp"
+#include "iView.hpp"
 
-#include "IScreenElement.hpp"
+#include "iScreenElement.hpp"
 
 #include <platypus_proto/settings.hpp>
 
@@ -10,6 +10,7 @@
 #include <memory>
 
 class IRenderer;
+class Scene;
 using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 
 class HumanView : public IView
@@ -27,8 +28,9 @@ public:
 	void onAttach(const ViewId viewId, const EntityId entityId) override;
 
 private:
-	Milliseconds _lastDraw;
-	float _refreshRate;
+	Milliseconds _last_draw;
+	float _frametime;
 	std::shared_ptr<IRenderer> _renderer;
-	ScreenElementList _screenElements;
+	std::shared_ptr<Scene> _scene;
+	ScreenElementList _screen_elements;
 };

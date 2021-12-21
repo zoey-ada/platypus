@@ -47,6 +47,18 @@ Color Color::fromHex(const std::string& hex_code)
 	return Color::black;
 }
 
+const uint16_t max_32rgba_color_value = 255;
+float Color::intToFloat(const uint16_t value)
+{
+	return static_cast<float>(value) / max_32rgba_color_value;
+}
+
+uint16_t Color::floatToInt(const float& value)
+{
+	return static_cast<uint16_t>(value * max_32rgba_color_value);
+}
+
+
 const Color Color::white = Color(1.0f, 1.0f, 1.0f);
 const Color Color::black = Color(0.0f, 0.0f, 0.0f);
 

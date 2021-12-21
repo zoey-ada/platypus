@@ -1,10 +1,10 @@
 #include "rendererFactory.hpp"
 
 #include <utilities/logging/logger.hpp>
-#include "../application_layer/window/IWindow.hpp"
+#include "../application_layer/window/iWindow.hpp"
 
 #ifdef _WIN32
-	#include "directXRenderer.hpp"
+	#include "directx/directXRenderer.hpp"
 	#include "../application_layer/window/windowsWindow.hpp"
 #endif
 
