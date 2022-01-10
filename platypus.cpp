@@ -3,8 +3,10 @@
 #include <application_layer/window/windowFactory.hpp>
 #include <platypus_proto/util.hpp>
 #include <renderer/rendererFactory.hpp>
+#include <resource_cache/resourceCache.hpp>
 #include <utilities/logging/logger.hpp>
 #include <views/iView.hpp>
+
 #include "baseGameLogic.hpp"
 
 Platypus::Platypus(const std::string& appName)
@@ -22,6 +24,10 @@ bool Platypus::initialize()
 
 	this->_renderer = RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
 	if (!this->_renderer->initialize(this->_settings.renderer_settings()))
+		return false;
+
+	this->_cache = std::make_shared<ResourceCache>(48);
+	if (!this->_cache->initialize(this->_renderer))
 		return false;
 
 	// requires settings and renderer to be initialized

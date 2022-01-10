@@ -73,6 +73,12 @@ set(entities_srcs
 )
 source_group(source\\entities FILES ${entities_srcs})
 
+set(exceptions_srcs
+	exceptions/creationException.hpp
+	exceptions/platypusException.hpp
+)
+source_group(source\\exceptions FILES ${exceptions_srcs})
+
 set(libraries_srcs
 	libraries/libzip_include.hpp
 )
@@ -91,12 +97,45 @@ source_group(source\\renderer FILES ${renderer_srcs})
 
 if(WIN32)
 	set(directx_srcs
-		${renderer_srcs}
+		renderer/directx/directXObjectCreator.hpp
+		renderer/directx/directXObjectCreator.cpp
 		renderer/directx/directXRenderer.hpp
-		renderer/directx/directXrenderer.cpp
+		renderer/directx/directXRenderer.cpp
+		renderer/directx/directXShaderLoader.hpp
+		renderer/directx/directXShaderLoader.cpp
 	)
 endif()
 source_group(source\\renderer\\directx FILES ${directx_srcs})
+
+set(resource_cache_srcs
+	resource_cache/resourceCache.hpp
+	resource_cache/resourceCache.cpp
+)
+source_group(source\\resource_cache FILES ${resource_cache_srcs})
+
+set(resource_cache_loaders_srcs
+	resource_cache/loaders/directXVertexShaderLoader.hpp
+	resource_cache/loaders/directXVertexShaderLoader.cpp
+	resource_cache/loaders/iResourceLoader.hpp
+)
+source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
+
+set(resource_cache_resources_srcs
+	resource_cache/resources/resource.hpp
+	resource_cache/resources/resource.cpp
+	resource_cache/resources/resourceType.hpp
+	resource_cache/resources/resourceType.cpp
+	resource_cache/resources/vertexShaderResource.hpp
+	resource_cache/resources/vertexShaderResource.cpp
+)
+source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_srcs})
+
+set(resource_cache_stores_srcs
+	resource_cache/stores/zipResourceStore.hpp
+	resource_cache/stores/zipResourceStore.cpp
+	resource_cache/stores/iResourceStore.hpp
+)
+source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 
 set(scene_node_srcs
 	renderer/scene_nodes/iSceneNode.hpp
@@ -112,8 +151,11 @@ source_group(source\\scene_nodes FILES ${scene_node_srcs})
 set(utilities_srcs
 	utilities/encoding.hpp
 	utilities/encoding.cpp
+	utilities/safeDelete.hpp
 	utilities/time.hpp
 	utilities/time.cpp
+	utilities/wildcardMatch.hpp
+	utilities/wildcardMatch.cpp
 )
 source_group(source\\utilities FILES ${utilities_srcs})
 
@@ -146,10 +188,15 @@ set(all_srcs
 	${application_filesys_srcs}
 	${application_window_srcs}
 	${entities_srcs}
+	${exceptions_srcs}
 	${libraries_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}
 	${directx_srcs}
+	${resource_cache_srcs}
+	${resource_cache_loaders_srcs}
+	${resource_cache_resources_srcs}
+	${resource_cache_stores_srcs}
 	${utilities_srcs}
 	${utilities_logging_srcs}
 	${views_srcs}
@@ -183,5 +230,6 @@ if(WIN32)
 	target_link_libraries(platypus
 		PRIVATE
 			d3d11.lib
+			d3dcompiler.lib
 	)
 endif()

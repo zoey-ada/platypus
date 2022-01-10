@@ -104,6 +104,9 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
 
 	this->_context->RSSetViewports(1, &viewport);
 
+	this->_creator = std::make_shared<DirectXObjectCreator>();
+	this->_creator->initialize(this->shared_from_this());
+
 	return true;
 }
 

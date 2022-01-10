@@ -4,8 +4,12 @@
 
 #include <d3d11.h>
 
-class DirectXRenderer : public IRenderer
+#include "directXObjectCreator.hpp"
+
+class DirectXRenderer : public IRenderer, public std::enable_shared_from_this<DirectXRenderer>
 {
+friend class DirectXObjectCreator;
+
 public:
 	DirectXRenderer() = delete;
 	DirectXRenderer(HWND hwnd, HINSTANCE hinstance);
@@ -19,6 +23,8 @@ public:
 
 	void setBackgroundColor(const Color& backgroundColor) override;
 
+	std::shared_ptr<DirectXObjectCreator> create() { return this->_creator; }
+
 private:
 	HWND _hwnd;
 	HINSTANCE _hinstance;
@@ -31,4 +37,6 @@ private:
 	D3D_DRIVER_TYPE _driverType;
 
 	Color _backgroundColor;
+
+	std::shared_ptr<DirectXObjectCreator> _creator;
 };

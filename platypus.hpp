@@ -8,6 +8,7 @@
 
 class BaseGameLogic;
 class IRenderer;
+class ResourceCache;
 
 class Platypus
 {
@@ -27,6 +28,7 @@ protected:
 
 	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer;
+	std::shared_ptr<ResourceCache> _cache;
 
 private:
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
