@@ -73,6 +73,10 @@ set(entities_srcs
 )
 source_group(source\\entities FILES ${entities_srcs})
 
+set(libraries_srcs
+	libraries/libzip_include.hpp
+)
+source_group(source\\libraries FILES ${libraries_srcs})
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
@@ -142,6 +146,7 @@ set(all_srcs
 	${application_filesys_srcs}
 	${application_window_srcs}
 	${entities_srcs}
+	${libraries_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}
 	${directx_srcs}
@@ -150,7 +155,7 @@ set(all_srcs
 	${views_srcs}
 )
 
-add_library(platypus ${all_srcs})
+add_library(platypus STATIC ${all_srcs})
 _p__warnings_as_errors(platypus)
 _p__link_static(platypus)
 
@@ -171,6 +176,7 @@ target_link_libraries(platypus
 	PRIVATE
 		freetype
 		utf8cpp
+		zip
 )
 
 if(WIN32)

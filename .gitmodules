@@ -7,3 +7,9 @@
 [submodule "libraries/utf8-cpp"]
 	path = libraries/utf8-cpp
 	url = https://github.com/nemtrif/utfcpp.git
+[submodule "libraries/libzip"]
+	path = libraries/libzip
+	url = https://github.com/nih-at/libzip.git
+[submodule "libraries/zlib"]
+	path = libraries/zlib
+	url = https://github.com/madler/zlib.git
