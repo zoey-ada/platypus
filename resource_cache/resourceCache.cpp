@@ -4,6 +4,7 @@
 #include <utilities/logging/logger.hpp>
 
 #include "loaders/iResourceLoader.hpp"
+#include "loaders/directXPixelShaderLoader.hpp"
 #include "loaders/directXVertexShaderLoader.hpp"
 
 #include "resources/resource.hpp"
@@ -32,6 +33,7 @@ bool ResourceCache::initialize(const std::shared_ptr<IRenderer>& renderer)
 	auto cache = this->shared_from_this();
 
 	this->registerLoader(std::make_shared<DirectXVertexShaderLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<DirectXPixelShaderLoader>(cache, renderer));
 
 	return true;
 }
@@ -44,7 +46,7 @@ void ResourceCache::registerLoader(const std::shared_ptr<IResourceLoader>& loade
 std::shared_ptr<Resource> ResourceCache::getResource(const ResourceType& type,
 	const std::string& path)
 {
-	logInfo("attempting to get resource" + path, "resource_cache");
+	logInfo("attempting to get resource " + path, "resource_cache");
 	auto resource = this->tryShareResource(type, path);
 
 	if (resource != nullptr)
@@ -115,7 +117,7 @@ std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& store
 
 std::shared_ptr<IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
 {
-	logInfo("searching for loader for " + std::to_string(type));
+	logInfo("searching for loader for " + std::to_string(type), "resource_cache");
 
 	try
 	{
@@ -151,7 +153,7 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 	auto loader = this->getLoader(type);
 	if (loader == nullptr)
 	{
-		logWarning("failed to find a loader for" + std::to_string(type), "resource_cache");
+		logWarning("failed to find a loader for " + std::to_string(type), "resource_cache");
 		return nullptr;
 	}
 
@@ -229,7 +231,7 @@ uint8_t* ResourceCache::allocate(const uint32_t size)
 	auto* memory = new(std::nothrow) uint8_t[size];
 	if (memory != nullptr)
 	{
-		logInfo(std::to_string(size) + " bytes allocated");
+		logInfo(std::to_string(size) + " bytes allocated", "resource_cache");
 	}
 
 	return memory;

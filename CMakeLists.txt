@@ -114,6 +114,8 @@ set(resource_cache_srcs
 source_group(source\\resource_cache FILES ${resource_cache_srcs})
 
 set(resource_cache_loaders_srcs
+	resource_cache/loaders/directXPixelShaderLoader.hpp
+	resource_cache/loaders/directXPixelShaderLoader.cpp
 	resource_cache/loaders/directXVertexShaderLoader.hpp
 	resource_cache/loaders/directXVertexShaderLoader.cpp
 	resource_cache/loaders/iResourceLoader.hpp
@@ -121,6 +123,8 @@ set(resource_cache_loaders_srcs
 source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
 
 set(resource_cache_resources_srcs
+	resource_cache/resources/pixelShaderResource.hpp
+	resource_cache/resources/pixelShaderResource.cpp
 	resource_cache/resources/resource.hpp
 	resource_cache/resources/resource.cpp
 	resource_cache/resources/resourceType.hpp
