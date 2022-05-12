@@ -48,6 +48,8 @@ source_group(source FILES ${main_srcs})
 set(application_srcs
 	application_layer/platform.hpp
 	application_layer/platform.cpp
+	application_layer/utils.hpp
+	application_layer/windowsUtils.cpp
 )
 source_group(source\\application_layer FILES ${application_srcs})
 
