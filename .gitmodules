@@ -13,3 +13,6 @@
 [submodule "libraries/zlib"]
 	path = libraries/zlib
 	url = https://github.com/madler/zlib.git
+[submodule "libraries/assimp"]
+	path = libraries/assimp
+	url = https://github.com/assimp/assimp.git
