@@ -137,9 +137,9 @@ set(resource_cache_resources_srcs
 source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_srcs})
 
 set(resource_cache_stores_srcs
+	resource_cache/stores/iResourceStore.hpp
 	resource_cache/stores/zipResourceStore.hpp
 	resource_cache/stores/zipResourceStore.cpp
-	resource_cache/stores/iResourceStore.hpp
 )
 source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 

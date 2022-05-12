@@ -1,20 +1,19 @@
 #pragma once
 
-#include "resource.hpp"
-
 #include <d3d11.h>
+
+#include "resource.hpp"
 
 namespace graphics
 {
-	using PixelShader = ID3D11PixelShader;
+using PixelShader = ID3D11PixelShader;
 };
 
 class PixelShaderResource: public Resource
 {
 public:
-	explicit PixelShaderResource(std::string name, uint8_t* buffer,
-		unsigned int size, std::shared_ptr<IResourceStore> store,
-		std::shared_ptr<ResourceCache> cache,
+	explicit PixelShaderResource(std::string name, uint8_t* buffer, uint64_t size,
+		std::shared_ptr<IResourceStore> store, std::shared_ptr<ResourceCache> cache,
 		std::shared_ptr<graphics::PixelShader> shader);
 
 	virtual ~PixelShaderResource() = default;

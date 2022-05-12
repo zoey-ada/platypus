@@ -3,9 +3,9 @@
 #include <d3d11.h>
 
 #include <exceptions/creationException.hpp>
-#include <renderer/iRenderer.hpp>
 #include <renderer/directx/directXRenderer.hpp>
 #include <renderer/directx/directXShaderLoader.hpp>
+#include <renderer/iRenderer.hpp>
 #include <utilities/safeDelete.hpp>
 
 #include "../resourceCache.hpp"
@@ -13,8 +13,8 @@
 #include "../resources/vertexShaderResource.hpp"
 #include "../stores/iResourceStore.hpp"
 
-DirectXVertexShaderLoader::DirectXVertexShaderLoader(
-	std::shared_ptr<ResourceCache> cache, std::shared_ptr<IRenderer> renderer)
+DirectXVertexShaderLoader::DirectXVertexShaderLoader(std::shared_ptr<ResourceCache> cache,
+	std::shared_ptr<IRenderer> renderer)
 	: _cache(std::move(cache)), _renderer(std::move(renderer))
 {}
 
@@ -29,7 +29,7 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 		return nullptr;
 
 	auto size = store->getResourceSize(filename);
-	auto* buffer = new(std::nothrow) uint8_t[size];
+	auto* buffer = new (std::nothrow) uint8_t[size];
 
 	if (buffer == nullptr)
 	{
@@ -60,19 +60,15 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 		raw_shader = d3d_renderer->create()->newVertexShader(bytecode);
 		auto shader = toSharedPtr(&raw_shader);
 
-		const D3D11_INPUT_ELEMENT_DESC input_desc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 4, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 20, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
-		raw_input_layout = d3d_renderer->create()->newInputLayout(bytecode, input_desc, ARRAYSIZE(input_desc));
+		raw_input_layout =
+			d3d_renderer->create()->newInputLayout(bytecode, input_desc, ARRAYSIZE(input_desc));
 		auto inputLayout = toSharedPtr(&raw_input_layout);
 
 		safeRelease(&bytecode);
-		return std::make_shared<VertexShaderResource>(filename, buffer, size, store, _cache, shader, inputLayout);
+		return std::make_shared<VertexShaderResource>(filename, buffer, size, store, _cache, shader,
+			inputLayout);
 	}
-	catch (CreationException& e)
+	catch (CreationException&)
 	{
 		safeDeleteArray(&buffer);
 		safeRelease(&bytecode);
@@ -80,7 +76,6 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 		safeRelease(&raw_input_layout);
 		throw;
 	}
-
 }
 
 uint8_t* DirectXVertexShaderLoader::allocate(unsigned int size)

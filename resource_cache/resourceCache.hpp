@@ -20,7 +20,7 @@ using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
 class ResourceCache: public std::enable_shared_from_this<ResourceCache>
 {
 public:
-	explicit ResourceCache(const unsigned int size_in_mb);
+	explicit ResourceCache(const uint64_t size_in_mb);
 	virtual ~ResourceCache();
 
 	bool initialize(const std::shared_ptr<IRenderer>& renderer);
@@ -32,7 +32,7 @@ public:
 	bool addResource(const std::shared_ptr<Resource>& resource);
 
 	void flush();
-	uint8_t* allocate(const uint32_t size);
+	uint8_t* allocate(const uint64_t size);
 
 protected:
 	std::shared_ptr<IResourceStore> getStore(const std::string& store);
@@ -41,15 +41,14 @@ protected:
 	std::shared_ptr<Resource> tryShareResource(const ResourceType& type,
 		const std::string& path) const;
 
-	std::shared_ptr<Resource> loadResource(const ResourceType& type,
-		const std::string& path);
+	std::shared_ptr<Resource> loadResource(const ResourceType& type, const std::string& path);
 
 	void updateResource(const std::shared_ptr<Resource>& resource);
 	void free(const std::shared_ptr<Resource>& source);
 
-	bool makeRoom(const uint32_t size);
+	bool makeRoom(const uint64_t size);
 	void freeOneResource();
-	void memoryHasBeenFreed(const uint32_t size);
+	void memoryHasBeenFreed(const uint64_t size);
 
 private:
 	ResourceList _recently_used;
@@ -57,6 +56,6 @@ private:
 	ResourceLoaderMap _resource_loaders;
 	ResourceStoreMap _stores;
 
-	uint32_t _cache_size;
-	uint32_t _allocated;
+	uint64_t _cache_size;
+	uint64_t _allocated;
 };

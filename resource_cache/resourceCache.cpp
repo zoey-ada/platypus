@@ -3,23 +3,22 @@
 #include <renderer/iRenderer.hpp>
 #include <utilities/logging/logger.hpp>
 
-#include "loaders/iResourceLoader.hpp"
 #include "loaders/directXPixelShaderLoader.hpp"
 #include "loaders/directXVertexShaderLoader.hpp"
-
+#include "loaders/iResourceLoader.hpp"
 #include "resources/resource.hpp"
 #include "resources/resourceType.hpp"
-
 #include "stores/iResourceStore.hpp"
 #include "stores/zipResourceStore.hpp"
 
 const unsigned int bytes_in_kilobyte = 1024;
 const unsigned int bytes_in_megabyte = bytes_in_kilobyte * 1024;
 
-ResourceCache::ResourceCache(const unsigned int size_in_mb)
+ResourceCache::ResourceCache(const uint64_t size_in_mb)
 	: _cache_size(size_in_mb * bytes_in_megabyte), _allocated(0)
 {
-	logInfo("resource cache created with '" + std::to_string(_cache_size) + "' bytes of memory", "resource_cache");
+	logInfo("resource cache created with '" + std::to_string(_cache_size) + "' bytes of memory",
+		"resource_cache");
 }
 
 ResourceCache::~ResourceCache()
@@ -180,14 +179,17 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 
 void ResourceCache::updateResource(const std::shared_ptr<Resource>& resource)
 {
-	logInfo("moving " + resource->path() + " to the front of the recently used list", "resource_cache");
+	logInfo("moving " + resource->path() + " to the front of the recently used list",
+		"resource_cache");
 	this->_recently_used.remove(resource);
 	this->_recently_used.push_front(resource);
 }
 
 void ResourceCache::free(const std::shared_ptr<Resource>& resource)
 {
-	logInfo("removing " + resource->path() + " (" + std::to_string(resource->size()) + ") from the cache", "resource_cache");
+	logInfo("removing " + resource->path() + " (" + std::to_string(resource->size()) +
+			") from the cache",
+		"resource_cache");
 	this->_recently_used.remove(resource);
 
 	auto type = resource->type();
@@ -197,13 +199,14 @@ void ResourceCache::free(const std::shared_ptr<Resource>& resource)
 		_resources.erase(type);
 }
 
-bool ResourceCache::makeRoom(const uint32_t size)
+bool ResourceCache::makeRoom(const uint64_t size)
 {
 	logInfo("attempting to find " + std::to_string(size) + " bytes of memory", "resource_cache");
 
 	if (size > this->_cache_size)
 	{
-		logWarning("the cache is smaller than " + std::to_string(size) + " bytes", "resource_cache");
+		logWarning("the cache is smaller than " + std::to_string(size) + " bytes",
+			"resource_cache");
 		return false;
 	}
 
@@ -211,7 +214,8 @@ bool ResourceCache::makeRoom(const uint32_t size)
 	{
 		if (this->_recently_used.empty())
 		{
-			logWarning("unable to find " + std::to_string(size) + " bytes of memory", "resource_cache");
+			logWarning("unable to find " + std::to_string(size) + " bytes of memory",
+				"resource_cache");
 			return false;
 		}
 
@@ -221,14 +225,15 @@ bool ResourceCache::makeRoom(const uint32_t size)
 	return true;
 }
 
-uint8_t* ResourceCache::allocate(const uint32_t size)
+uint8_t* ResourceCache::allocate(const uint64_t size)
 {
-	logInfo("attemptying to allocate " + std::to_string(size) + " bytes of memory", "resource_cache");
+	logInfo("attemptying to allocate " + std::to_string(size) + " bytes of memory",
+		"resource_cache");
 
 	if (!this->makeRoom(size))
 		return nullptr;
 
-	auto* memory = new(std::nothrow) uint8_t[size];
+	auto* memory = new (std::nothrow) uint8_t[size];
 	if (memory != nullptr)
 	{
 		logInfo(std::to_string(size) + " bytes allocated", "resource_cache");
@@ -242,7 +247,7 @@ void ResourceCache::freeOneResource()
 	this->free(this->_recently_used.back());
 }
 
-void ResourceCache::memoryHasBeenFreed(const uint32_t size)
+void ResourceCache::memoryHasBeenFreed(const uint64_t size)
 {
 	logInfo(std::to_string(size) + " bytes freed", "resource_cache");
 	this->_allocated -= size;

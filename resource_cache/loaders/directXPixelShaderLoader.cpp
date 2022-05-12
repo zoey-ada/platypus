@@ -62,7 +62,7 @@ std::shared_ptr<Resource> DirectXPixelShaderLoader::load(
 		safeRelease(&bytecode);
 		return std::make_shared<PixelShaderResource>(filename, buffer, size, store, _cache, shader);
 	}
-	catch (CreationException& e)
+	catch (CreationException&)
 	{
 		safeDeleteArray(&buffer);
 		safeRelease(&bytecode);
