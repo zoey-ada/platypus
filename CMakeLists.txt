@@ -221,15 +221,20 @@ target_compile_definitions(platypus
 target_include_directories(platypus
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/libraries/zlib
+		${CMAKE_CURRENT_BINARY_DIR}/libraries/zlib
 )
 
 target_link_libraries(platypus
 	PUBLIC
 		platypus-proto
 	PRIVATE
+		assimp
 		freetype
 		utf8cpp
 		zip
+		zlibstatic
 )
 
 if(WIN32)
@@ -237,5 +242,6 @@ if(WIN32)
 		PRIVATE
 			d3d11.lib
 			d3dcompiler.lib
+			windowscodecs.lib
 	)
 endif()
