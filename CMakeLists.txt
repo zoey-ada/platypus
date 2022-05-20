@@ -85,15 +85,19 @@ set(libraries_srcs
 	libraries/libzip_include.hpp
 )
 source_group(source\\libraries FILES ${libraries_srcs})
+
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
+	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
+	renderer/iVertexShader.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
 	renderer/scene.hpp
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
+	renderer/screenElementScene.cpp
 )
 source_group(source\\renderer FILES ${renderer_srcs})
 
@@ -101,10 +105,14 @@ if(WIN32)
 	set(directx_srcs
 		renderer/directx/directXObjectCreator.hpp
 		renderer/directx/directXObjectCreator.cpp
+		renderer/directx/directXPixelShader.hpp
+		renderer/directx/directXPixelShader.cpp
 		renderer/directx/directXRenderer.hpp
 		renderer/directx/directXRenderer.cpp
 		renderer/directx/directXShaderLoader.hpp
 		renderer/directx/directXShaderLoader.cpp
+		renderer/directx/directXVertexShader.hpp
+		renderer/directx/directXVertexShader.cpp
 	)
 endif()
 source_group(source\\renderer\\directx FILES ${directx_srcs})
@@ -152,7 +160,11 @@ set(resource_cache_stores_srcs
 source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 
 set(scene_node_srcs
+	renderer/scene_nodes/cameraNode.hpp
+	renderer/scene_nodes/cameraNode.cpp
 	renderer/scene_nodes/iSceneNode.hpp
+	renderer/scene_nodes/meshNode.hpp
+	renderer/scene_nodes/meshNode.cpp
 	renderer/scene_nodes/renderPass.hpp
 	renderer/scene_nodes/rootNode.hpp
 	renderer/scene_nodes/rootNode.cpp
@@ -188,6 +200,13 @@ set(utilities_logging_srcs
 )
 source_group(source\\utilities\\logging FILES ${utilities_logging_srcs})
 
+set(utilities_math_srcs
+	utilities/math/mathTypes.hpp
+	utilities/math/directXMathTypes.hpp
+	utilities/math/directXMathTypes.cpp
+)
+source_group(source\\utilities\\math FILES ${utilities_math_srcs})
+
 set(views_srcs
 	views/humanView.hpp
 	views/humanView.cpp
@@ -213,6 +232,7 @@ set(all_srcs
 	${resource_cache_stores_srcs}
 	${utilities_srcs}
 	${utilities_logging_srcs}
+	${utilities_math_srcs}
 	${views_srcs}
 )
 

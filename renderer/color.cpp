@@ -10,6 +10,11 @@ std::array<float, 4> Color::toFloat() const
 	};
 }
 
+Vec4 Color::toVec4() const
+{
+	return Vec4(_r, _g, _b, _a);
+}
+
 Color Color::fromHex(const std::string& hex_code)
 {
 	if (hex_code.at(0) == '#')

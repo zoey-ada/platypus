@@ -1,5 +1,6 @@
 #include "platypus.hpp"
 
+#include <application_layer/utils.hpp>
 #include <application_layer/window/windowFactory.hpp>
 #include <platypus_proto/util.hpp>
 #include <renderer/rendererFactory.hpp>
@@ -11,7 +12,7 @@
 
 Platypus::Platypus(const std::string& appName)
 	: _renderer(nullptr), _window(WindowFactory::createWindow(appName)), _logic(nullptr)
-{ }
+{}
 
 bool Platypus::initialize()
 {
@@ -22,12 +23,14 @@ bool Platypus::initialize()
 	if (!this->_window->initialize(this->_settings.renderer_settings().resolution()))
 		return false;
 
-	this->_renderer = RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
-	if (!this->_renderer->initialize(this->_settings.renderer_settings()))
-		return false;
+	this->_renderer =
+		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
 
 	this->_cache = std::make_shared<ResourceCache>(48);
 	if (!this->_cache->initialize(this->_renderer))
+		return false;
+
+	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
 		return false;
 
 	// requires settings and renderer to be initialized
@@ -42,13 +45,11 @@ int Platypus::run()
 }
 
 void Platypus::shutdown()
-{ }
+{}
 
 UpdateFunction Platypus::getUpdateFunction() const
 {
-	return [this](Milliseconds delta) {
-		this->_logic->onUpdate(delta);
-	};
+	return [this](Milliseconds delta) { this->_logic->onUpdate(delta); };
 }
 
 RenderFunction Platypus::getRenderFunction() const
@@ -68,11 +69,10 @@ void Platypus::LoadSettings()
 	catch (const platypus::ProtoFileParsingError& e)
 	{
 		std::cerr << "Unable to load settings file. Falling back to default settings." << std::endl
-			<< "Error loading '" << e._filename << "' >> " << e.what() << std::endl;
+				  << "Error loading '" << e._filename << "' >> " << e.what() << std::endl;
 
 		this->_settings = this->DefaultSettings();
 	}
-
 }
 
 platypus::Settings Platypus::DefaultSettings()

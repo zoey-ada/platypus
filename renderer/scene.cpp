@@ -1,27 +1,55 @@
 #include "scene.hpp"
 
+#include <resource_cache/resourceCache.hpp>
+#include <utilities/logging/logger.hpp>
 #include <utilities/time.hpp>
 
-#include "scene_nodes/rootNode.hpp"
 #include "iRenderer.hpp"
+#include "scene_nodes/cameraNode.hpp"
+#include "scene_nodes/rootNode.hpp"
 
-Scene::Scene(std::shared_ptr<IRenderer> renderer)
-: _root(std::make_shared<RootNode>()), _renderer(renderer), _entity_map()
+Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache)
+	: _root(std::make_shared<RootNode>()), _renderer(renderer), _cache(cache)
 {
-	// hook up some shit
+	this->_matrix_stack.push(Mat4x4::identity());
+	// hook up event manager
 }
 
 bool Scene::onRender()
 {
-	if (this->_root /*&& this->_camera*/)
+	if (this->_root && this->_camera)
 	{
 		auto scene = this->shared_from_this();
-		// setup camera and lights
-		if (this->_root->preRender(scene))
+		if (!this->_camera->setViewTransform(scene))
 		{
-			this->_root->render(scene);
-			this->_root->renderChildren(scene);
-			this->_root->postRender(scene);
+			logWarning("failed to set the camera's view transform", "render");
+			return false;
+		}
+
+		// setup lights
+
+		if (!this->_root->preRender(scene))
+		{
+			logWarning("failed to pre-render scene root", "render");
+			return false;
+		}
+
+		if (!this->_root->render(scene))
+		{
+			logWarning("failed to render scene root", "render");
+			return false;
+		}
+
+		if (!this->_root->renderChildren(scene))
+		{
+			logWarning("failed to render scene root's children", "render");
+			return false;
+		}
+
+		if (!this->_root->postRender(scene))
+		{
+			logWarning("failed to post-render scene root", "render");
+			return false;
 		}
 	}
 
@@ -31,13 +59,13 @@ bool Scene::onRender()
 
 bool Scene::onUpdate(const Milliseconds delta)
 {
-	if (!this->_root)
+	if (this->_root == nullptr)
 		return true;
 
 	return this->_root->onUpdate(this->shared_from_this(), delta);
 }
 
-bool Scene::addSceneNode(EntityId id, std::shared_ptr<ISceneNode> child)
+bool Scene::addChild(EntityId id, std::shared_ptr<ISceneNode> child)
 {
 	if (id != InvalidEntityId)
 		this->_entity_map[id] = child;
@@ -57,4 +85,29 @@ bool Scene::removeChild(EntityId id)
 
 	this->_entity_map.erase(id);
 	return this->_root->removeChild(id);
+}
+
+void Scene::pushAndSetMatrix(const Mat4x4& to_world)
+{
+	auto product = *(this->_matrix_stack.top()) * to_world;
+	this->_matrix_stack.push(std::make_shared<Mat4x4>(product));
+	this->_renderer->setWorldTransform(this->_matrix_stack.top());
+}
+
+void Scene::pushAndSetMatrix(const std::shared_ptr<Mat4x4>& to_world)
+{
+	auto product = *(this->_matrix_stack.top()) * *to_world;
+	this->_matrix_stack.push(std::make_shared<Mat4x4>(product));
+	this->_renderer->setWorldTransform(this->_matrix_stack.top());
+}
+
+void Scene::popMatrix()
+{
+	this->_matrix_stack.pop();
+	this->_renderer->setWorldTransform(this->_matrix_stack.top());
+}
+
+std::shared_ptr<Mat4x4> Scene::getTopMatrix()
+{
+	return this->_matrix_stack.top();
 }

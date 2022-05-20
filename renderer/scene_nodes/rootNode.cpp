@@ -2,21 +2,23 @@
 
 #include "../scene.hpp"
 
-RootNode::RootNode()
-	: SceneNode("scene root", InvalidEntityId)
+RootNode::RootNode(): SceneNode("scene root", InvalidEntityId)
 {
 	this->_children.reserve(static_cast<size_t>(RenderPass::Last));
 
-	auto static_nodes = std::make_shared<SceneNode>("static-nodes", InvalidEntityId, RenderPass::Static);
+	auto static_nodes =
+		std::make_shared<SceneNode>("static-nodes", InvalidEntityId, RenderPass::Static);
 	this->_children.push_back(static_nodes);
 
-	auto entity_nodes = std::make_shared<SceneNode>("entity-nodes", InvalidEntityId, RenderPass::Entity);
+	auto entity_nodes =
+		std::make_shared<SceneNode>("entity-nodes", InvalidEntityId, RenderPass::Entity);
 	this->_children.push_back(entity_nodes);
 
 	auto sky_nodes = std::make_shared<SceneNode>("sky-nodes", InvalidEntityId, RenderPass::Sky);
 	this->_children.push_back(sky_nodes);
 
-	auto invisible_nodes = std::make_shared<SceneNode>("invisible-nodes", InvalidEntityId, RenderPass::NotRendered);
+	auto invisible_nodes =
+		std::make_shared<SceneNode>("invisible-nodes", InvalidEntityId, RenderPass::NotRendered);
 	this->_children.push_back(invisible_nodes);
 }
 
@@ -35,23 +37,25 @@ bool RootNode::addChild(const std::shared_ptr<ISceneNode>& child)
 
 bool RootNode::renderChildren(const std::shared_ptr<Scene>& scene)
 {
-	for (auto pass = static_cast<int>(RenderPass::First); pass < static_cast<int>(RenderPass::Last); ++pass)
+	bool success = true;
+
+	for (auto pass = static_cast<int>(RenderPass::First); pass <static_cast<int>(RenderPass::Last); ++pass)
 	{
 		switch (pass)
 		{
 		case static_cast<int>(RenderPass::Static):
 			[[fallthrough]];
 		case static_cast<int>(RenderPass::Entity):
-			return this->_children[pass]->renderChildren(scene);
+			success = success ? this->_children[pass]->renderChildren(scene) : false;
 
 		case static_cast<int>(RenderPass::Sky):
 			// setup for sky pass
-			return this->_children[pass]->renderChildren(scene);
+			success = success ? this->_children[pass]->renderChildren(scene) : false;
 
 		default:
 			break;
 		}
 	}
 
-	return true;
+	return success;
 }

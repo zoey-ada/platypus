@@ -3,26 +3,33 @@
 #include <array>
 #include <string>
 
+#include <utilities/math/mathTypes.hpp>
+
 class Color
 {
 public:
 	Color()
 		: Color(1.0f, 1.0f, 1.0f)
-	{ }
+	{}
 
-	explicit Color(const float rgba[4])
+	explicit Color(const std::array<float, 4> rgba)
 		: Color(rgba[0], rgba[1], rgba[2], rgba[3])
-	{ }
+	{}
 
 	explicit Color(const float r, const float g, const float b, const float a = 1.0f)
 		: _r(r), _g(g), _b(b), _a(a)
-	{ }
+	{}
 
 	explicit Color(const uint16_t r, const uint16_t g, const uint16_t b, const uint16_t a = 255)
 		: _r(intToFloat(r)), _g(intToFloat(g)), _b(intToFloat(b)), _a(intToFloat(a))
-	{ }
+	{}
+
+	explicit Color(const Vec4& rgba)
+		: Color(rgba.x, rgba.y, rgba.z, rgba.w)
+	{}
 
 	[[nodiscard]] std::array<float, 4> toFloat() const;
+	[[nodiscard]] Vec4 toVec4() const;
 
 	[[nodiscard]] static Color fromHex(const std::string& hex_code);
 	[[nodiscard]] static float intToFloat(const uint16_t value);

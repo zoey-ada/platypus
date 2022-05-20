@@ -2,31 +2,39 @@
 
 #include <array>
 
-DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
-	: _hwnd(hwnd), _hinstance(hinstance), _device(nullptr), _context(nullptr),
-	  _swapChain(nullptr), _backBufferTarget(nullptr),
-	  _featureLevel(D3D_FEATURE_LEVEL_1_0_CORE), _driverType(D3D_DRIVER_TYPE_UNKNOWN),
-	  _backgroundColor(Color::black)
-{ }
+#include <resource_cache/resources/resource.hpp>
+#include <resource_cache/resources/resourceType.hpp>
 
-bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
+#include "directXPixelShader.hpp"
+#include "directXTexture.hpp"
+#include "directXVertexShader.hpp"
+
+DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
+	: _hwnd(hwnd),
+	  _hinstance(hinstance),
+	  _device(nullptr),
+	  _context(nullptr),
+	  _swapChain(nullptr),
+	  _backBufferTarget(nullptr),
+	  _featureLevel(D3D_FEATURE_LEVEL_1_0_CORE),
+	  _driverType(D3D_DRIVER_TYPE_UNKNOWN),
+	  _backgroundColor(Color::black)
+{}
+
+bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
+	const std::weak_ptr<ResourceCache>& cache)
 {
+	this->_cache = cache;
+
 	this->setBackgroundColor(Color::fromHex(settings.background_color()));
 
 	// prioritized list of feature levels
-	std::array<D3D_FEATURE_LEVEL, 4> featureLevels = {
-		D3D_FEATURE_LEVEL_11_1,
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0
-	};
+	std::array<D3D_FEATURE_LEVEL, 4> featureLevels = {D3D_FEATURE_LEVEL_11_1,
+		D3D_FEATURE_LEVEL_11_0, D3D_FEATURE_LEVEL_10_1, D3D_FEATURE_LEVEL_10_0};
 
 	// prioritized list of driver types
-	std::array<D3D_DRIVER_TYPE, 3> driverTypes = {
-		D3D_DRIVER_TYPE_HARDWARE,
-		D3D_DRIVER_TYPE_WARP,
-		D3D_DRIVER_TYPE_SOFTWARE
-	};
+	std::array<D3D_DRIVER_TYPE, 3> driverTypes = {D3D_DRIVER_TYPE_HARDWARE, D3D_DRIVER_TYPE_WARP,
+		D3D_DRIVER_TYPE_SOFTWARE};
 
 	// get the window dimensions
 	RECT dimensions;
@@ -41,8 +49,10 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
 	swapChainDesc.BufferCount = 1;
 	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 	swapChainDesc.BufferDesc.Height = height;
-	swapChainDesc.BufferDesc.RefreshRate.Numerator = static_cast<UINT>(settings.frame_rate().numerator());
-	swapChainDesc.BufferDesc.RefreshRate.Denominator = static_cast<UINT>(settings.frame_rate().denominator());
+	swapChainDesc.BufferDesc.RefreshRate.Numerator =
+		static_cast<UINT>(settings.frame_rate().numerator());
+	swapChainDesc.BufferDesc.RefreshRate.Denominator =
+		static_cast<UINT>(settings.frame_rate().denominator());
 	swapChainDesc.BufferDesc.Width = width;
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	swapChainDesc.OutputWindow = this->_hwnd;
@@ -60,10 +70,10 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
 	HRESULT hr = S_OK;
 	for (const auto driver : driverTypes)
 	{
-		hr = D3D11CreateDeviceAndSwapChain(nullptr, driver, nullptr,
-			creationFlags, featureLevels._Elems, static_cast<UINT>(featureLevels.size()),
-			D3D11_SDK_VERSION, &swapChainDesc, &this->_swapChain, &this->_device,
-			&this->_featureLevel, &this->_context);
+		hr = D3D11CreateDeviceAndSwapChain(nullptr, driver, nullptr, creationFlags,
+			featureLevels._Elems, static_cast<UINT>(featureLevels.size()), D3D11_SDK_VERSION,
+			&swapChainDesc, &this->_swapChain, &this->_device, &this->_featureLevel,
+			&this->_context);
 
 		if (SUCCEEDED(hr))
 		{
@@ -82,7 +92,8 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings)
 	if (FAILED(hr))
 		return false;
 
-	hr = this->_device->CreateRenderTargetView(backBufferTexture, nullptr, &this->_backBufferTarget);
+	hr =
+		this->_device->CreateRenderTargetView(backBufferTexture, nullptr, &this->_backBufferTarget);
 
 	if (backBufferTexture != nullptr)
 		backBufferTexture->Release();
@@ -151,4 +162,32 @@ bool DirectXRenderer::postRender()
 void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
 {
 	this->_backgroundColor = backgroundColor;
+}
+
+void DirectXRenderer::setWorldTransform(const std::shared_ptr<Mat4x4>& /*world*/)
+{}
+
+std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path)
+{
+	return std::make_shared<DirectXVertexShader>(this->shared_from_this(), this->_cache.lock(),
+		path);
+}
+
+std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path)
+{
+	return std::make_shared<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(),
+		path);
+}
+
+// std::shared_ptr<ITexture> DirectXRenderer::loadTexture(std::string path)
+// {
+// 	return std::make_shared<DirectXTexture>(this->shared_from_this(), this->_cache.lock(), path);
+// }
+
+bool DirectXRenderer::doesFormatSupport(DXGI_FORMAT format,
+	D3D11_FORMAT_SUPPORT resource_type) const
+{
+	UINT supported_types = 0;
+	auto hr = this->_device->CheckFormatSupport(format, &supported_types);
+	return SUCCEEDED(hr) && static_cast<bool>(supported_types & resource_type);
 }

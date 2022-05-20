@@ -1,11 +1,17 @@
 #include "sceneNode.hpp"
 
-SceneNode::SceneNode(const std::string& name, EntityId entity_id, RenderPass render_pass)
-: _children(), _parent(), _properties(std::make_shared<SceneNodeProperties>())
+#include "../scene.hpp"
+#include "sceneNodeProperties.hpp"
+
+SceneNode::SceneNode(const std::string& name, EntityId entity_id, RenderPass render_pass,
+	std::shared_ptr<Mat4x4> to, Color diffuse_color, std::shared_ptr<Mat4x4> from)
 {
-	_properties->_name = name;
-	_properties->_entity_id = entity_id;
-	_properties->_render_pass = render_pass;
+	this->_properties->_name = name;
+	this->_properties->_entity_id = entity_id;
+	this->_properties->_render_pass = render_pass;
+	this->_properties->_ambient = Color::white;
+	this->_properties->_diffuse = diffuse_color;
+	this->setTransform(to, from);
 }
 
 bool SceneNode::onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta)
@@ -24,9 +30,9 @@ bool SceneNode::isVisible(const std::shared_ptr<Scene>& /*scene*/) const
 	return true;
 }
 
-bool SceneNode::preRender(const std::shared_ptr<Scene>& /*scene*/)
+bool SceneNode::preRender(const std::shared_ptr<Scene>& scene)
 {
-	// adjust location
+	scene->pushAndSetMatrix(this->_properties->toWorld());
 	return true;
 }
 
@@ -51,9 +57,9 @@ bool SceneNode::renderChildren(const std::shared_ptr<Scene>& scene)
 	return true;
 }
 
-bool SceneNode::postRender(const std::shared_ptr<Scene>& /*scene*/)
+bool SceneNode::postRender(const std::shared_ptr<Scene>& scene)
 {
-	// un-adjust location
+	scene->popMatrix();
 	return true;
 }
 
@@ -74,4 +80,15 @@ bool SceneNode::removeChild(const EntityId /*id*/)
 	}
 
 	return false;
+}
+
+void SceneNode::setTransform(const std::shared_ptr<Mat4x4>& to_world,
+	const std::shared_ptr<Mat4x4> from_world)
+{
+	this->_properties->_to_world = *to_world;
+
+	if (from_world == nullptr)
+		this->_properties->_from_world = this->_properties->_to_world.inverse();
+	else
+		this->_properties->_from_world = *from_world;
 }
