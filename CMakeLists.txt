@@ -116,8 +116,12 @@ set(resource_cache_srcs
 source_group(source\\resource_cache FILES ${resource_cache_srcs})
 
 set(resource_cache_loaders_srcs
+	resource_cache/loaders/directXMeshLoader.hpp
+	resource_cache/loaders/directXMeshLoader.cpp
 	resource_cache/loaders/directXPixelShaderLoader.hpp
 	resource_cache/loaders/directXPixelShaderLoader.cpp
+	resource_cache/loaders/directXTextureLoader.hpp
+	resource_cache/loaders/directXTextureLoader.cpp
 	resource_cache/loaders/directXVertexShaderLoader.hpp
 	resource_cache/loaders/directXVertexShaderLoader.cpp
 	resource_cache/loaders/iResourceLoader.hpp
@@ -125,12 +129,16 @@ set(resource_cache_loaders_srcs
 source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
 
 set(resource_cache_resources_srcs
+	resource_cache/resources/meshResource.hpp
+	resource_cache/resources/meshResource.cpp
 	resource_cache/resources/pixelShaderResource.hpp
 	resource_cache/resources/pixelShaderResource.cpp
 	resource_cache/resources/resource.hpp
 	resource_cache/resources/resource.cpp
 	resource_cache/resources/resourceType.hpp
 	resource_cache/resources/resourceType.cpp
+	resource_cache/resources/textureResource.hpp
+	resource_cache/resources/textureResource.cpp
 	resource_cache/resources/vertexShaderResource.hpp
 	resource_cache/resources/vertexShaderResource.cpp
 )

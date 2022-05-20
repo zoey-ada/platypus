@@ -3,7 +3,9 @@
 #include <renderer/iRenderer.hpp>
 #include <utilities/logging/logger.hpp>
 
+#include "loaders/directXMeshLoader.hpp"
 #include "loaders/directXPixelShaderLoader.hpp"
+#include "loaders/directXTextureLoader.hpp"
 #include "loaders/directXVertexShaderLoader.hpp"
 #include "loaders/iResourceLoader.hpp"
 #include "resources/resource.hpp"
@@ -33,6 +35,8 @@ bool ResourceCache::initialize(const std::shared_ptr<IRenderer>& renderer)
 
 	this->registerLoader(std::make_shared<DirectXVertexShaderLoader>(cache, renderer));
 	this->registerLoader(std::make_shared<DirectXPixelShaderLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<DirectXTextureLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<DirectXMeshLoader>(cache, renderer));
 
 	return true;
 }

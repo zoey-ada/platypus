@@ -4,12 +4,17 @@
 
 enum class ResourceType
 {
+	General,
+	Mesh,
 	PixelShader,
+	Texture,
 	VertexShader,
-	General
+	Unknown
 };
 
 namespace std
 {
-	std::string to_string(const ResourceType type);
+
+std::string to_string(const ResourceType type);
+
 };
