@@ -1,7 +1,5 @@
 #include "cameraNode.hpp"
 
-#include <DirectXMath.h>
-
 #include "../scene.hpp"
 
 CameraNode::CameraNode(const std::shared_ptr<Mat4x4>& /*to*/, const Frustum& frustum)
@@ -16,8 +14,8 @@ CameraNode::CameraNode(const std::shared_ptr<Mat4x4>& /*to*/, const Frustum& fru
 	this->_projection =
 		matrixPerspectiveFovLH(this->_frustum.getFieldOfView(), this->_frustum.getAspect(),
 			this->_frustum.getNearDistance(), this->_frustum.getFarDistance());
-	//this->_ortho = matrixOrthographicOffCenterLH(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
-	// this->_ortho = XMMatrixOrthographicLH(1280.0f, 720.0f, 0.0f, 1.0f);
+	// this->_ortho = matrixOrthographicOffCenterLH(0.0f, 1280.0f, 0.0f, 720.0f, -1.0f, 1.0f);
+	//  this->_ortho = XMMatrixOrthographicLH(1280.0f, 720.0f, 0.0f, 1.0f);
 
 	// return true;
 }
