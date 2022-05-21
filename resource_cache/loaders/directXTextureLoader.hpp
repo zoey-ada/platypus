@@ -59,8 +59,7 @@ private:
 
 	[[nodiscard]] IWICBitmapFrameDecode* createTextureFromWic(const uint8_t* image_data,
 		const uint64_t image_data_size);
-	[[nodiscard]] std::shared_ptr<ID3D11ShaderResourceView> createWicTexture(
-		IWICBitmapFrameDecode* frame);
+	[[nodiscard]] ID3D11ShaderResourceView* createWicTexture(IWICBitmapFrameDecode* frame);
 
 	[[nodiscard]] DXGI_FORMAT toDxgiFormat(WICPixelFormatGUID& pixel_format) const;
 	[[nodiscard]] uint64_t getBitsPerPixel(const WICPixelFormatGUID& pixel_format) const;

@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
 
@@ -159,6 +160,25 @@ bool DirectXRenderer::postRender()
 	return SUCCEEDED(hr);
 }
 
+void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
+{
+	// IA setup
+	unsigned int stride = sizeof(graphics::DrawableVertex);
+	unsigned int offset = 0;
+
+	auto vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh->getVertexBuffer());
+	auto index_buffer = reinterpret_cast<ID3D11Buffer*>(mesh->getIndexBuffer());
+
+	this->context()->IASetVertexBuffers(0, 1, &vertex_buffer, &stride, &offset);
+	this->context()->IASetIndexBuffer(index_buffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
+
+	// render
+	this->context()->IASetPrimitiveTopology(
+		D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
+}
+
 void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
 {
 	this->_backgroundColor = backgroundColor;
@@ -173,10 +193,11 @@ std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string pat
 		path);
 }
 
-std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path)
+std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
+	std::string texture)
 {
-	return std::make_shared<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(),
-		path);
+	return std::make_shared<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(), path,
+		texture);
 }
 
 // std::shared_ptr<ITexture> DirectXRenderer::loadTexture(std::string path)

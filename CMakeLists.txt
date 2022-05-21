@@ -89,6 +89,8 @@ source_group(source\\libraries FILES ${libraries_srcs})
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
+	renderer/graphics.hpp
+	renderer/graphics.cpp
 	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
 	renderer/iVertexShader.hpp

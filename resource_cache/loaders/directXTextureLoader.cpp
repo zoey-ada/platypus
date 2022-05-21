@@ -43,6 +43,13 @@ std::shared_ptr<Resource> DirectXTextureLoader::load(const std::shared_ptr<IReso
 		return nullptr;
 	}
 
+	PtResourceData resource_data {};
+	resource_data.name = filename;
+	resource_data.buffer = buffer;
+	resource_data.size = size;
+	resource_data.store = store;
+	resource_data.cache = this->_cache;
+
 	Scoped<IWICBitmapFrameDecode> wic_frame = this->createTextureFromWic(buffer, size);
 	if (wic_frame.isNull())
 	{
@@ -68,10 +75,13 @@ std::shared_ptr<Resource> DirectXTextureLoader::load(const std::shared_ptr<IReso
 	sampler_desc.MinLOD = 0;
 	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	auto sampler_state = toSharedPtr(this->_renderer->create()->newSamplerState(sampler_desc));
+	auto sampler_state = this->_renderer->create()->newSamplerState(sampler_desc);
 
-	return std::make_shared<TextureResource>(filename, buffer, size, store, this->_cache, texture,
-		sampler_state);
+	PtTextureData texture_data {};
+	texture_data.texture = (PtTexture)texture;
+	texture_data.sampler_state = (PtSamplerState)sampler_state;
+
+	return std::make_shared<TextureResource>(&resource_data, &texture_data);
 }
 
 uint8_t* DirectXTextureLoader::allocate(unsigned int size)
@@ -83,7 +93,8 @@ IWICBitmapFrameDecode* DirectXTextureLoader::createTextureFromWic(const uint8_t*
 	const uint64_t image_data_size)
 {
 	Scoped<IWICStream> wic_stream = this->_renderer->create()->newWicStream();
-	wic_stream->InitializeFromMemory(const_cast<uint8_t*>(image_data), static_cast<DWORD>(image_data_size));
+	wic_stream->InitializeFromMemory(const_cast<uint8_t*>(image_data),
+		static_cast<DWORD>(image_data_size));
 
 	Scoped<IWICBitmapDecoder> wic_decoder =
 		this->_renderer->create()->newWicBitmapDecoder(wic_stream.get());
@@ -98,8 +109,7 @@ IWICBitmapFrameDecode* DirectXTextureLoader::createTextureFromWic(const uint8_t*
 	return frame;
 }
 
-std::shared_ptr<ID3D11ShaderResourceView> DirectXTextureLoader::createWicTexture(
-	IWICBitmapFrameDecode* frame)
+ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrameDecode* frame)
 {
 	IWICBitmapSource* source = frame;
 
@@ -111,7 +121,8 @@ std::shared_ptr<ID3D11ShaderResourceView> DirectXTextureLoader::createWicTexture
 		throw CreationException("texture", "Unable to get size of texture from WIC frame");
 	}
 
-	Scoped<IWICFormatConverter> format_converter = this->_renderer->create()->newWicFormatConverter();
+	Scoped<IWICFormatConverter> format_converter =
+		this->_renderer->create()->newWicFormatConverter();
 	hr = format_converter->Initialize(source, GUID_WICPixelFormat32bppRGBA,
 		WICBitmapDitherType::WICBitmapDitherTypeNone, nullptr, 0.0,
 		WICBitmapPaletteType::WICBitmapPaletteTypeCustom);
@@ -184,7 +195,7 @@ std::shared_ptr<ID3D11ShaderResourceView> DirectXTextureLoader::createWicTexture
 	desc.Height = height;
 	desc.MipLevels = 1;
 	desc.ArraySize = 1;
-	//desc.Format = format;
+	// desc.Format = format;
 	desc.Format = format;
 	desc.SampleDesc.Count = 1;
 	desc.SampleDesc.Quality = 0;
@@ -198,7 +209,7 @@ std::shared_ptr<ID3D11ShaderResourceView> DirectXTextureLoader::createWicTexture
 	image_data.SysMemPitch = stride;
 	image_data.SysMemSlicePitch = image_data_size;
 
-	auto texture = toSharedPtr(this->_renderer->create()->newTexture(desc, image_data));
+	auto texture = this->_renderer->create()->newTexture(desc, image_data);
 
 	// generate mipmaps with texture_view
 

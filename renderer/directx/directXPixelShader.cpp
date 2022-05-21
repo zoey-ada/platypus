@@ -50,7 +50,7 @@ bool DirectXPixelShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 
 	auto r = this->_resource_cache.lock()->getResource(ResourceType::PixelShader, this->_path);
 	auto resource = std::static_pointer_cast<PixelShaderResource>(r);
-	this->_pixel_shader = resource->getShader();
+	this->_pixel_shader = reinterpret_cast<ID3D11PixelShader*>(resource->getShader());
 
 	if (this->_pixel_shader == nullptr)
 		return false;
@@ -82,7 +82,7 @@ bool DirectXPixelShader::setupRender(const std::shared_ptr<Scene>& /*scene*/,
 	auto* context = this->_renderer->context();
 
 	// set the pixel shader
-	context->PSSetShader(this->_pixel_shader.get(), nullptr, 0);
+	context->PSSetShader(this->_pixel_shader, nullptr, 0);
 
 	// material
 	D3D11_MAPPED_SUBRESOURCE mapped_resource;
@@ -119,11 +119,10 @@ bool DirectXPixelShader::setTexture(const std::string& texture_path)
 	return true;
 }
 
-bool DirectXPixelShader::setTexture(std::shared_ptr<graphics::Texture> texture,
-	std::shared_ptr<graphics::SamplerState> sampler_state)
+bool DirectXPixelShader::setTexture(PtTexture texture, PtSamplerState sampler_state)
 {
-	auto temp_texture = texture.get();
-	auto temp_sampler = sampler_state.get();
+	auto temp_texture = reinterpret_cast<ID3D11ShaderResourceView*>(texture);
+	auto temp_sampler = reinterpret_cast<ID3D11SamplerState*>(sampler_state);
 
 	this->_renderer->context()->PSSetShaderResources(0, 1, &temp_texture);
 	this->_renderer->context()->PSSetSamplers(0, 1, &temp_sampler);

@@ -1,37 +1,27 @@
 #pragma once
 
-#include <d3d11.h>
+#include <renderer/graphics.hpp>
 
 #include "resource.hpp"
 
-namespace graphics
+struct PtVertexShaderData
 {
-using VertexShader = ID3D11VertexShader;
-using InputLayout = ID3D11InputLayout;
+	PtVertexShader vertex_shader;
+	PtInputLayout input_layout;
 };
 
 class VertexShaderResource: public Resource
 {
 public:
-	explicit VertexShaderResource(std::string name, uint8_t* buffer, uint64_t size,
-		std::shared_ptr<IResourceStore> store, std::shared_ptr<ResourceCache> cache,
-		std::shared_ptr<graphics::VertexShader> shader,
-		std::shared_ptr<graphics::InputLayout> input_layout);
-
+	explicit VertexShaderResource(PtResourceData* resource_data, PtVertexShaderData* shader_data);
 	virtual ~VertexShaderResource() = default;
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::VertexShader; }
 
-	[[nodiscard]] std::shared_ptr<graphics::VertexShader> getShader() const
-	{
-		return this->_shader;
-	}
-	[[nodiscard]] std::shared_ptr<graphics::InputLayout> getInputLayout() const
-	{
-		return this->_input_layout;
-	}
+	[[nodiscard]] PtVertexShader getShader() const { return this->_shader; }
+	[[nodiscard]] PtInputLayout getInputLayout() const { return this->_input_layout; }
 
 private:
-	std::shared_ptr<graphics::VertexShader> _shader;
-	std::shared_ptr<graphics::InputLayout> _input_layout;
+	PtVertexShader _shader {nullptr};
+	PtInputLayout _input_layout {nullptr};
 };

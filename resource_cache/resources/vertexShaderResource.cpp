@@ -2,11 +2,9 @@
 
 #include "../stores/iResourceStore.hpp"
 
-VertexShaderResource::VertexShaderResource(std::string name, uint8_t* buffer, uint64_t size,
-	std::shared_ptr<IResourceStore> store, std::shared_ptr<ResourceCache> cache,
-	std::shared_ptr<graphics::VertexShader> shader,
-	std::shared_ptr<graphics::InputLayout> input_layout)
-	: Resource(std::move(name), buffer, size, std::move(store), std::move(cache)),
-	  _shader(std::move(shader)),
-	  _input_layout(std::move(input_layout))
+VertexShaderResource::VertexShaderResource(PtResourceData* resource_data,
+	PtVertexShaderData* shader_data)
+	: Resource(resource_data),
+	  _shader(shader_data->vertex_shader),
+	  _input_layout(shader_data->input_layout)
 {}

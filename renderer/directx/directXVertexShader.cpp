@@ -55,8 +55,8 @@ bool DirectXVertexShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 
 	auto r = this->_resource_cache.lock()->getResource(ResourceType::VertexShader, this->_path);
 	auto resource = std::static_pointer_cast<VertexShaderResource>(r);
-	this->_vertex_shader = resource->getShader();
-	this->_input_layout = resource->getInputLayout();
+	this->_vertex_shader = reinterpret_cast<ID3D11VertexShader*>(resource->getShader());
+	this->_input_layout = reinterpret_cast<ID3D11InputLayout*>(resource->getInputLayout());
 
 	if (this->_input_layout == nullptr || this->_vertex_shader == nullptr)
 		return false;
@@ -94,8 +94,8 @@ bool DirectXVertexShader::setupRender(const std::shared_ptr<Scene>& scene,
 	auto* context = this->_renderer->context();
 
 	// set the vertex shader and vertex layout
-	context->VSSetShader(this->_vertex_shader.get(), nullptr, 0);
-	context->IASetInputLayout(this->_input_layout.get());
+	context->VSSetShader(this->_vertex_shader, nullptr, 0);
+	context->IASetInputLayout(this->_input_layout);
 
 	// get the projection and view matrices from the camera
 	D3D11_MAPPED_SUBRESOURCE mapped_resource;

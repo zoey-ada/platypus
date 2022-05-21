@@ -43,6 +43,13 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 		return nullptr;
 	}
 
+	PtResourceData resource_data {};
+	resource_data.name = filename;
+	resource_data.buffer = buffer;
+	resource_data.size = size;
+	resource_data.store = store;
+	resource_data.cache = this->_cache;
+
 	// load the shader
 	ID3DBlob* bytecode = nullptr;
 	if (!loadShaderBytecode(filename, buffer, size, &bytecode, ShaderType::Vertex))
@@ -52,13 +59,12 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 		return nullptr;
 	}
 
-	ID3D11VertexShader* raw_shader = nullptr;
-	ID3D11InputLayout* raw_input_layout = nullptr;
+	ID3D11VertexShader* shader = nullptr;
+	ID3D11InputLayout* input_layout = nullptr;
 
 	try
 	{
-		raw_shader = d3d_renderer->create()->newVertexShader(bytecode);
-		auto shader = toSharedPtr(&raw_shader);
+		shader = d3d_renderer->create()->newVertexShader(bytecode);
 
 		const D3D11_INPUT_ELEMENT_DESC input_desc[] = {
 			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT,
@@ -67,20 +73,23 @@ std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
 				D3D11_INPUT_PER_VERTEX_DATA, 0},
 			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT,
 				D3D11_INPUT_PER_VERTEX_DATA, 0}};
-		raw_input_layout =
+		input_layout =
 			d3d_renderer->create()->newInputLayout(bytecode, input_desc, ARRAYSIZE(input_desc));
-		auto inputLayout = toSharedPtr(&raw_input_layout);
 
 		safeRelease(&bytecode);
-		return std::make_shared<VertexShaderResource>(filename, buffer, size, store, _cache, shader,
-			inputLayout);
+
+		PtVertexShaderData shader_data {};
+		shader_data.vertex_shader = (PtVertexShader)shader;
+		shader_data.input_layout = (PtInputLayout)input_layout;
+
+		return std::make_shared<VertexShaderResource>(&resource_data, &shader_data);
 	}
 	catch (CreationException&)
 	{
 		safeDeleteArray(&buffer);
 		safeRelease(&bytecode);
-		safeRelease(&raw_shader);
-		safeRelease(&raw_input_layout);
+		safeRelease(&shader);
+		safeRelease(&input_layout);
 		throw;
 	}
 }

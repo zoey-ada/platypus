@@ -23,12 +23,15 @@ public:
 	bool preRender() override;
 	bool postRender() override;
 
+	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
+
 	void setBackgroundColor(const Color& backgroundColor) override;
 
 	void setWorldTransform(const std::shared_ptr<Mat4x4>& world) override;
 
 	std::shared_ptr<IVertexShader> loadVertexShader(std::string path) override;
-	std::shared_ptr<IPixelShader> loadPixelShader(std::string path) override;
+	std::shared_ptr<IPixelShader> loadPixelShader(std::string path,
+		std::string texture = std::string()) override;
 	// std::shared_ptr<ITexture> loadTexture(std::string path) override;
 	bool doesFormatSupport(DXGI_FORMAT format, D3D11_FORMAT_SUPPORT resource_type) const;
 

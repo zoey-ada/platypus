@@ -8,11 +8,19 @@
 class IResourceStore;
 class ResourceCache;
 
+struct PtResourceData
+{
+	std::string name;
+	uint8_t* buffer;
+	uint64_t size;
+	std::shared_ptr<IResourceStore> store;
+	std::shared_ptr<ResourceCache> cache;
+};
+
 class Resource
 {
 public:
-	Resource(std::string name, uint8_t* buffer, uint64_t size,
-		std::shared_ptr<IResourceStore> store, std::shared_ptr<ResourceCache> cache);
+	Resource(PtResourceData* resource_data);
 
 	virtual ~Resource();
 
@@ -27,8 +35,8 @@ public:
 
 protected:
 	std::string _name;
-	uint8_t* _buffer;
-	uint64_t _size;
-	std::shared_ptr<IResourceStore> _store;
-	std::shared_ptr<ResourceCache> _cache;
+	uint8_t* _buffer {nullptr};
+	uint64_t _size {0};
+	std::shared_ptr<IResourceStore> _store {nullptr};
+	std::shared_ptr<ResourceCache> _cache {nullptr};
 };

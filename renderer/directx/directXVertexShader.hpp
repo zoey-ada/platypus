@@ -28,8 +28,8 @@ private:
 
 	std::string _path {};
 
-	std::shared_ptr<ID3D11VertexShader> _vertex_shader {nullptr};
-	std::shared_ptr<ID3D11InputLayout> _input_layout {nullptr};
+	ID3D11VertexShader* _vertex_shader {nullptr};
+	ID3D11InputLayout* _input_layout {nullptr};
 	std::shared_ptr<DirectXRenderer> _renderer {nullptr};
 	std::weak_ptr<ResourceCache> _resource_cache;
 

@@ -1,27 +1,24 @@
 #pragma once
 
-#include <d3d11.h>
+#include <renderer/graphics.hpp>
 
 #include "resource.hpp"
 
-namespace graphics
+struct PtPixelShaderData
 {
-using PixelShader = ID3D11PixelShader;
+	PtPixelShader pixel_shader;
 };
 
 class PixelShaderResource: public Resource
 {
 public:
-	explicit PixelShaderResource(std::string name, uint8_t* buffer, uint64_t size,
-		std::shared_ptr<IResourceStore> store, std::shared_ptr<ResourceCache> cache,
-		std::shared_ptr<graphics::PixelShader> shader);
-
+	explicit PixelShaderResource(PtResourceData* resource_data, PtPixelShaderData* shader_data);
 	virtual ~PixelShaderResource() = default;
 
 	ResourceType type() const override { return ResourceType::PixelShader; }
 
-	std::shared_ptr<graphics::PixelShader> getShader() const { return this->_shader; }
+	PtPixelShader getShader() const { return this->_shader; }
 
 private:
-	std::shared_ptr<graphics::PixelShader> _shader;
+	PtPixelShader _shader;
 };
