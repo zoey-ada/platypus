@@ -22,6 +22,8 @@ public:
 	explicit Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache);
 	virtual ~Scene() = default;
 
+	[[nodiscard]] bool initialize();
+
 	[[nodiscard]] bool onRender();
 	[[nodiscard]] bool onUpdate(const Milliseconds delta);
 

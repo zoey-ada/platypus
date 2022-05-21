@@ -15,6 +15,14 @@ Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache>
 	// hook up event manager
 }
 
+[[nodiscard]] bool Scene::initialize()
+{
+	if (this->_root == nullptr)
+		return true;
+
+	return this->_root->initialize(this->shared_from_this());
+}
+
 bool Scene::onRender()
 {
 	if (this->_root && this->_camera)
@@ -72,8 +80,7 @@ bool Scene::addChild(EntityId id, std::shared_ptr<ISceneNode> child)
 
 	// setup light garbage
 
-	// child->onRestore(this->shared_from_this())
-	return _root->addChild(child);
+	return child->initialize(this->shared_from_this()) && _root->addChild(child);
 }
 
 bool Scene::removeChild(EntityId id)

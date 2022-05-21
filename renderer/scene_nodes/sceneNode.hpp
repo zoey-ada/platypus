@@ -25,6 +25,8 @@ public:
 
 	std::shared_ptr<const SceneNodeProperties> properties() const override { return _properties; }
 
+	[[nodiscard]] bool initialize(const std::shared_ptr<Scene>& scene) override;
+
 	bool onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta) override;
 	[[nodiscard]] bool isVisible(const std::shared_ptr<Scene>& scene) const override;
 

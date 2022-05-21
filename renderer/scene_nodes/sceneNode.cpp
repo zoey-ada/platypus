@@ -14,6 +14,16 @@ SceneNode::SceneNode(const std::string& name, EntityId entity_id, RenderPass ren
 	this->setTransform(to, from);
 }
 
+bool SceneNode::initialize(const std::shared_ptr<Scene>& scene)
+{
+	bool success = true;
+
+	for (auto child : this->_children)
+		success &= child->initialize(scene);
+
+	return success;
+}
+
 bool SceneNode::onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta)
 {
 	bool success = true;

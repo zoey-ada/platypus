@@ -23,16 +23,16 @@ public:
 
 	virtual ~MeshNode() = default;
 
-	// bool OnRestore(std::shared_ptr<Scene> scene) override;
+	[[nodiscard]] bool initialize(const std::shared_ptr<Scene>& scene) override;
 	// bool OnLostDevice(std::shared_ptr<Scene> /*scene*/) override { return true; }
 	bool render(const std::shared_ptr<Scene>& scene) override;
 
 private:
 	std::string _meshFilename;
-	std::shared_ptr<IPixelShader> _pixelShader;
-	std::shared_ptr<IVertexShader> _vertexShader;
+	std::shared_ptr<IPixelShader> _pixel_shader;
+	std::shared_ptr<IVertexShader> _vertex_shader;
 
-	std::shared_ptr<ID3D11Buffer> _vertexBuffer {nullptr};
+	std::shared_ptr<ID3D11Buffer> _vertexBuffer;
 
 	void createRectangle(std::shared_ptr<ResourceCache> cache, std::string name,
 		const uint32_t height, const uint32_t width, std::shared_ptr<DirectXRenderer> renderer);
