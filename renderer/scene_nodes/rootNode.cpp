@@ -39,7 +39,8 @@ bool RootNode::renderChildren(const std::shared_ptr<Scene>& scene)
 {
 	bool success = true;
 
-	for (auto pass = static_cast<int>(RenderPass::First); pass <static_cast<int>(RenderPass::Last); ++pass)
+	for (auto pass = static_cast<int>(RenderPass::First); pass < static_cast<int>(RenderPass::Last);
+		 ++pass)
 	{
 		switch (pass)
 		{
@@ -47,10 +48,12 @@ bool RootNode::renderChildren(const std::shared_ptr<Scene>& scene)
 			[[fallthrough]];
 		case static_cast<int>(RenderPass::Entity):
 			success = success ? this->_children[pass]->renderChildren(scene) : false;
+			break;
 
 		case static_cast<int>(RenderPass::Sky):
 			// setup for sky pass
 			success = success ? this->_children[pass]->renderChildren(scene) : false;
+			break;
 
 		default:
 			break;
