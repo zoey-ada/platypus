@@ -1,6 +1,6 @@
 #include "baseGameLogic.hpp"
 
-#include "views/IView.hpp"
+#include "views/iView.hpp"
 #include <utilities/logging/logger.hpp>
 
 bool BaseGameLogic::initialize()

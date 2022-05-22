@@ -48,18 +48,20 @@ source_group(source FILES ${main_srcs})
 set(application_srcs
 	application_layer/platform.hpp
 	application_layer/platform.cpp
+	application_layer/utils.hpp
+	application_layer/windowsUtils.cpp
 )
 source_group(source\\application_layer FILES ${application_srcs})
 
 set(application_filesys_srcs
-	application_layer/file_system/IFileSystem.hpp
+	application_layer/file_system/iFileSystem.hpp
 	application_layer/file_system/standardFileSystem.hpp
 	application_layer/file_system/standardFileSystem.cpp
 )
 source_group(source\\application_layer\\file_system FILES ${application_filesys_srcs})
 
 set(application_window_srcs
-	application_layer/window/IWindow.hpp
+	application_layer/window/iWindow.hpp
 	application_layer/window/windowFactory.hpp
 	application_layer/window/windowFactory.cpp
 	application_layer/window/windowsWindow.hpp
@@ -73,28 +75,115 @@ set(entities_srcs
 )
 source_group(source\\entities FILES ${entities_srcs})
 
+set(exceptions_srcs
+	exceptions/creationException.hpp
+	exceptions/platypusException.hpp
+)
+source_group(source\\exceptions FILES ${exceptions_srcs})
+
+set(libraries_srcs
+	libraries/libzip_include.hpp
+)
+source_group(source\\libraries FILES ${libraries_srcs})
+
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
-	renderer/IRenderer.hpp
+	renderer/graphics.hpp
+	renderer/graphics.cpp
+	renderer/iPixelShader.hpp
+	renderer/iRenderer.hpp
+	renderer/iVertexShader.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
+	renderer/scene.hpp
+	renderer/scene.cpp
+	renderer/screenElementScene.hpp
+	renderer/screenElementScene.cpp
 )
+source_group(source\\renderer FILES ${renderer_srcs})
 
 if(WIN32)
-	set(renderer_srcs
-		${renderer_srcs}
-		renderer/directXRenderer.hpp
-		renderer/directXrenderer.cpp
+	set(directx_srcs
+		renderer/directx/directXObjectCreator.hpp
+		renderer/directx/directXObjectCreator.cpp
+		renderer/directx/directXPixelShader.hpp
+		renderer/directx/directXPixelShader.cpp
+		renderer/directx/directXRenderer.hpp
+		renderer/directx/directXRenderer.cpp
+		renderer/directx/directXShaderLoader.hpp
+		renderer/directx/directXShaderLoader.cpp
+		renderer/directx/directXVertexShader.hpp
+		renderer/directx/directXVertexShader.cpp
 	)
 endif()
-source_group(source\\renderer FILES ${renderer_srcs})
+source_group(source\\renderer\\directx FILES ${directx_srcs})
+
+set(resource_cache_srcs
+	resource_cache/resourceCache.hpp
+	resource_cache/resourceCache.cpp
+)
+source_group(source\\resource_cache FILES ${resource_cache_srcs})
+
+set(resource_cache_loaders_srcs
+	resource_cache/loaders/directXMeshLoader.hpp
+	resource_cache/loaders/directXMeshLoader.cpp
+	resource_cache/loaders/directXPixelShaderLoader.hpp
+	resource_cache/loaders/directXPixelShaderLoader.cpp
+	resource_cache/loaders/directXTextureLoader.hpp
+	resource_cache/loaders/directXTextureLoader.cpp
+	resource_cache/loaders/directXVertexShaderLoader.hpp
+	resource_cache/loaders/directXVertexShaderLoader.cpp
+	resource_cache/loaders/iResourceLoader.hpp
+)
+source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
+
+set(resource_cache_resources_srcs
+	resource_cache/resources/meshResource.hpp
+	resource_cache/resources/meshResource.cpp
+	resource_cache/resources/pixelShaderResource.hpp
+	resource_cache/resources/pixelShaderResource.cpp
+	resource_cache/resources/resource.hpp
+	resource_cache/resources/resource.cpp
+	resource_cache/resources/resourceType.hpp
+	resource_cache/resources/resourceType.cpp
+	resource_cache/resources/textureResource.hpp
+	resource_cache/resources/textureResource.cpp
+	resource_cache/resources/vertexShaderResource.hpp
+	resource_cache/resources/vertexShaderResource.cpp
+)
+source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_srcs})
+
+set(resource_cache_stores_srcs
+	resource_cache/stores/iResourceStore.hpp
+	resource_cache/stores/zipResourceStore.hpp
+	resource_cache/stores/zipResourceStore.cpp
+)
+source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
+
+set(scene_node_srcs
+	renderer/scene_nodes/cameraNode.hpp
+	renderer/scene_nodes/cameraNode.cpp
+	renderer/scene_nodes/iSceneNode.hpp
+	renderer/scene_nodes/meshNode.hpp
+	renderer/scene_nodes/meshNode.cpp
+	renderer/scene_nodes/renderPass.hpp
+	renderer/scene_nodes/rootNode.hpp
+	renderer/scene_nodes/rootNode.cpp
+	renderer/scene_nodes/sceneNode.hpp
+	renderer/scene_nodes/sceneNode.cpp
+	renderer/scene_nodes/sceneNodeProperties.hpp
+)
+source_group(source\\scene_nodes FILES ${scene_node_srcs})
 
 set(utilities_srcs
 	utilities/encoding.hpp
 	utilities/encoding.cpp
+	utilities/safeDelete.hpp
 	utilities/time.hpp
 	utilities/time.cpp
+	utilities/wildcardMatch.hpp
+	utilities/wildcardMatch.cpp
 )
 source_group(source\\utilities FILES ${utilities_srcs})
 
@@ -105,7 +194,7 @@ set(utilities_logging_srcs
 	utilities/logging/consoleLogger.cpp
 	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
-	utilities/logging/ILogger.hpp
+	utilities/logging/iLogger.hpp
 	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
 	utilities/logging/verbosityDecorator.hpp
@@ -113,11 +202,18 @@ set(utilities_logging_srcs
 )
 source_group(source\\utilities\\logging FILES ${utilities_logging_srcs})
 
+set(utilities_math_srcs
+	utilities/math/mathTypes.hpp
+	utilities/math/directXMathTypes.hpp
+	utilities/math/directXMathTypes.cpp
+)
+source_group(source\\utilities\\math FILES ${utilities_math_srcs})
+
 set(views_srcs
 	views/humanView.hpp
 	views/humanView.cpp
-	views/IScreenElement.hpp
-	views/IView.hpp
+	views/iScreenElement.hpp
+	views/iView.hpp
 )
 source_group(source\\views FILES ${views_srcs})
 
@@ -127,13 +223,22 @@ set(all_srcs
 	${application_filesys_srcs}
 	${application_window_srcs}
 	${entities_srcs}
+	${exceptions_srcs}
+	${libraries_srcs}
 	${renderer_srcs}
+	${scene_node_srcs}
+	${directx_srcs}
+	${resource_cache_srcs}
+	${resource_cache_loaders_srcs}
+	${resource_cache_resources_srcs}
+	${resource_cache_stores_srcs}
 	${utilities_srcs}
 	${utilities_logging_srcs}
+	${utilities_math_srcs}
 	${views_srcs}
 )
 
-add_library(platypus ${all_srcs})
+add_library(platypus STATIC ${all_srcs})
 _p__warnings_as_errors(platypus)
 _p__link_static(platypus)
 
@@ -146,19 +251,27 @@ target_compile_definitions(platypus
 target_include_directories(platypus
 	PUBLIC
 		${CMAKE_CURRENT_SOURCE_DIR}
+	PRIVATE
+		${CMAKE_CURRENT_SOURCE_DIR}/libraries/zlib
+		${CMAKE_CURRENT_BINARY_DIR}/libraries/zlib
 )
 
 target_link_libraries(platypus
 	PUBLIC
 		platypus-proto
 	PRIVATE
+		assimp
 		freetype
 		utf8cpp
+		zip
+		zlibstatic
 )
 
 if(WIN32)
 	target_link_libraries(platypus
 		PRIVATE
 			d3d11.lib
+			d3dcompiler.lib
+			windowscodecs.lib
 	)
 endif()

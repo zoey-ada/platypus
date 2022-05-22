@@ -1,21 +1,24 @@
 #pragma once
 
-#include "IView.hpp"
-
-#include "IScreenElement.hpp"
-
-#include <platypus_proto/settings.hpp>
-
 #include <list>
 #include <memory>
 
+#include <platypus_proto/settings.hpp>
+
+#include "iScreenElement.hpp"
+#include "iView.hpp"
+
+class CameraNode;
 class IRenderer;
+class ResourceCache;
+class Scene;
 using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 
-class HumanView : public IView
+class HumanView: public IView
 {
 public:
-	HumanView(std::shared_ptr<IRenderer> renderer, const platypus::Settings& settings);
+	HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache,
+		const platypus::Settings& settings);
 	virtual ~HumanView();
 
 	bool onRestore() override;
@@ -27,8 +30,11 @@ public:
 	void onAttach(const ViewId viewId, const EntityId entityId) override;
 
 private:
-	Milliseconds _lastDraw;
-	float _refreshRate;
+	Milliseconds _last_draw;
+	Milliseconds _frametime;
 	std::shared_ptr<IRenderer> _renderer;
-	ScreenElementList _screenElements;
+	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<Scene> _scene;
+	std::shared_ptr<CameraNode> _camera;
+	ScreenElementList _screen_elements;
 };

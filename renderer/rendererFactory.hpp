@@ -1,7 +1,7 @@
 #pragma once
 
 #include <platypus_proto/settings.hpp>
-#include "IRenderer.hpp"
+#include "iRenderer.hpp"
 
 #include <memory>
 

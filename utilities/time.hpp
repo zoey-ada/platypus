@@ -3,6 +3,8 @@
 #include <cstdint>
 #include <string>
 
+#include <platypus_proto/settings.hpp>
+
 using Milliseconds = int64_t;
 
 const uint32_t hours_in_day = 24;
@@ -24,3 +26,7 @@ Milliseconds getCurrentTime();
 
 std::string getCurrentTimestamp();
 std::string toTimestamp(Milliseconds time);
+
+float resolveFrameRate(const platypus::Fraction& frame_rate);
+Milliseconds frametimeFromFrameRate(const platypus::Fraction& frame_rate);
+Milliseconds frametimeFromFrameRate(const float frame_rate);

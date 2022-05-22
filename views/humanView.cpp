@@ -1,30 +1,61 @@
 #include "humanView.hpp"
 
-#include "../renderer/IRenderer.hpp"
-#include "../utilities/time.hpp"
-#include <utilities/logging/logger.hpp>
 #include <algorithm>
 
-HumanView::HumanView(std::shared_ptr<IRenderer> renderer, const platypus::Settings& settings)
-	: _lastDraw(0), _refreshRate((settings.renderer_settings().frame_rate().denominator() * static_cast<float>(milliseconds_in_second)) / settings.renderer_settings().frame_rate().numerator()),
-	  _renderer(std::move(renderer))
-{ }
+#include <renderer/iRenderer.hpp>
+#include <renderer/scene_nodes/cameraNode.hpp>
+#include <renderer/scene_nodes/meshNode.hpp>
+#include <renderer/screenElementScene.hpp>
+#include <resource_cache/resourceCache.hpp>
+#include <utilities/logging/logger.hpp>
+#include <utilities/time.hpp>
+
+HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache,
+	const platypus::Settings& settings)
+	: _last_draw(0), _frametime(-1), _renderer(renderer), _cache(cache)
+{
+	this->_frametime = frametimeFromFrameRate(settings.renderer_settings().frame_rate());
+
+	auto scene = std::make_shared<ScreenElementScene>(renderer, cache);
+	this->_scene = scene;
+	this->_screen_elements.push_back(scene);
+
+	// setup camera
+	Frustum frustum;
+	frustum.initialize(3.1415f / 4.0f, 1.0f, 1.0f, 100.0f);
+	this->_camera = std::make_shared<CameraNode>(Mat4x4::identity(), frustum);
+
+	bool success = this->_scene->addChild(InvalidEntityId, this->_camera);
+	this->_scene->setCamera(this->_camera);
+
+	auto mat = Mat4x4::identity();
+	//mat->scale(5, 5, 5);
+	mat->rotateY(3.1415f / 4);
+	mat->setPosition(Vec3(0, 0, 5));
+	auto test = std::make_shared<MeshNode>("test_mesh", "assets.zip/cube.obj", renderer, cache,
+		InvalidEntityId, RenderPass::Entity, mat, Color::black);
+
+	bool contains = this->_camera->getFrustum().contains(Vec3(0, 0, 0));
+	if (!contains) {}
+
+	success = this->_scene->addChild(InvalidEntityId, test);
+}
 
 HumanView::~HumanView()
 {
-	while (!this->_screenElements.empty())
-		this->_screenElements.pop_front();
+	while (!this->_screen_elements.empty())
+		this->_screen_elements.pop_front();
 }
 
 bool HumanView::onRestore()
 {
-	return std::all_of(this->_screenElements.begin(), this->_screenElements.end(),
+	return std::all_of(this->_screen_elements.begin(), this->_screen_elements.end(),
 		[](const std::shared_ptr<IScreenElement>& element) { return element->onRestore(); });
 }
 
 void HumanView::onDeviceLost()
 {
-	for (const auto& element : this->_screenElements)
+	for (const auto& element : this->_screen_elements)
 		element->onDeviceLost();
 }
 
@@ -33,11 +64,11 @@ void HumanView::onUpdate(const Milliseconds delta)
 	// process jobs
 	// read input
 
-	for (const auto& element : this->_screenElements)
+	for (const auto& element : this->_screen_elements)
 		element->onUpdate(delta);
 }
 
-template <class T>
+template<class T>
 struct SortBy_SharedPtr_Content
 {
 	bool operator()(const std::shared_ptr<T>& lhs, const std::shared_ptr<T>& rhs) const
@@ -48,13 +79,13 @@ struct SortBy_SharedPtr_Content
 
 void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 {
-	if (static_cast<float>(now - this->_lastDraw) > this->_refreshRate)
+	if (static_cast<float>(now - this->_last_draw) >= this->_frametime)
 	{
 		if (this->_renderer->preRender())
 		{
-			this->_screenElements.sort(SortBy_SharedPtr_Content<IScreenElement>());
+			this->_screen_elements.sort(SortBy_SharedPtr_Content<IScreenElement>());
 
-			for (const auto& element : this->_screenElements)
+			for (const auto& element : this->_screen_elements)
 			{
 				if (element->isVisible())
 				{
@@ -63,7 +94,7 @@ void HumanView::onRender(const Milliseconds now, const Milliseconds delta)
 				}
 			}
 
-			this->_lastDraw = now;
+			this->_last_draw = now;
 		}
 		else
 		{

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ILogger.hpp"
+#include "iLogger.hpp"
 
 #include "consoleFormat.hpp"
 

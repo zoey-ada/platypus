@@ -1,6 +1,6 @@
 #pragma once
 
-#include <application_layer/window/IWindow.hpp>
+#include <application_layer/window/iWindow.hpp>
 #include <platypus_proto/settings.hpp>
 
 #include <memory>
@@ -8,6 +8,7 @@
 
 class BaseGameLogic;
 class IRenderer;
+class ResourceCache;
 
 class Platypus
 {
@@ -27,6 +28,7 @@ protected:
 
 	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer;
+	std::shared_ptr<ResourceCache> _cache;
 
 private:
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
