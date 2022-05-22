@@ -27,8 +27,7 @@ MeshNode::MeshNode(const std::string& name, const std::string& mesh_path,
 
 	// force the mesh to reload
 	auto resCache = scene->cache();
-	auto mesh = std::dynamic_pointer_cast<MeshResource>(
-		resCache->getResource(ResourceType::Mesh, this->_meshFilename));
+	auto mesh = resCache->getMesh(this->_meshFilename);
 
 	// calculate bounding sphere
 
@@ -81,8 +80,7 @@ bool MeshNode::render(const std::shared_ptr<Scene>& scene)
 
 	// get the mesh
 	auto resCache = scene->cache();
-	auto meshResource = std::dynamic_pointer_cast<MeshResource>(
-		resCache->getResource(ResourceType::Mesh, this->_meshFilename));
+	auto meshResource = resCache->getMesh(this->_meshFilename);
 
 	scene->renderer()->drawMesh(meshResource);
 	return false;

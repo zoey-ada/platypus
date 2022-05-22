@@ -11,6 +11,10 @@ class IRenderer;
 class IResourceStore;
 class IResourceLoader;
 class Resource;
+class PixelShaderResource;
+class VertexShaderResource;
+class TextureResource;
+class MeshResource;
 
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
@@ -28,6 +32,11 @@ public:
 	void registerLoader(const std::shared_ptr<IResourceLoader>& loader);
 
 	std::shared_ptr<Resource> getResource(const ResourceType& type, const std::string& path);
+	std::shared_ptr<PixelShaderResource> getPixelShader(const std::string& path);
+	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path);
+	std::shared_ptr<TextureResource> getTexture(const std::string& path);
+	std::shared_ptr<MeshResource> getMesh(const std::string& path);
+
 	bool exists(const ResourceType& type, const std::string& path) const;
 	bool addResource(const std::shared_ptr<Resource>& resource);
 

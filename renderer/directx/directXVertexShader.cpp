@@ -53,8 +53,7 @@ bool DirectXVertexShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 {
 	this->deinitialize();
 
-	auto r = this->_resource_cache.lock()->getResource(ResourceType::VertexShader, this->_path);
-	auto resource = std::static_pointer_cast<VertexShaderResource>(r);
+	auto resource = this->_resource_cache.lock()->getVertexShader(this->_path);
 	this->_vertex_shader = reinterpret_cast<ID3D11VertexShader*>(resource->getShader());
 	this->_input_layout = reinterpret_cast<ID3D11InputLayout*>(resource->getInputLayout());
 

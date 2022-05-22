@@ -84,8 +84,7 @@ bool RectangleNode::render(std::shared_ptr<Scene> scene)
 
 	auto appLayer = std::shared_ptr<ApplicationLayerFactory>()->GetApplicationLayer();
 	auto resCache = appLayer->_resourceCache;
-	auto meshResource = std::dynamic_pointer_cast<MeshResource>(
-		resCache->GetResource(ResourceType::Mesh, this->GenerateMeshName()));
+	auto meshResource = resCache->GetMesh(this->GenerateMeshName());
 	auto vertexBuffer = meshResource->GetVertexBuffer().get();
 
 	auto renderer = std::dynamic_pointer_cast<DirectXRenderer>(appLayer->_renderer);

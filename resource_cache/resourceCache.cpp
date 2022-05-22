@@ -8,8 +8,12 @@
 #include "loaders/directXTextureLoader.hpp"
 #include "loaders/directXVertexShaderLoader.hpp"
 #include "loaders/iResourceLoader.hpp"
+#include "resources/meshResource.hpp"
+#include "resources/pixelShaderResource.hpp"
 #include "resources/resource.hpp"
 #include "resources/resourceType.hpp"
+#include "resources/textureResource.hpp"
+#include "resources/vertexShaderResource.hpp"
 #include "stores/iResourceStore.hpp"
 #include "stores/zipResourceStore.hpp"
 
@@ -64,6 +68,29 @@ std::shared_ptr<Resource> ResourceCache::getResource(const ResourceType& type,
 	}
 
 	return resource;
+}
+
+std::shared_ptr<PixelShaderResource> ResourceCache::getPixelShader(const std::string& path)
+{
+	return std::dynamic_pointer_cast<PixelShaderResource>(
+		this->getResource(ResourceType::PixelShader, path));
+}
+
+std::shared_ptr<VertexShaderResource> ResourceCache::getVertexShader(const std::string& path)
+{
+	return std::dynamic_pointer_cast<VertexShaderResource>(
+		this->getResource(ResourceType::VertexShader, path));
+}
+
+std::shared_ptr<TextureResource> ResourceCache::getTexture(const std::string& path)
+{
+	return std::dynamic_pointer_cast<TextureResource>(
+		this->getResource(ResourceType::Texture, path));
+}
+
+std::shared_ptr<MeshResource> ResourceCache::getMesh(const std::string& path)
+{
+	return std::dynamic_pointer_cast<MeshResource>(this->getResource(ResourceType::Mesh, path));
 }
 
 bool ResourceCache::exists(const ResourceType& type, const std::string& path) const

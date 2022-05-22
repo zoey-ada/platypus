@@ -48,8 +48,7 @@ bool DirectXPixelShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 {
 	this->deinitialize();
 
-	auto r = this->_resource_cache.lock()->getResource(ResourceType::PixelShader, this->_path);
-	auto resource = std::static_pointer_cast<PixelShaderResource>(r);
+	auto resource = this->_resource_cache.lock()->getPixelShader(this->_path);
 	this->_pixel_shader = reinterpret_cast<ID3D11PixelShader*>(resource->getShader());
 
 	if (this->_pixel_shader == nullptr)
@@ -110,8 +109,7 @@ bool DirectXPixelShader::setTexture(const std::string& texture_path)
 
 	if (!this->_texture_path.empty())
 	{
-		auto texture = std::dynamic_pointer_cast<TextureResource>(
-			this->_resource_cache.lock()->getResource(ResourceType::Texture, this->_texture_path));
+		auto texture = this->_resource_cache.lock()->getTexture(this->_texture_path);
 		if (texture)
 			return this->setTexture(texture->getTexture(), texture->getSamplerState());
 	}
