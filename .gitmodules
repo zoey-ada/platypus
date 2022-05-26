@@ -4,6 +4,7 @@
 [submodule "libraries/platypus-proto"]
 	path = libraries/platypus-proto
 	url = git@github.com:zoey-ada/platypus-proto.git
+	branch = entity
 [submodule "libraries/utf8-cpp"]
 	path = libraries/utf8-cpp
 	url = https://github.com/nemtrif/utfcpp.git
