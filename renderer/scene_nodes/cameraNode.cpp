@@ -3,7 +3,7 @@
 #include "../scene.hpp"
 
 CameraNode::CameraNode(const std::shared_ptr<Mat4x4>& /*to*/, const Frustum& frustum)
-	: SceneNode("camera", InvalidEntityId, RenderPass::First),
+	: SceneNode(this->getSceneNodeData()),
 	  _frustum(frustum),
 	  //   _active(true),
 	  _debug_camera(false),

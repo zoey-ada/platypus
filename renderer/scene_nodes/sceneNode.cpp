@@ -3,15 +3,24 @@
 #include "../scene.hpp"
 #include "sceneNodeProperties.hpp"
 
-SceneNode::SceneNode(const std::string& name, EntityId entity_id, RenderPass render_pass,
-	std::shared_ptr<Mat4x4> to, Color diffuse_color, std::shared_ptr<Mat4x4> from)
+SceneNode::SceneNode(PtSceneNodeData* node_data)
 {
-	this->_properties->_name = name;
-	this->_properties->_entity_id = entity_id;
-	this->_properties->_render_pass = render_pass;
+	this->_properties->_name = node_data->name;
+	this->_properties->_entity_id = node_data->entity_id;
+	this->_properties->_render_pass = node_data->render_pass;
 	this->_properties->_ambient = Color::white;
-	this->_properties->_diffuse = diffuse_color;
-	this->setTransform(to, from);
+	this->_properties->_diffuse = node_data->diffuse_color;
+	this->setTransform(node_data->to, node_data->from);
+}
+
+SceneNode::SceneNode(PtSceneNodeData node_data): SceneNode(&node_data)
+{
+	this->_properties->_name = std::move(node_data.name);
+	this->_properties->_entity_id = node_data.entity_id;
+	this->_properties->_render_pass = node_data.render_pass;
+	this->_properties->_ambient = Color::white;
+	this->_properties->_diffuse = std::move(node_data.diffuse_color);
+	this->setTransform(std::move(node_data.to), std::move(node_data.from));
 }
 
 bool SceneNode::initialize(const std::shared_ptr<Scene>& scene)

@@ -2,23 +2,32 @@
 
 #include "../scene.hpp"
 
-RootNode::RootNode(): SceneNode("scene root", InvalidEntityId)
+RootNode::RootNode(): SceneNode(this->getSceneNodeData())
 {
 	this->_children.reserve(static_cast<size_t>(RenderPass::Last));
 
-	auto static_nodes =
-		std::make_shared<SceneNode>("static-nodes", InvalidEntityId, RenderPass::Static);
+	PtSceneNodeData static_data {};
+	static_data.name = "static-nodes";
+	static_data.render_pass = RenderPass::Static;
+	auto static_nodes = std::make_shared<SceneNode>(&static_data);
 	this->_children.push_back(static_nodes);
 
-	auto entity_nodes =
-		std::make_shared<SceneNode>("entity-nodes", InvalidEntityId, RenderPass::Entity);
+	PtSceneNodeData entity_data {};
+	entity_data.name = "entity-nodes";
+	entity_data.render_pass = RenderPass::Entity;
+	auto entity_nodes = std::make_shared<SceneNode>(&entity_data);
 	this->_children.push_back(entity_nodes);
 
-	auto sky_nodes = std::make_shared<SceneNode>("sky-nodes", InvalidEntityId, RenderPass::Sky);
+	PtSceneNodeData sky_data {};
+	sky_data.name = "sky-nodes";
+	sky_data.render_pass = RenderPass::Sky;
+	auto sky_nodes = std::make_shared<SceneNode>(&sky_data);
 	this->_children.push_back(sky_nodes);
 
-	auto invisible_nodes =
-		std::make_shared<SceneNode>("invisible-nodes", InvalidEntityId, RenderPass::NotRendered);
+	PtSceneNodeData invisible_data {};
+	invisible_data.name = "invisible-nodes";
+	invisible_data.render_pass = RenderPass::NotRendered;
+	auto invisible_nodes = std::make_shared<SceneNode>(&invisible_data);
 	this->_children.push_back(invisible_nodes);
 }
 
