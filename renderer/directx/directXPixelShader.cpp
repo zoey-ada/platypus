@@ -29,7 +29,7 @@ DirectXPixelShader::DirectXPixelShader(std::shared_ptr<IRenderer> renderer,
 	: _path(std::move(path)), _texture_path(texture_path), _resource_cache(cache)
 {
 	if (this->_path.empty())
-		this->_path = "assets.zip/simple_pixel.hlsl";
+		this->_path = "assets.zip/shaders/simple_pixel.cso";
 
 	_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
 	if (_renderer == nullptr)
