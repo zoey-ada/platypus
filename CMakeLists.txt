@@ -72,8 +72,19 @@ source_group(source\\application_layer\\window FILES ${application_window_srcs})
 set(entities_srcs
 	entities/entity.hpp
 	entities/entity.cpp
+	entities/entityFactory.hpp
+	entities/entityFactory.cpp
 )
 source_group(source\\entities FILES ${entities_srcs})
+
+set(entities_components_srcs
+	entities/components/entityComponent.hpp
+	entities/components/positionComponent.hpp
+	entities/components/positionComponent.cpp
+	entities/components/renderComponent3d.hpp
+	entities/components/renderComponent3d.cpp
+)
+source_group(source\\entities\\components FILES ${entities_components_srcs})
 
 set(exceptions_srcs
 	exceptions/creationException.hpp
@@ -223,6 +234,7 @@ set(all_srcs
 	${application_filesys_srcs}
 	${application_window_srcs}
 	${entities_srcs}
+	${entities_components_srcs}
 	${exceptions_srcs}
 	${libraries_srcs}
 	${renderer_srcs}

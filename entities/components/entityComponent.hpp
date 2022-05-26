@@ -29,7 +29,7 @@ public:
 	virtual void postInitialize() {}
 	virtual void update(Milliseconds /*delta*/) {}
 
-	virtual const char* getName() const = 0;
+	virtual const char* name() const = 0;
 
 protected:
 	std::shared_ptr<Entity> _owner;

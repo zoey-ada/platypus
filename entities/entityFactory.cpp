@@ -23,7 +23,11 @@ std::shared_ptr<Entity> EntityFactory::createEntity(const char* entity_resource)
 		if (reflection->HasField(data, field))
 		{
 			const auto& m = reflection->GetMessage(data, field);
-			bool valid = m.IsInitialized();
+			if (!m.IsInitialized())
+			{
+				// log error
+				continue;
+			}
 
 			auto mcopy = m.New();
 			mcopy->CopyFrom(m);

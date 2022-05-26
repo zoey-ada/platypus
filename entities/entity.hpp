@@ -36,7 +36,7 @@ public:
 		auto iter = this->_components.find(id);
 
 		if (iter == this->_components.end())
-			return nullptr;
+			return std::weak_ptr<ComponentType>();
 
 		return std::static_pointer_cast<ComponentType>(iter->second);
 	}

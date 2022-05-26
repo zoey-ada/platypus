@@ -37,5 +37,5 @@ void Entity::update(Milliseconds delta)
 
 void Entity::addComponent(std::shared_ptr<EntityComponent> component)
 {
-	this->_components.insert(ComponentMapping(component->getName(), component));
+	this->_components.insert(ComponentMapping(component->name(), component));
 }
