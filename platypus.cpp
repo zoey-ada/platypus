@@ -26,7 +26,7 @@ bool Platypus::initialize()
 	this->_renderer =
 		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
 
-	this->_cache = std::make_shared<ResourceCache>(48);
+	this->_cache = std::make_shared<ResourceCache>(this->_settings.resource_cache_settings());
 	if (!this->_cache->initialize(this->_renderer))
 		return false;
 
