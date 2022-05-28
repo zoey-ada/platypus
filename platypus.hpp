@@ -1,12 +1,13 @@
 #pragma once
 
-#include <application_layer/window/iWindow.hpp>
-#include <platypus_proto/settings.hpp>
-
 #include <memory>
 #include <string>
 
+#include <application_layer/window/iWindow.hpp>
+#include <platypus_proto/settings.hpp>
+
 class BaseGameLogic;
+class IEventManager;
 class IRenderer;
 class ResourceCache;
 
@@ -29,6 +30,7 @@ protected:
 	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer;
 	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IEventManager> _event_manager;
 
 private:
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
