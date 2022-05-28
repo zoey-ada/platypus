@@ -1,7 +1,10 @@
 #include "renderComponent3d.hpp"
 
+#include <events/events/newRenderComponentEvent.hpp>
+#include <events/iEventManager.hpp>
 #include <platypus_proto/entity.hpp>
 #include <renderer/scene_nodes/meshNode.hpp>
+#include <serviceProvider.hpp>
 
 #include "positionComponent.hpp"
 
@@ -13,7 +16,9 @@ bool RenderComponent3d::initialize(const std::shared_ptr<Message>& data)
 
 void RenderComponent3d::postInitialize()
 {
-	// trigger new render component event
+	auto event =
+		std::make_shared<NewRenderComponentEvent>(this->_owner->getId(), this->getSceneNode());
+	ServiceProvider::getService<IEventManager>()->triggerEvent(event);
 }
 
 std::shared_ptr<SceneNode> RenderComponent3d::getSceneNode()
