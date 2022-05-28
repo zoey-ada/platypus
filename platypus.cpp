@@ -2,6 +2,7 @@
 
 #include <application_layer/utils.hpp>
 #include <application_layer/window/windowFactory.hpp>
+#include <events/eventManager.hpp>
 #include <platypus_proto/util.hpp>
 #include <renderer/rendererFactory.hpp>
 #include <resource_cache/resourceCache.hpp>
@@ -9,6 +10,7 @@
 #include <views/iView.hpp>
 
 #include "baseGameLogic.hpp"
+#include "serviceProvider.hpp"
 
 Platypus::Platypus(const std::string& appName)
 	: _renderer(nullptr), _window(WindowFactory::createWindow(appName)), _logic(nullptr)
@@ -26,12 +28,15 @@ bool Platypus::initialize()
 	this->_renderer =
 		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
 
-	this->_cache = std::make_shared<ResourceCache>(48);
+	this->_cache = std::make_shared<ResourceCache>(this->_settings.resource_cache_settings());
 	if (!this->_cache->initialize(this->_renderer))
 		return false;
 
 	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
 		return false;
+
+	this->_event_manager = std::make_shared<EventManager>();
+	ServiceProvider::registerService(this->_event_manager);
 
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();

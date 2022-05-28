@@ -5,6 +5,8 @@
 #include <memory>
 #include <string>
 
+#include <platypus_proto/settings.hpp>
+
 #include "resources/resourceType.hpp"
 
 class IRenderer;
@@ -24,7 +26,7 @@ using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
 class ResourceCache: public std::enable_shared_from_this<ResourceCache>
 {
 public:
-	explicit ResourceCache(const uint64_t size_in_mb);
+	explicit ResourceCache(const platypus::ResourceCacheSettings& settings);
 	virtual ~ResourceCache();
 
 	bool initialize(const std::shared_ptr<IRenderer>& renderer);

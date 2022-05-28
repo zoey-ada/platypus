@@ -20,8 +20,8 @@
 const unsigned int bytes_in_kilobyte = 1024;
 const unsigned int bytes_in_megabyte = bytes_in_kilobyte * 1024;
 
-ResourceCache::ResourceCache(const uint64_t size_in_mb)
-	: _cache_size(size_in_mb * bytes_in_megabyte), _allocated(0)
+ResourceCache::ResourceCache(const platypus::ResourceCacheSettings& settings)
+	: _cache_size(settings.cache_size_in_mb() * bytes_in_megabyte), _allocated(0)
 {
 	logInfo("resource cache created with '" + std::to_string(_cache_size) + "' bytes of memory",
 		"resource_cache");

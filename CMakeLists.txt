@@ -42,6 +42,8 @@ set(main_srcs
 	baseGameLogic.cpp
 	platypus.hpp
 	platypus.cpp
+	serviceProvider.hpp
+	serviceProvider.cpp
 )
 source_group(source FILES ${main_srcs})
 
@@ -85,6 +87,18 @@ set(entities_components_srcs
 	entities/components/renderComponent3d.cpp
 )
 source_group(source\\entities\\components FILES ${entities_components_srcs})
+
+set(events_srcs
+	events/eventManager.hpp
+	events/eventManager.cpp
+	events/iEventManager.hpp
+)
+source_group(source\\events FILES ${events_srcs})
+
+set(events_events_src
+	events/events/newRenderComponentEvent.hpp
+)
+source_group(source\\events\\events FILES ${events_events_src})
 
 set(exceptions_srcs
 	exceptions/creationException.hpp
@@ -235,6 +249,8 @@ set(all_srcs
 	${application_window_srcs}
 	${entities_srcs}
 	${entities_components_srcs}
+	${events_srcs}
+	${events_events_srcs}
 	${exceptions_srcs}
 	${libraries_srcs}
 	${renderer_srcs}
