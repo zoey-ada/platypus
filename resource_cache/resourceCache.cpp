@@ -25,6 +25,12 @@ ResourceCache::ResourceCache(const platypus::ResourceCacheSettings& settings)
 {
 	logInfo("resource cache created with '" + std::to_string(_cache_size) + "' bytes of memory",
 		"resource_cache");
+
+	this->_store_locations.resize(static_cast<size_t>(settings.store_locations_size()));
+	for (const auto& location : settings.store_locations())
+	{
+		this->_store_locations.push_back(location);
+	}
 }
 
 ResourceCache::~ResourceCache()

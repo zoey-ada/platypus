@@ -2,6 +2,15 @@
 
 #include "events/iEvent.hpp"
 
+EventManager::EventManager(const uint32_t number_of_queues): _number_of_queues(number_of_queues)
+{
+	this->_queues.resize(this->_number_of_queues);
+	for (int i = 0; i < this->_number_of_queues; ++i)
+	{
+		this->_queues.push_back(std::list<std::shared_ptr<IEvent>>());
+	}
+}
+
 DelegateId EventManager::_registerEventSink(const std::string& event_type,
 	const EventDelegate& delegate)
 {

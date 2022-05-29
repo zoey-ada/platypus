@@ -69,4 +69,5 @@ private:
 
 	uint64_t _cache_size;
 	uint64_t _allocated;
+	std::list<std::string> _store_locations;
 };

@@ -6,14 +6,14 @@
 #include <map>
 #include <memory>
 
-#include "iEventManager.hpp"
+#include <platypus_proto/settings.hpp>
 
-const unsigned int EVENTMANAGER_NUM_QUEUES = 2;
+#include "iEventManager.hpp"
 
 class EventManager: public IEventManager, public std::enable_shared_from_this<EventManager>
 {
 public:
-	EventManager() = default;
+	explicit EventManager(const uint32_t number_of_queues = 2);
 	virtual ~EventManager() = default;
 
 	DelegateId _registerEventSink(const std::string& event_type,
@@ -33,8 +33,9 @@ private:
 	using EventQueue = std::list<std::shared_ptr<IEvent>>;
 
 	EventDelegateMap _event_delegates;
-	std::array<EventQueue, EVENTMANAGER_NUM_QUEUES> _queues;
-	int _active_queue;
+	std::list<EventQueue> _queues;
+	int _number_of_queues {2};
+	int _active_queue {0};
 	int _last_delegate_id {InvalidDelegateId};
 	int _last_event_id {InvalidEventId};
 };

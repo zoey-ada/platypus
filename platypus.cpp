@@ -35,7 +35,8 @@ bool Platypus::initialize()
 	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
 		return false;
 
-	this->_event_manager = std::make_shared<EventManager>();
+	this->_event_manager = std::make_shared<EventManager>(
+		this->_settings.general_settings().event_manager_queue_count());
 	ServiceProvider::registerService(this->_event_manager);
 
 	// requires settings and renderer to be initialized
