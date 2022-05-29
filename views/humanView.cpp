@@ -29,14 +29,23 @@ HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<Resour
 	this->_scene->setCamera(this->_camera);
 
 	auto mat = Mat4x4::identity();
-	//mat->scale(5, 5, 5);
+	// mat->scale(5, 5, 5);
 	mat->rotateY(3.1415f / 4);
 	mat->setPosition(Vec3(0, 0, 5));
-	auto test = std::make_shared<MeshNode>("test_mesh", "assets.zip/cube.obj", renderer, cache,
-		InvalidEntityId, RenderPass::Entity, mat, Color::black);
+
+	PtSceneNodeData node_data;
+	node_data.to = mat;
+	node_data.diffuse_color = Color::black;
+	PtMeshNodeData mesh_node_data {};
+	mesh_node_data.mesh_path = "assets.zip/meshes/cube.obj";
+	mesh_node_data.texture_path = "assets.zip/textures/platypus.jpg";
+	mesh_node_data.pixel_shader_path = mesh_node_data.vetex_shader_path = "";
+
+	auto test = std::make_shared<MeshNode>(&node_data, &mesh_node_data);
 
 	bool contains = this->_camera->getFrustum().contains(Vec3(0, 0, 0));
-	if (!contains) {}
+	if (!contains)
+	{}
 
 	success = this->_scene->addChild(InvalidEntityId, test);
 }

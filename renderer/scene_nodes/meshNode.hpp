@@ -13,13 +13,18 @@ class Scene;
 struct ID3D11Buffer;
 class DirectXRenderer;
 
+struct PtMeshNodeData
+{
+	const char* mesh_path;
+	const char* texture_path;
+	const char* pixel_shader_path;
+	const char* vetex_shader_path;
+};
+
 class MeshNode: public SceneNode, public std::enable_shared_from_this<MeshNode>
 {
 public:
-	MeshNode(const std::string& name, const std::string& mesh_path,
-		std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache,
-		EntityId entity_id = InvalidEntityId, RenderPass render_pass = RenderPass::Entity,
-		std::shared_ptr<Mat4x4> to = Mat4x4::identity(), Color diffuse_color = Color::white);
+	MeshNode(PtSceneNodeData* base_node_data, PtMeshNodeData* mesh_node_data);
 
 	virtual ~MeshNode() = default;
 
@@ -28,7 +33,10 @@ public:
 	bool render(const std::shared_ptr<Scene>& scene) override;
 
 private:
-	std::string _meshFilename;
+	std::string _mesh_path;
+	std::string _texture_path;
+	std::string _pixel_shader_path;
+	std::string _vertex_shader_path;
 	std::shared_ptr<IPixelShader> _pixel_shader;
 	std::shared_ptr<IVertexShader> _vertex_shader;
 

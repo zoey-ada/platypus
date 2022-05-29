@@ -34,7 +34,7 @@ DirectXVertexShader::DirectXVertexShader(std::shared_ptr<IRenderer> renderer,
 	: _path(std::move(path)), _resource_cache(cache)
 {
 	if (this->_path.empty())
-		this->_path = "assets.zip/simple_vertex.hlsl";
+		this->_path = "assets.zip/shaders/simple_vertex.cso";
 
 	_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
 	if (_renderer == nullptr)

@@ -11,15 +11,22 @@ class SceneNodeProperties;
 
 using SceneNodeList = std::vector<std::shared_ptr<ISceneNode>>;
 
+struct PtSceneNodeData
+{
+	std::string name;
+	EntityId entity_id = InvalidEntityId;
+	RenderPass render_pass = RenderPass::Entity;
+	std::shared_ptr<Mat4x4> to = Mat4x4::identity();
+	Color diffuse_color = Color::white;
+	std::shared_ptr<Mat4x4> from = nullptr;
+};
+
 class SceneNode: public ISceneNode
 {
 	friend class Scene;
 
 public:
-	explicit SceneNode(const std::string& name, EntityId entity_id = InvalidEntityId,
-		RenderPass render_pass = RenderPass::Entity,
-		std::shared_ptr<Mat4x4> to = Mat4x4::identity(), Color diffuse_color = Color::white,
-		std::shared_ptr<Mat4x4> from = nullptr);
+	explicit SceneNode(PtSceneNodeData* node_data);
 
 	virtual ~SceneNode() = default;
 
@@ -44,6 +51,8 @@ public:
 protected:
 	SceneNodeList _children {};
 	std::shared_ptr<SceneNode> _parent {nullptr};
+
+	SceneNode(PtSceneNodeData node_data);
 
 private:
 	std::shared_ptr<SceneNodeProperties> _properties {std::make_shared<SceneNodeProperties>()};
