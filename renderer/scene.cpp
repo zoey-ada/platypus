@@ -1,6 +1,9 @@
 #include "scene.hpp"
 
+#include <events/events/newRenderComponentEvent.hpp>
+#include <events/iEventManager.hpp>
 #include <resource_cache/resourceCache.hpp>
+#include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
 #include <utilities/time.hpp>
 
@@ -17,6 +20,8 @@ Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache>
 
 [[nodiscard]] bool Scene::initialize()
 {
+	this->registerEventSinks();
+
 	if (this->_root == nullptr)
 		return true;
 
@@ -117,4 +122,18 @@ void Scene::popMatrix()
 std::shared_ptr<Mat4x4> Scene::getTopMatrix()
 {
 	return this->_matrix_stack.top();
+}
+
+void Scene::registerEventSinks()
+{
+	registerEventSink("new-render-component-event", Scene::onNewRenderComponent);
+}
+
+void Scene::onNewRenderComponent(std::shared_ptr<IEvent> event)
+{
+	auto render_event = std::dynamic_pointer_cast<NewRenderComponentEvent>(event);
+	if (!this->addChild(render_event->_entity_id, render_event->_scene_node))
+	{
+		// log error
+	}
 }

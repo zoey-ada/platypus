@@ -9,6 +9,7 @@
 #include <utilities/time.hpp>
 
 class CameraNode;
+class IEvent;
 class IRenderer;
 class ISceneNode;
 class ResourceCache;
@@ -40,6 +41,9 @@ public:
 
 	[[nodiscard]] std::shared_ptr<IRenderer> renderer() const { return this->_renderer; }
 	[[nodiscard]] std::shared_ptr<ResourceCache> cache() const { return this->_cache; }
+
+	void registerEventSinks();
+	void onNewRenderComponent(std::shared_ptr<IEvent> event);
 
 private:
 	std::shared_ptr<SceneNode> _root {nullptr};

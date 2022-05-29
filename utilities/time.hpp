@@ -3,7 +3,7 @@
 #include <cstdint>
 #include <string>
 
-#include <platypus_proto/settings.hpp>
+#include <platypus_proto/common.hpp>
 
 using Milliseconds = int64_t;
 
@@ -21,6 +21,8 @@ const uint32_t milliseconds_in_minute = milliseconds_in_second * seconds_in_minu
 const uint32_t milliseconds_in_hour = milliseconds_in_minute * minutes_in_hour;
 const uint32_t milliseconds_in_day = milliseconds_in_hour * hours_in_day;
 
+const Milliseconds Infinity = INT64_MAX;
+const Milliseconds NegativeInfinity = INT64_MIN;
 
 Milliseconds getCurrentTime();
 
