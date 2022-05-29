@@ -10,7 +10,7 @@ Entity::Entity(EntityId id): _id(id)
 Entity::~Entity()
 {
 	if (!this->_components.empty())
-		this->shutdown();
+		this->deinitialize();
 }
 
 bool Entity::initialize(const platypus::Entity& /*data*/)
@@ -24,7 +24,7 @@ void Entity::postInitialize()
 		mapping.second->postInitialize();
 }
 
-void Entity::shutdown()
+void Entity::deinitialize()
 {
 	this->_components.clear();
 }

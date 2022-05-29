@@ -122,7 +122,7 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
 	return true;
 }
 
-void DirectXRenderer::shutdown()
+void DirectXRenderer::deinitialize()
 {
 	if (this->_backBufferTarget != nullptr)
 		this->_backBufferTarget->Release();

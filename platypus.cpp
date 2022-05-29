@@ -50,7 +50,7 @@ int Platypus::run()
 	return this->_window->runLoop(this->getUpdateFunction(), this->getRenderFunction());
 }
 
-void Platypus::shutdown()
+void Platypus::deinitialize()
 {}
 
 UpdateFunction Platypus::getUpdateFunction() const

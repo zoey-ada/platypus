@@ -24,7 +24,7 @@ public:
 
 	bool initialize(const platypus::Entity& data);
 	void postInitialize();
-	void shutdown();
+	void deinitialize();
 
 	void update(Milliseconds delta);
 

@@ -14,11 +14,11 @@ class DirectXRenderer: public IRenderer, public std::enable_shared_from_this<Dir
 public:
 	DirectXRenderer() = delete;
 	DirectXRenderer(HWND hwnd, HINSTANCE hinstance);
-	virtual ~DirectXRenderer() { DirectXRenderer::shutdown(); }
+	virtual ~DirectXRenderer() { DirectXRenderer::deinitialize(); }
 
 	bool initialize(const platypus::RendererSettings& settings,
 		const std::weak_ptr<ResourceCache>& cache) override;
-	void shutdown() override;
+	void deinitialize() override;
 
 	bool preRender() override;
 	bool postRender() override;

@@ -20,7 +20,7 @@ public:
 protected:
 	bool initialize();
 	int run();
-	void shutdown();
+	void deinitialize();
 
 	virtual std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
 

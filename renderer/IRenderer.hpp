@@ -20,7 +20,7 @@ public:
 
 	virtual bool initialize(const platypus::RendererSettings& settings,
 		const std::weak_ptr<ResourceCache>& cache) = 0;
-	virtual void shutdown() = 0;
+	virtual void deinitialize() = 0;
 
 	virtual bool preRender() = 0;
 	virtual bool postRender() = 0;
