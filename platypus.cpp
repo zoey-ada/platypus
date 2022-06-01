@@ -58,6 +58,8 @@ int Platypus::run()
 
 void Platypus::deinitialize()
 {
+	this->_renderer->deinitialize();
+	this->_cache->flush();
 	ServiceProvider::unregisterAllServices();
 }
 
