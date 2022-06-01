@@ -8,6 +8,7 @@
 
 class BaseGameLogic;
 class IEventManager;
+class InputManager;
 class IPlatform;
 class IRenderer;
 class ResourceCache;
@@ -36,6 +37,7 @@ private:
 	std::shared_ptr<IPlatform> _platform;
 	std::shared_ptr<IWindow> _window;
 	std::shared_ptr<BaseGameLogic> _logic;
+	std::shared_ptr<InputManager> _input_manager;
 	std::shared_ptr<IEventManager> _event_manager;
 
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;

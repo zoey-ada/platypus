@@ -17,6 +17,8 @@ public:
 
 	std::shared_ptr<IWindow> createWindow(const platypus::RectSize& size) override;
 
+	std::vector<std::shared_ptr<IInputDevice>> queryInputDevices() override;
+
 private:
 	std::string _application_name;
 	HWND _hwnd {nullptr};

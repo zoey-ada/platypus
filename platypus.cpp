@@ -5,6 +5,7 @@
 #include <application_layer/utils.hpp>
 #include <application_layer/window/iWindow.hpp>
 #include <events/eventManager.hpp>
+#include <input/inputManager.hpp>
 #include <platypus_proto/util.hpp>
 #include <renderer/rendererFactory.hpp>
 #include <resource_cache/resourceCache.hpp>
@@ -48,6 +49,9 @@ bool Platypus::initialize()
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();
 
+	this->_input_manager = std::make_shared<InputManager>();
+	this->_input_manager->initialize();
+
 	return true;
 }
 
@@ -65,7 +69,10 @@ void Platypus::deinitialize()
 
 UpdateFunction Platypus::getUpdateFunction() const
 {
-	return [this](Milliseconds delta) { this->_logic->onUpdate(delta); };
+	return [this](Milliseconds now, Milliseconds delta) {
+		this->_input_manager->readInput(now);
+		this->_logic->onUpdate(delta);
+	};
 }
 
 RenderFunction Platypus::getRenderFunction() const

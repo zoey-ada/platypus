@@ -17,4 +17,6 @@ public:
 	virtual void deinitialize() = 0;
 
 	virtual std::shared_ptr<IWindow> createWindow(const platypus::RectSize& size) = 0;
+
+	virtual std::vector<std::shared_ptr<IInputDevice>> queryInputDevices() = 0;
 };

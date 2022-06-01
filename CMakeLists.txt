@@ -108,6 +108,20 @@ set(exceptions_srcs
 )
 source_group(source\\exceptions FILES ${exceptions_srcs})
 
+set(input_src
+	input/command.hpp
+	input/input.hpp
+	input/inputManager.hpp
+	input/inputManager.cpp
+	input/inputType.hpp
+)
+source_group(source\\input FILES ${input_src})
+
+set(input_devices_srcs
+	input/devices/iInputDevice.hpp
+)
+source_group(source\\input\\devices FILES ${input_devices_srcs})
+
 set(libraries_srcs
 	libraries/libzip_include.hpp
 )
@@ -256,6 +270,8 @@ set(all_srcs
 	${events_srcs}
 	${events_events_srcs}
 	${exceptions_srcs}
+	${input_src}
+	${input_devices_srcs}
 	${libraries_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}

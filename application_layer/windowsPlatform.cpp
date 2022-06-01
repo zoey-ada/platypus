@@ -21,3 +21,10 @@ std::shared_ptr<IWindow> WindowsPlatform::createWindow(const platypus::RectSize&
 	this->_hwnd = window->hwnd();
 	return window;
 }
+
+std::vector<std::shared_ptr<IInputDevice>> WindowsPlatform::queryInputDevices()
+{
+	assert(this->_hwnd != nullptr);
+	std::vector<std::shared_ptr<IInputDevice>> devices;
+	return devices;
+}

@@ -1,15 +1,16 @@
 #pragma once
 
-#include <platypus_proto/settings.hpp>
-#include <utilities/time.hpp>
-
 #include <cstdint>
 #include <functional>
 
-using UpdateFunction = std::function<void(Milliseconds delta)>;
+#include <platypus_proto/settings.hpp>
+#include <utilities/time.hpp>
+
+using UpdateFunction = std::function<void(Milliseconds time, Milliseconds delta)>;
 using RenderFunction = std::function<void(Milliseconds time, Milliseconds delta)>;
 
-class IWindow {
+class IWindow
+{
 public:
 	IWindow() = default;
 	virtual ~IWindow() = default;

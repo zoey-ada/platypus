@@ -1,15 +1,18 @@
 #include "windowsWindow.hpp"
 
-#include <utilities/encoding.hpp>
-
 #include <iostream>
+
+#include <utilities/encoding.hpp>
 
 const int16_t max_console_history = 500;
 
 WindowsWindow::WindowsWindow(const std::string& appName)
-	: _hwnd(nullptr), _hinstance(nullptr), _appName(appName), _prevTime(0),
-	_max_console_history(max_console_history)
-{ }
+	: _hwnd(nullptr),
+	  _hinstance(nullptr),
+	  _appName(appName),
+	  _prevTime(0),
+	  _max_console_history(max_console_history)
+{}
 
 bool WindowsWindow::initialize(const platypus::RectSize& dimensions)
 {
@@ -48,7 +51,7 @@ bool WindowsWindow::initialize(const platypus::RectSize& dimensions)
 	}
 
 	// determine window dimensions
-	RECT rect_dimensions = { 0, 0, (LONG)dimensions.width(), (LONG)dimensions.height() };
+	RECT rect_dimensions = {0, 0, (LONG)dimensions.width(), (LONG)dimensions.height()};
 	AdjustWindowRect(&rect_dimensions, WS_OVERLAPPEDWINDOW, FALSE);
 
 	// create window
@@ -84,7 +87,7 @@ int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc)
 			auto now = getCurrentTime();
 			auto delta = now - this->_prevTime;
 
-			updateFunc(delta);
+			updateFunc(now, delta);
 			renderFunc(now, delta);
 
 			this->_prevTime = now;
@@ -102,7 +105,8 @@ LRESULT CALLBACK WindowsWindow::initialWndProc(HWND hwnd, UINT msg, WPARAM wpara
 		void* lpCreateParam = create_struct->lpCreateParams;
 		WindowsWindow* this_window = reinterpret_cast<WindowsWindow*>(lpCreateParam);
 		SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this_window));
-		SetWindowLongPtr(hwnd, GWLP_WNDPROC, reinterpret_cast<LONG_PTR>(&WindowsWindow::staticWndProc));
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC,
+			reinterpret_cast<LONG_PTR>(&WindowsWindow::staticWndProc));
 		return this_window->wndProc(hwnd, msg, wparam, lparam);
 	}
 
@@ -128,6 +132,21 @@ LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		EndPaint(hwnd, &ps);
 		return 0;
 	}
+	case WM_INPUT:
+	{
+		if (this->_raw_input_devices.size() > 0)
+		{
+			HRAWINPUT raw_input = (HRAWINPUT)lparam;
+			RAWINPUT input_data;
+			UINT size = sizeof(input_data);
+
+			GetRawInputData(raw_input, RID_INPUT, &input_data, &size, sizeof(RAWINPUTHEADER));
+			for (const auto& device : this->_raw_input_devices)
+				device->onRawInputEvent(&input_data);
+
+			return 0;
+		}
+	}
 	case WM_DESTROY:
 	{
 		PostQuitMessage(0);
@@ -138,7 +157,11 @@ LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 		return DefWindowProcW(hwnd, msg, wparam, lparam);
 	}
 	}
+}
 
+void WindowsWindow::addRawInputDevice(std::shared_ptr<IRawInputDevice> input)
+{
+	this->_raw_input_devices.push_back(input);
 }
 
 void WindowsWindow::openConsole()
