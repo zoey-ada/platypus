@@ -47,6 +47,11 @@ set(main_srcs
 source_group(source FILES ${main_srcs})
 
 set(application_srcs
+	application_layer/iPlatform.hpp
+	application_layer/windowsPlatform.hpp
+	application_layer/windowsPlatform.cpp
+	application_layer/platformFactory.hpp
+	application_layer/platformFactory.cpp
 	application_layer/platform.hpp
 	application_layer/platform.cpp
 	application_layer/utils.hpp
@@ -63,8 +68,6 @@ source_group(source\\application_layer\\file_system FILES ${application_filesys_
 
 set(application_window_srcs
 	application_layer/window/iWindow.hpp
-	application_layer/window/windowFactory.hpp
-	application_layer/window/windowFactory.cpp
 	application_layer/window/windowsWindow.hpp
 	application_layer/window/windowsWindow.cpp
 )

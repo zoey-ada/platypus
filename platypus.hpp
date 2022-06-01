@@ -8,6 +8,7 @@
 
 class BaseGameLogic;
 class IEventManager;
+class IPlatform;
 class IRenderer;
 class ResourceCache;
 
@@ -30,12 +31,13 @@ protected:
 	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer;
 	std::shared_ptr<ResourceCache> _cache;
-	std::shared_ptr<IEventManager> _event_manager;
 
 private:
+	std::shared_ptr<IPlatform> _platform;
+	std::shared_ptr<IWindow> _window;
+	std::shared_ptr<BaseGameLogic> _logic;
+	std::shared_ptr<IEventManager> _event_manager;
+
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
 	[[nodiscard]] RenderFunction getRenderFunction() const;
-
-	std::unique_ptr<IWindow> _window;
-	std::shared_ptr<BaseGameLogic> _logic;
 };
