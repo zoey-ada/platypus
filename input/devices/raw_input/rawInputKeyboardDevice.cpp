@@ -6,7 +6,7 @@
 #include <hidsdi.h>
 #include <hidusage.h>
 
-#include <application_layer/window/windowsWindow.hpp>
+#include <platform/window/windowsWindow.hpp>
 #include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
 

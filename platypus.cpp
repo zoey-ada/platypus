@@ -1,12 +1,13 @@
 #include "platypus.hpp"
 
-#include <application_layer/iPlatform.hpp>
-#include <application_layer/platformFactory.hpp>
-#include <application_layer/utils.hpp>
-#include <application_layer/window/iWindow.hpp>
+#include <platypus_proto/util.hpp>
+
 #include <events/eventManager.hpp>
 #include <input/inputManager.hpp>
-#include <platypus_proto/util.hpp>
+#include <platform/iPlatform.hpp>
+#include <platform/platformFactory.hpp>
+#include <platform/utils.hpp>
+#include <platform/window/iWindow.hpp>
 #include <renderer/rendererFactory.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <utilities/logging/logger.hpp>

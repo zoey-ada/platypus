@@ -1,13 +1,14 @@
 #include "fileLogger.hpp"
 
-#include "../../application_layer/file_system/standardFileSystem.hpp"
-#include "../time.hpp"
-
 #include <fstream>
+
+#include <platform/file_system/standardFileSystem.hpp>
+
+#include "../time.hpp"
 
 FileLogger::FileLogger(std::string_view rootDir, const bool useSingleFile)
 	: _mutex(), _rootDir(rootDir), _files(), _useSingleFile(useSingleFile)
-{ }
+{}
 
 FileLogger::~FileLogger()
 {

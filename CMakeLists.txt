@@ -46,32 +46,32 @@ set(main_srcs
 )
 source_group(source FILES ${main_srcs})
 
-set(application_srcs
-	application_layer/iPlatform.hpp
-	application_layer/windowsPlatform.hpp
-	application_layer/windowsPlatform.cpp
-	application_layer/platformFactory.hpp
-	application_layer/platformFactory.cpp
-	application_layer/platform.hpp
-	application_layer/platform.cpp
-	application_layer/utils.hpp
-	application_layer/windowsUtils.cpp
+set(platform_srcs
+	platform/iPlatform.hpp
+	platform/windowsPlatform.hpp
+	platform/windowsPlatform.cpp
+	platform/platformFactory.hpp
+	platform/platformFactory.cpp
+	platform/platform.hpp
+	platform/platform.cpp
+	platform/utils.hpp
+	platform/windowsUtils.cpp
 )
-source_group(source\\application_layer FILES ${application_srcs})
+source_group(source\\platform FILES ${platform_srcs})
 
-set(application_filesys_srcs
-	application_layer/file_system/iFileSystem.hpp
-	application_layer/file_system/standardFileSystem.hpp
-	application_layer/file_system/standardFileSystem.cpp
+set(platform_filesys_srcs
+	platform/file_system/iFileSystem.hpp
+	platform/file_system/standardFileSystem.hpp
+	platform/file_system/standardFileSystem.cpp
 )
-source_group(source\\application_layer\\file_system FILES ${application_filesys_srcs})
+source_group(source\\platform\\file_system FILES ${platform_filesys_srcs})
 
-set(application_window_srcs
-	application_layer/window/iWindow.hpp
-	application_layer/window/windowsWindow.hpp
-	application_layer/window/windowsWindow.cpp
+set(platform_window_srcs
+	platform/window/iWindow.hpp
+	platform/window/windowsWindow.hpp
+	platform/window/windowsWindow.cpp
 )
-source_group(source\\application_layer\\window FILES ${application_window_srcs})
+source_group(source\\platform\\window FILES ${platform_window_srcs})
 
 set(entities_srcs
 	entities/entity.hpp
@@ -270,9 +270,9 @@ source_group(source\\views FILES ${views_srcs})
 
 set(all_srcs
 	${main_srcs}
-	${application_srcs}
-	${application_filesys_srcs}
-	${application_window_srcs}
+	${platform_srcs}
+	${platform_filesys_srcs}
+	${platform_window_srcs}
 	${entities_srcs}
 	${entities_components_srcs}
 	${events_srcs}

@@ -3,8 +3,9 @@
 #include <memory>
 #include <string>
 
-#include <application_layer/window/iWindow.hpp>
 #include <platypus_proto/settings.hpp>
+
+#include <platform/window/iWindow.hpp>
 
 class BaseGameLogic;
 class IEventManager;
