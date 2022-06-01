@@ -122,6 +122,14 @@ set(input_devices_srcs
 )
 source_group(source\\input\\devices FILES ${input_devices_srcs})
 
+set(input_devices_raw_input_srcs
+	input/devices/raw_input/iRawInputDevice.hpp
+	input/devices/raw_input/rawInputKeyboardDevice.hpp
+	input/devices/raw_input/rawInputKeyboardDevice.cpp
+	input/devices/raw_input/windowsHidMappings.hpp
+)
+source_group(source\\input\\devices\\raw_input FILES ${input_devices_raw_input_srcs})
+
 set(libraries_srcs
 	libraries/libzip_include.hpp
 )
@@ -272,6 +280,7 @@ set(all_srcs
 	${exceptions_srcs}
 	${input_src}
 	${input_devices_srcs}
+	${input_devices_raw_input_srcs}
 	${libraries_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}

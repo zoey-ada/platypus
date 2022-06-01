@@ -2,6 +2,8 @@
 
 #include "window/windowsWindow.hpp"
 
+#include <input/devices/raw_input/rawInputKeyboardDevice.hpp>
+
 WindowsPlatform::WindowsPlatform(std::string application_name)
 	: _application_name(std::move(application_name))
 {}
@@ -26,5 +28,6 @@ std::vector<std::shared_ptr<IInputDevice>> WindowsPlatform::queryInputDevices()
 {
 	assert(this->_hwnd != nullptr);
 	std::vector<std::shared_ptr<IInputDevice>> devices;
+	devices.push_back(std::make_shared<RawInputKeyboardDevice>(this->_hwnd));
 	return devices;
 }
