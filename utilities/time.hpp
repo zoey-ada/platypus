@@ -29,6 +29,5 @@ Milliseconds getCurrentTime();
 std::string getCurrentTimestamp();
 std::string toTimestamp(Milliseconds time);
 
-float resolveFrameRate(const platypus::Fraction& frame_rate);
 Milliseconds frametimeFromFrameRate(const platypus::Fraction& frame_rate);
 Milliseconds frametimeFromFrameRate(const float frame_rate);

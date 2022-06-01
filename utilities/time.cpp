@@ -3,6 +3,8 @@
 #include <chrono>
 #include <cmath>
 
+#include "math/utils.hpp"
+
 namespace chrono = std::chrono;
 
 Milliseconds getCurrentTime()
@@ -40,14 +42,9 @@ std::string toTimestamp(const Milliseconds time)
 	return std::string(timestamp).append(hrOffset).append(":").append(minOffset);
 }
 
-float resolveFrameRate(const platypus::Fraction& frame_rate)
-{
-	return static_cast<float>(frame_rate.numerator()) / frame_rate.denominator();
-}
-
 Milliseconds frametimeFromFrameRate(const platypus::Fraction& frame_rate)
 {
-	return frametimeFromFrameRate(resolveFrameRate(frame_rate));
+	return frametimeFromFrameRate(resolveAndInvertFraction(frame_rate));
 }
 
 Milliseconds frametimeFromFrameRate(const float frame_rate)

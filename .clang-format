@@ -79,9 +79,9 @@ IncludeCategories:
       Priority: 1
     - Regex: '^<((assimp))/[A-Za-z0-9\/\-_]+\.(h|hpp|hxx)>'
       Priority: 2
-    - Regex: '^<(d3d11)|(DirectXMath)|(d3dcompiler)|(Windows)|(wincodec)|(dxgiformat)\.h>'
+    - Regex: '^<(d3d11|DirectXMath|d3dcompiler|Windows|wincodec|dxgiformat|hidusage|hidsdi|WinUser)\.h>'
       Priority: 5
-    - Regex: '^<((freetype)|(libzip)|(platypus(-proto)?)|(utf8-cpp)|(zlib)|(libraries))/[A-Za-z0-9\/\-_]+\.(h|hpp|hxx)>'
+    - Regex: '^<(freetype|libzip|platypus_proto|utf8-cpp|zlib|libraries)/[A-Za-z0-9\/\-_]+\.(h|hpp|hxx)>'
       Priority: 10
     - Regex: '^<[A-Za-z0-9\/\-_]+\.(h|hpp|hxx)>'
       Priority: 15

@@ -4,28 +4,41 @@
 #include <type_traits>
 
 class IEventManager;
+class IPlatform;
+class IWindow;
+
+#define registrableService(service_type)                                         \
+                                                                                 \
+public:                                                                          \
+	static void register##service_type(std::shared_ptr<I##service_type> service) \
+	{                                                                            \
+		ServiceProvider::_##service_type = service;                              \
+	}                                                                            \
+                                                                                 \
+	static void unregister##service_type()                                       \
+	{                                                                            \
+		ServiceProvider::_##service_type.reset();                                \
+	}                                                                            \
+                                                                                 \
+	static std::shared_ptr<I##service_type> get##service_type()                  \
+	{                                                                            \
+		return ServiceProvider::_##service_type;                                 \
+	}                                                                            \
+                                                                                 \
+private:                                                                         \
+	inline static std::shared_ptr<I##service_type> _##service_type = nullptr;
 
 class ServiceProvider
 {
+	registrableService(Platform);
+	registrableService(Window);
+	registrableService(EventManager);
+
 public:
-	template<class T>
-	static void registerService(std::shared_ptr<T> service)
+	inline static void unregisterAllServices()
 	{
-		if (std::is_same<T, IEventManager>::value)
-		{
-			ServiceProvider::_event_manager = service;
-		}
+		ServiceProvider::_Platform.reset();
+		ServiceProvider::_Window.reset();
+		ServiceProvider::_EventManager.reset();
 	}
-
-	template<class T>
-	static std::shared_ptr<T> getService()
-	{
-		if (std::is_same<T, IEventManager>::value)
-		{
-			return ServiceProvider::_event_manager;
-		}
-	}
-
-private:
-	static std::shared_ptr<IEventManager> _event_manager;
 };

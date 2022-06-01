@@ -1,13 +1,16 @@
 #pragma once
 
-#include "iWindow.hpp"
-
-#include <utilities/time.hpp>
+#include <string>
+#include <vector>
 
 #include <Windows.h>
-#include <string>
 
-class WindowsWindow : public IWindow
+#include <input/devices/raw_input/iRawInputDevice.hpp>
+#include <utilities/time.hpp>
+
+#include "iWindow.hpp"
+
+class WindowsWindow: public IWindow
 {
 public:
 	explicit WindowsWindow(const std::string& appName);
@@ -24,12 +27,16 @@ public:
 	[[nodiscard]] HWND hwnd() const { return this->_hwnd; }
 	[[nodiscard]] HINSTANCE hinstance() const { return this->_hinstance; }
 
-private:
-	void openConsole();
+	void addRawInputDevice(std::shared_ptr<IRawInputDevice> input);
 
+private:
 	HWND _hwnd;
 	HINSTANCE _hinstance;
 	std::string _appName;
 	Milliseconds _prevTime;
 	int16_t _max_console_history;
+
+	std::vector<std::shared_ptr<IRawInputDevice>> _raw_input_devices;
+
+	void openConsole();
 };

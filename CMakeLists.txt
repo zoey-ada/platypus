@@ -43,11 +43,15 @@ set(main_srcs
 	platypus.hpp
 	platypus.cpp
 	serviceProvider.hpp
-	serviceProvider.cpp
 )
 source_group(source FILES ${main_srcs})
 
 set(application_srcs
+	application_layer/iPlatform.hpp
+	application_layer/windowsPlatform.hpp
+	application_layer/windowsPlatform.cpp
+	application_layer/platformFactory.hpp
+	application_layer/platformFactory.cpp
 	application_layer/platform.hpp
 	application_layer/platform.cpp
 	application_layer/utils.hpp
@@ -64,8 +68,6 @@ source_group(source\\application_layer\\file_system FILES ${application_filesys_
 
 set(application_window_srcs
 	application_layer/window/iWindow.hpp
-	application_layer/window/windowFactory.hpp
-	application_layer/window/windowFactory.cpp
 	application_layer/window/windowsWindow.hpp
 	application_layer/window/windowsWindow.cpp
 )
@@ -105,6 +107,28 @@ set(exceptions_srcs
 	exceptions/platypusException.hpp
 )
 source_group(source\\exceptions FILES ${exceptions_srcs})
+
+set(input_src
+	input/command.hpp
+	input/input.hpp
+	input/inputManager.hpp
+	input/inputManager.cpp
+	input/inputType.hpp
+)
+source_group(source\\input FILES ${input_src})
+
+set(input_devices_srcs
+	input/devices/iInputDevice.hpp
+)
+source_group(source\\input\\devices FILES ${input_devices_srcs})
+
+set(input_devices_raw_input_srcs
+	input/devices/raw_input/iRawInputDevice.hpp
+	input/devices/raw_input/rawInputKeyboardDevice.hpp
+	input/devices/raw_input/rawInputKeyboardDevice.cpp
+	input/devices/raw_input/windowsHidMappings.hpp
+)
+source_group(source\\input\\devices\\raw_input FILES ${input_devices_raw_input_srcs})
 
 set(libraries_srcs
 	libraries/libzip_include.hpp
@@ -231,6 +255,8 @@ set(utilities_math_srcs
 	utilities/math/mathTypes.hpp
 	utilities/math/directXMathTypes.hpp
 	utilities/math/directXMathTypes.cpp
+	utilities/math/utils.hpp
+	utilities/math/utils.cpp
 )
 source_group(source\\utilities\\math FILES ${utilities_math_srcs})
 
@@ -252,6 +278,9 @@ set(all_srcs
 	${events_srcs}
 	${events_events_srcs}
 	${exceptions_srcs}
+	${input_src}
+	${input_devices_srcs}
+	${input_devices_raw_input_srcs}
 	${libraries_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}

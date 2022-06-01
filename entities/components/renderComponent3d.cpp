@@ -18,7 +18,7 @@ void RenderComponent3d::postInitialize()
 {
 	auto event =
 		std::make_shared<NewRenderComponentEvent>(this->_owner->getId(), this->getSceneNode());
-	ServiceProvider::getService<IEventManager>()->triggerEvent(event);
+	ServiceProvider::getEventManager()->triggerEvent(event);
 }
 
 std::shared_ptr<SceneNode> RenderComponent3d::getSceneNode()

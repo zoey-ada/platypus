@@ -43,6 +43,5 @@ public:
  * @param event_type (std::string) event type
  * @param func (T::function) member function
  */
-#define registerEventSink(event_type, func)                                      \
-	ServiceProvider::getService<IEventManager>()->_registerEventSink(event_type, \
-		fromMemberFunc(&func, this))
+#define registerEventSink(event_type, func) \
+	ServiceProvider::getEventManager()->_registerEventSink(event_type, fromMemberFunc(&func, this))
