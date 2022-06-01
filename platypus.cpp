@@ -17,6 +17,7 @@
 Platypus::Platypus(const std::string& appName)
 	: _platform(PlatformFactory::getPlatform(appName.c_str()))
 {
+	ServiceProvider::registerPlatform(this->_platform);
 }
 
 bool Platypus::initialize()
@@ -28,6 +29,7 @@ bool Platypus::initialize()
 	this->_window = this->_platform->createWindow(this->_settings.renderer_settings().resolution());
 	if (this->_window == nullptr)
 		return false;
+	ServiceProvider::registerWindow(this->_window);
 
 	this->_renderer =
 		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());

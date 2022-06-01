@@ -30,11 +30,15 @@ private:                                                                        
 
 class ServiceProvider
 {
+	registrableService(Platform);
+	registrableService(Window);
 	registrableService(EventManager);
 
 public:
 	inline static void unregisterAllServices()
 	{
+		ServiceProvider::_Platform.reset();
+		ServiceProvider::_Window.reset();
 		ServiceProvider::_EventManager.reset();
 	}
 };
