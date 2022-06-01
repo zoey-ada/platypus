@@ -26,7 +26,7 @@ HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<Resour
 	frustum.initialize(3.1415f / 4.0f, 1.0f, 1.0f, 100.0f);
 	this->_camera = std::make_shared<CameraNode>(Mat4x4::identity(), frustum);
 
-	bool success = this->_scene->addChild(InvalidEntityId, this->_camera);
+	success = this->_scene->addChild(InvalidEntityId, this->_camera);
 	this->_scene->setCamera(this->_camera);
 
 	auto mat = Mat4x4::identity();
