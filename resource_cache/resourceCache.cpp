@@ -59,17 +59,17 @@ void ResourceCache::registerLoader(const std::shared_ptr<IResourceLoader>& loade
 std::shared_ptr<Resource> ResourceCache::getResource(const ResourceType& type,
 	const std::string& path)
 {
-	logInfo("attempting to get resource " + path, "resource_cache");
+	logDebug("attempting to get resource " + path, "resource_cache");
 	auto resource = this->tryShareResource(type, path);
 
 	if (resource != nullptr)
 	{
-		logInfo("resource was found in the cache", "resource_cache");
+		logDebug("resource was found in the cache", "resource_cache");
 		this->updateResource(resource);
 	}
 	else
 	{
-		logInfo("resource was not in the cache", "resource_cache");
+		logVerbose("resource was not in the cache", "resource_cache");
 		resource = this->loadResource(type, path);
 	}
 
@@ -129,21 +129,21 @@ void ResourceCache::flush()
 
 std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& store)
 {
-	logInfo("searching for resource store " + store, "resource_cache");
+	logDebug("searching for resource store " + store, "resource_cache");
 
 	auto found_store = this->_stores.find(store);
 	if (found_store != this->_stores.end())
 	{
-		logInfo("found resource store " + store, "resource_cache");
+		logDebug("found resource store " + store, "resource_cache");
 		return found_store->second;
 	}
 
-	logInfo("failed to find resource store " + store, "resource_cache");
+	logDebug("failed to find resource store " + store, "resource_cache");
 
 	auto new_store = std::make_shared<ZipResourceStore>(store);
 	if (new_store->open())
 	{
-		logInfo("successfully loaded resource store " + store, "resource_cache");
+		logDebug("successfully loaded resource store " + store, "resource_cache");
 		_stores[store] = new_store;
 		return new_store;
 	}
@@ -153,7 +153,7 @@ std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& store
 
 std::shared_ptr<IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
 {
-	logInfo("searching for loader for " + std::to_string(type), "resource_cache");
+	logDebug("searching for loader for " + std::to_string(type), "resource_cache");
 
 	try
 	{
@@ -207,7 +207,7 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 		return nullptr;
 	}
 
-	logInfo("successfully loaded resource " + path, "resource_cache");
+	logVerbose("successfully loaded resource " + path, "resource_cache");
 
 	this->_resources[type][path] = resource;
 	this->_recently_used.push_front(resource);
@@ -216,7 +216,7 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 
 void ResourceCache::updateResource(const std::shared_ptr<Resource>& resource)
 {
-	logInfo("moving " + resource->path() + " to the front of the recently used list",
+	logDebug("moving " + resource->path() + " to the front of the recently used list",
 		"resource_cache");
 	this->_recently_used.remove(resource);
 	this->_recently_used.push_front(resource);
@@ -224,13 +224,13 @@ void ResourceCache::updateResource(const std::shared_ptr<Resource>& resource)
 
 void ResourceCache::free(const std::shared_ptr<Resource>& resource)
 {
-	logInfo("removing " + resource->path() + " (" + std::to_string(resource->size()) +
+	logVerbose("removing " + resource->path() + " (" + std::to_string(resource->size()) +
 			") from the cache",
 		"resource_cache");
-	this->_recently_used.remove(resource);
 
 	auto type = resource->type();
 	_resources[type].erase(resource->path());
+	this->_recently_used.remove(resource);
 
 	if (_resources[type].empty())
 		_resources.erase(type);
@@ -238,7 +238,7 @@ void ResourceCache::free(const std::shared_ptr<Resource>& resource)
 
 bool ResourceCache::makeRoom(const uint64_t size)
 {
-	logInfo("attempting to find " + std::to_string(size) + " bytes of memory", "resource_cache");
+	logDebug("attempting to find " + std::to_string(size) + " bytes of memory", "resource_cache");
 
 	if (size > this->_cache_size)
 	{
@@ -264,7 +264,7 @@ bool ResourceCache::makeRoom(const uint64_t size)
 
 uint8_t* ResourceCache::allocate(const uint64_t size)
 {
-	logInfo("attemptying to allocate " + std::to_string(size) + " bytes of memory",
+	logDebug("attemptying to allocate " + std::to_string(size) + " bytes of memory",
 		"resource_cache");
 
 	if (!this->makeRoom(size))
@@ -273,7 +273,7 @@ uint8_t* ResourceCache::allocate(const uint64_t size)
 	auto* memory = new (std::nothrow) uint8_t[size];
 	if (memory != nullptr)
 	{
-		logInfo(std::to_string(size) + " bytes allocated", "resource_cache");
+		logDebug(std::to_string(size) + " bytes allocated", "resource_cache");
 	}
 
 	return memory;
@@ -286,6 +286,6 @@ void ResourceCache::freeOneResource()
 
 void ResourceCache::memoryHasBeenFreed(const uint64_t size)
 {
-	logInfo(std::to_string(size) + " bytes freed", "resource_cache");
+	logDebug(std::to_string(size) + " bytes freed", "resource_cache");
 	this->_allocated -= size;
 }
