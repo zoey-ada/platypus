@@ -2,9 +2,8 @@
 
 #include <map>
 
-#include <hidusage.h>
-
 #include <WinUser.h>
+#include <hidusage.h>
 
 #include "../../inputType.hpp"
 

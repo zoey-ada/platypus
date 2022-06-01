@@ -2,11 +2,12 @@
 
 #include <algorithm>
 
+#include <platypus_proto/input.hpp>
+#include <platypus_proto/util.hpp>
+
 #include <application_layer/iPlatform.hpp>
 #include <events/events/inputEvent.hpp>
 #include <events/iEventManager.hpp>
-#include <platypus_proto/input.hpp>
-#include <platypus_proto/util.hpp>
 #include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
 

@@ -2,15 +2,15 @@
 
 #include <array>
 
-#include "Windows.h"
-#include "windowsHidMappings.hpp"
-#include <application_layer/window/windowsWindow.hpp>
+#include <Windows.h>
+#include <hidsdi.h>
 #include <hidusage.h>
 
+#include <application_layer/window/windowsWindow.hpp>
 #include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
 
-#include "hidsdi.h"
+#include "windowsHidMappings.hpp"
 
 RawInputKeyboardDevice::RawInputKeyboardDevice(HWND hwnd): _hwnd(hwnd)
 {}

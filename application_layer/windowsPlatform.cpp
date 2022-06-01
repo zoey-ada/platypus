@@ -1,8 +1,8 @@
 #include "windowsPlatform.hpp"
 
-#include "window/windowsWindow.hpp"
-
 #include <input/devices/raw_input/rawInputKeyboardDevice.hpp>
+
+#include "window/windowsWindow.hpp"
 
 WindowsPlatform::WindowsPlatform(std::string application_name)
 	: _application_name(std::move(application_name))
