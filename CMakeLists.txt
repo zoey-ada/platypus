@@ -233,6 +233,8 @@ set(utilities_math_srcs
 	utilities/math/mathTypes.hpp
 	utilities/math/directXMathTypes.hpp
 	utilities/math/directXMathTypes.cpp
+	utilities/math/utils.hpp
+	utilities/math/utils.cpp
 )
 source_group(source\\utilities\\math FILES ${utilities_math_srcs})
 
