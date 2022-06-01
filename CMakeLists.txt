@@ -43,7 +43,6 @@ set(main_srcs
 	platypus.hpp
 	platypus.cpp
 	serviceProvider.hpp
-	serviceProvider.cpp
 )
 source_group(source FILES ${main_srcs})
 

@@ -37,7 +37,7 @@ bool Platypus::initialize()
 
 	this->_event_manager = std::make_shared<EventManager>(
 		this->_settings.general_settings().event_manager_queue_count());
-	ServiceProvider::registerService(this->_event_manager);
+	ServiceProvider::registerEventManager(this->_event_manager);
 
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();
@@ -51,7 +51,9 @@ int Platypus::run()
 }
 
 void Platypus::deinitialize()
-{}
+{
+	ServiceProvider::unregisterAllServices();
+}
 
 UpdateFunction Platypus::getUpdateFunction() const
 {
