@@ -26,10 +26,11 @@ public:
 	virtual bool postRender() = 0;
 
 	virtual void drawMesh(const std::shared_ptr<MeshResource>& mesh) = 0;
+	virtual std::shared_ptr<MeshResource> createRectangle() = 0;
 
 	virtual void setBackgroundColor(const Color& backgroundColor) = 0;
 
-	virtual void setWorldTransform(const std::shared_ptr<Mat4x4>& world) = 0;
+	virtual void setWorldTransform(const Mat4x4& world) = 0;
 
 	virtual std::shared_ptr<IVertexShader> loadVertexShader(std::string path) = 0;
 	virtual std::shared_ptr<IPixelShader> loadPixelShader(std::string path,

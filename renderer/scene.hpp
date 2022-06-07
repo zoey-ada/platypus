@@ -34,7 +34,7 @@ public:
 	void pushAndSetMatrix(const Mat4x4& to_world);
 	void pushAndSetMatrix(const std::shared_ptr<Mat4x4>& to_world);
 	void popMatrix();
-	[[nodiscard]] std::shared_ptr<Mat4x4> getTopMatrix();
+	[[nodiscard]] const Mat4x4& getTopMatrix() const;
 
 	void setCamera(std::shared_ptr<CameraNode> camera) { this->_camera = camera; }
 	[[nodiscard]] std::shared_ptr<CameraNode> getCamera() const { return this->_camera; }
@@ -51,6 +51,6 @@ private:
 	std::shared_ptr<IRenderer> _renderer {nullptr};
 	std::shared_ptr<ResourceCache> _cache {nullptr};
 
-	std::stack<std::shared_ptr<Mat4x4>> _matrix_stack {};
+	std::stack<Mat4x4> _matrix_stack {};
 	SceneEntityMap _entity_map {};
 };

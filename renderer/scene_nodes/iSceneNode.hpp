@@ -14,7 +14,7 @@ class ISceneNode
 public:
 	virtual ~ISceneNode() = default;
 
-	virtual std::shared_ptr<const SceneNodeProperties> properties() const = 0;
+	virtual std::shared_ptr<SceneNodeProperties> properties() const = 0;
 
 	[[nodiscard]] virtual bool initialize(const std::shared_ptr<Scene>& scene) = 0;
 

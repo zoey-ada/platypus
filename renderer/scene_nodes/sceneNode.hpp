@@ -16,9 +16,9 @@ struct PtSceneNodeData
 	std::string name;
 	EntityId entity_id = InvalidEntityId;
 	RenderPass render_pass = RenderPass::Entity;
-	std::shared_ptr<Mat4x4> to = Mat4x4::identity();
+	const Mat4x4* to = Mat4x4::identity();
 	Color diffuse_color = Color::white;
-	std::shared_ptr<Mat4x4> from = nullptr;
+	const Mat4x4* from = nullptr;
 };
 
 class SceneNode: public ISceneNode
@@ -30,7 +30,7 @@ public:
 
 	virtual ~SceneNode() = default;
 
-	std::shared_ptr<const SceneNodeProperties> properties() const override { return _properties; }
+	std::shared_ptr<SceneNodeProperties> properties() const override { return _properties; }
 
 	[[nodiscard]] bool initialize(const std::shared_ptr<Scene>& scene) override;
 
@@ -45,8 +45,7 @@ public:
 	bool addChild(const std::shared_ptr<ISceneNode>& child) override;
 	bool removeChild(const EntityId id) override;
 
-	void setTransform(const std::shared_ptr<Mat4x4>& to_world,
-		const std::shared_ptr<Mat4x4> from_world);
+	void setTransform(const Mat4x4* to_world, const Mat4x4* from_world = nullptr);
 
 protected:
 	SceneNodeList _children {};

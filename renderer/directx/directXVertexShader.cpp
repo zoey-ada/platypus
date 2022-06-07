@@ -105,7 +105,7 @@ bool DirectXVertexShader::setupRender(const std::shared_ptr<Scene>& scene,
 	// transform matrices
 	auto* matrices = (ConstantBuffer_Matrices*)mapped_resource.pData;
 	matrices->_worldViewProj = scene->getCamera()->getWorldViewProjection(scene).transpose().load();
-	matrices->_world = scene->getTopMatrix()->transpose().load();
+	matrices->_world = scene->getTopMatrix().transpose().load();
 
 	context->Unmap(this->_matrices, 0);
 

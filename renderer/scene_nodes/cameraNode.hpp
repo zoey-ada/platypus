@@ -7,7 +7,7 @@
 class CameraNode: public SceneNode
 {
 public:
-	explicit CameraNode(const std::shared_ptr<Mat4x4>& to, const Frustum& frustum);
+	explicit CameraNode(const Mat4x4* to, const Frustum& frustum);
 	virtual ~CameraNode() = default;
 
 	[[nodiscard]] bool render(const std::shared_ptr<Scene>& scene) override;

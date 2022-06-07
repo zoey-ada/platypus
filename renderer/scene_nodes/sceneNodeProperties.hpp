@@ -33,8 +33,10 @@ public:
 	inline void renderPass(const RenderPass renderPass) { _render_pass = renderPass; }
 	inline void diffuse(const Color& diffuse) { _diffuse = diffuse; }
 	inline void ambient(const Color& ambient) { _ambient = ambient; }
-	inline void toWorld(const Mat4x4& toWorld) { _to_world = toWorld; }
-	inline void fromWorld(const Mat4x4& fromWorld) { _from_world = fromWorld; }
+	inline void toWorld(const Mat4x4* toWorld) { _to_world = Mat4x4(*toWorld); }
+	inline void toWorld(const Mat4x4& toWorld) { _to_world = Mat4x4(toWorld); }
+	inline void fromWorld(const Mat4x4* fromWorld) { _from_world = Mat4x4(*fromWorld); }
+	inline void fromWorld(const Mat4x4& fromWorld) { _from_world = Mat4x4(fromWorld); }
 
 private:
 	EntityId _entity_id = InvalidEntityId;

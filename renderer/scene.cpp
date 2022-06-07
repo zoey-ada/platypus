@@ -14,7 +14,7 @@
 Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache)
 	: _root(std::make_shared<RootNode>()), _renderer(renderer), _cache(cache)
 {
-	this->_matrix_stack.push(Mat4x4::identity());
+	this->_matrix_stack.push(std::move(Mat4x4()));
 	// hook up event manager
 }
 
@@ -101,15 +101,15 @@ bool Scene::removeChild(EntityId id)
 
 void Scene::pushAndSetMatrix(const Mat4x4& to_world)
 {
-	auto product = *(this->_matrix_stack.top()) * to_world;
-	this->_matrix_stack.push(std::make_shared<Mat4x4>(product));
+	auto product = (this->_matrix_stack.top()) * to_world;
+	this->_matrix_stack.push(std::move(product));
 	this->_renderer->setWorldTransform(this->_matrix_stack.top());
 }
 
 void Scene::pushAndSetMatrix(const std::shared_ptr<Mat4x4>& to_world)
 {
-	auto product = *(this->_matrix_stack.top()) * *to_world;
-	this->_matrix_stack.push(std::make_shared<Mat4x4>(product));
+	auto product = (this->_matrix_stack.top()) * *to_world;
+	this->_matrix_stack.push(Mat4x4(product));
 	this->_renderer->setWorldTransform(this->_matrix_stack.top());
 }
 
@@ -119,7 +119,7 @@ void Scene::popMatrix()
 	this->_renderer->setWorldTransform(this->_matrix_stack.top());
 }
 
-std::shared_ptr<Mat4x4> Scene::getTopMatrix()
+const Mat4x4& Scene::getTopMatrix() const
 {
 	return this->_matrix_stack.top();
 }

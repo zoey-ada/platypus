@@ -2,7 +2,7 @@
 
 #include "../scene.hpp"
 
-CameraNode::CameraNode(const std::shared_ptr<Mat4x4>& /*to*/, const Frustum& frustum)
+CameraNode::CameraNode(const Mat4x4* /*to*/, const Frustum& frustum)
 	: SceneNode(this->getSceneNodeData()),
 	  _frustum(frustum),
 	  //   _active(true),
@@ -43,7 +43,7 @@ bool CameraNode::setViewTransform(const std::shared_ptr<Scene>& /* scene */)
 		auto at_world = matrix.transform(at);
 		Vec3 position = matrix.getPosition() + static_cast<Vec3>(at_world);
 		matrix.setPosition(position);
-		this->setTransform(std::make_shared<Mat4x4>(matrix), nullptr);
+		this->setTransform(&matrix);
 	}
 
 	return true;
@@ -52,7 +52,8 @@ bool CameraNode::setViewTransform(const std::shared_ptr<Scene>& /* scene */)
 Mat4x4 CameraNode::getWorldViewProjection(const std::shared_ptr<Scene>& scene) const
 {
 	auto world = scene->getTopMatrix();
-	auto& view = this->properties()->fromWorld();
-	auto world_view = (*world) * view;
+	auto view = this->properties()->fromWorld();
+	auto world_view = world * view;
 	return world_view * this->_projection;
+	// return world_view * this->_ortho;
 }

@@ -2,115 +2,65 @@
 
 #include <sstream>
 
-// #include "../../application_layer/ApplicationFactory.h"
-// #include "../../application_layer/IApplicationLayer.h"
-// #include "../../event_system/Events.h"
-// #include "../../event_system/IEventManager.h"
-// #include "<resource_cache/loaders/DirectXMeshLoader.hpp>
-// #include "<resource_cache/resources/MeshResource.hpp>
-#include <resource_cache/ResourceCache.hpp>
-// #include <resource_cache/resources/SpriteResource.hpp>
-#include <resource_cache/resources/TextureResource.hpp>
+#include <resource_cache/resourceCache.hpp>
+#include <resource_cache/resources/meshResource.hpp>
 
-#include "../directx/directXPixelShader.hpp"
-#include "../directx/directXRenderer.hpp"
-#include "../directx/directXVertexShader.hpp"
+#include "../iPixelShader.hpp"
+#include "../iRenderer.hpp"
+#include "../iVertexShader.hpp"
+#include "../scene.hpp"
 
-RectangleNode::RectangleNode(const ActorId actorId, const std::string name, const Color color,
-	RenderPass renderPass, const uint32_t height, const uint32_t width, const float x,
-	const float y, const std::string pixelShaderFilename, const std::string vertexShaderFilename)
-	: SceneNode(actorId, name, renderPass, Color::green, Mat4x4::Identity()),
-	  _color(color),
-	  _height(height),
-	  _width(width),
-	  _x(x),
-	  _y(y),
-	  _pixelShaderFilename(pixelShaderFilename),
-	  _vertexShaderFilename(vertexShaderFilename)
+RectangleNode::RectangleNode(PtSceneNodeData* base_node_data, PtRectangleNodeData* rect_node_data)
+	: SceneNode(base_node_data),
+	  _texture_path(rect_node_data->texture_path),
+	  _pixel_shader_path(rect_node_data->pixel_shader_path),
+	  _vertex_shader_path(rect_node_data->vetex_shader_path)
+{}
+
+bool RectangleNode::initialize(const std::shared_ptr<Scene>& scene)
 {
-	this->_pixelShader = std::make_shared<DirectXPixelShader>(pixelShaderFilename, "");
+	if (this->_vertex_shader == nullptr)
+	{
+		this->_vertex_shader = scene->renderer()->loadVertexShader(this->_vertex_shader_path);
+	}
+	if (this->_pixel_shader == nullptr)
+	{
+		this->_pixel_shader =
+			scene->renderer()->loadPixelShader(this->_pixel_shader_path, this->_texture_path);
+	}
 
-	this->_vertexShader = std::make_shared<DirectXVertexShader>(vertexShaderFilename);
-
-	this->SetPosition(Vec2(x, -y));
-
-	Material material;
-	material.SetDiffuse(color);
-	this->SetMaterial(material);
-	this->SetAlpha(color.a);
-}
-
-bool RectangleNode::onRestore(std::shared_ptr<Scene> scene)
-{
-	if (!SceneNode::OnRestore(scene) || !this->_pixelShader->OnRestore(scene) ||
-		!this->_vertexShader->OnRestore(scene))
+	if (!SceneNode::initialize(scene) || !this->_pixel_shader->initialize(scene) ||
+		!this->_vertex_shader->initialize(scene))
 	{
 		return false;
 	}
 
 	// force the sprite to reload
-	auto appLayer = std::shared_ptr<ApplicationLayerFactory>()->GetApplicationLayer();
-	auto resCache = appLayer->_resourceCache;
-	if (!resCache->Exists(ResourceType::Mesh, this->GenerateMeshName()))
+	auto cache = scene->cache();
+	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1"))
 	{
-		DirectXMeshLoader meshLoader;
-		bool added = resCache->AddResource(meshLoader.CreateRectangle(resCache,
-			this->GenerateMeshName(), this->_height, this->_width));
-
-		if (!added)
+		auto rect = scene->renderer()->createRectangle();
+		if (!cache->addResource(rect))
 		{
 			// log error about creating sprite resource
 		}
 	}
 
-	this->SetRadius(1000);
+	// this->SetRadius(1000);
 
 	return true;
 }
 
-bool RectangleNode::render(std::shared_ptr<Scene> scene)
+bool RectangleNode::render(const std::shared_ptr<Scene>& scene)
 {
-	if (!this->_pixelShader->SetupRender(scene, this->shared_from_this()) ||
-		!this->_vertexShader->SetupRender(scene, this->shared_from_this()))
+	if (!this->_pixel_shader->setupRender(scene, this->shared_from_this()) ||
+		!this->_vertex_shader->setupRender(scene, this->shared_from_this()))
 	{
 		return false;
 	}
 
-	auto screenHeight = 720;
-
-	// IA setup
-	unsigned int stride = sizeof(Vertex);
-	unsigned int offset = 0;
-
-	auto appLayer = std::shared_ptr<ApplicationLayerFactory>()->GetApplicationLayer();
-	auto resCache = appLayer->_resourceCache;
-	auto meshResource = resCache->GetMesh(this->GenerateMeshName());
-	auto vertexBuffer = meshResource->GetVertexBuffer().get();
-
-	auto renderer = std::dynamic_pointer_cast<DirectXRenderer>(appLayer->_renderer);
-	renderer->context()->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
-	renderer->context()->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	renderer->context()->Draw(4, 0);
-
+	// get the mesh
+	auto mesh_resource = scene->cache()->getMesh("rectangle_1x1");
+	scene->renderer()->drawMesh(mesh_resource);
 	return true;
-}
-
-// void RectangleNode::ActorMovedDelegate(std::shared_ptr<IEvent> data)
-// {
-// 	auto d = std::dynamic_pointer_cast<ActorMovedEvent>(data);
-
-// 	if (d->GetId() == this->_properties->actor_id())
-// 	{
-// 		this->_x = d->GetX();
-// 		this->_y = d->GetY();
-// 		this->SetPosition(Vec2(this->_x, -this->_y));
-// 	}
-// }
-
-std::string RectangleNode::GenerateMeshName()
-{
-	std::stringstream ss;
-	ss << "generated__rectangle_" << this->_height << "_" << this->_width;
-	return ss.str();
 }
