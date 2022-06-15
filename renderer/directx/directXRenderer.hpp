@@ -23,6 +23,8 @@ public:
 	bool preRender() override;
 	bool postRender() override;
 
+	void enableDebugMode() override;
+
 	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
 	std::shared_ptr<MeshResource> createRectangle() override;
 	std::shared_ptr<MeshResource> createTextRectangle() override;
@@ -51,6 +53,7 @@ private:
 	ID3D11DeviceContext* _context;
 	IDXGISwapChain* _swapChain;
 	ID3D11RenderTargetView* _backBufferTarget;
+	ID3D11RasterizerState* _rasterizer_state;
 
 	D3D_FEATURE_LEVEL _featureLevel;
 	D3D_DRIVER_TYPE _driverType;
