@@ -5,6 +5,8 @@
 
 #include <platypus_proto/common.hpp>
 
+#include <utilities/common/ptExtent.hpp>
+
 class IInputDevice;
 class IWindow;
 
@@ -19,4 +21,6 @@ public:
 	virtual std::shared_ptr<IWindow> createWindow(const platypus::RectSize& size) = 0;
 
 	virtual std::vector<std::shared_ptr<IInputDevice>> queryInputDevices() = 0;
+
+	virtual PtExtent getPixelDensity() = 0;
 };

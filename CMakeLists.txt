@@ -242,6 +242,11 @@ set(utilities_srcs
 )
 source_group(source\\utilities FILES ${utilities_srcs})
 
+set(utilities_common_srcs
+	utilities/common/ptExtent.hpp
+)
+source_group(source\\utilities\\common FILES ${utilities_common_srcs})
+
 set(utilities_logging_srcs
 	utilities/logging/consoleFormat.hpp
 	utilities/logging/consoleFormat.cpp
@@ -296,6 +301,7 @@ set(all_srcs
 	${resource_cache_resources_srcs}
 	${resource_cache_stores_srcs}
 	${utilities_srcs}
+	${utilities_common_srcs}
 	${utilities_logging_srcs}
 	${utilities_math_srcs}
 	${views_srcs}
