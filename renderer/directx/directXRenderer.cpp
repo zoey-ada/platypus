@@ -6,6 +6,7 @@
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
 
+#include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
 #include "directXTexture.hpp"
 #include "directXVertexShader.hpp"
@@ -194,6 +195,11 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 std::shared_ptr<MeshResource> DirectXRenderer::createRectangle()
 {
 	return DirectXMeshLoader::createRectangle(this->shared_from_this());
+}
+
+std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
+{
+	return std::make_shared<DirectXAlphaPass>(this->shared_from_this());
 }
 
 void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)

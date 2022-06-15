@@ -8,6 +8,7 @@
 #include <utilities/math/mathTypes.hpp>
 #include <utilities/time.hpp>
 
+struct AlphaSceneNode;
 class CameraNode;
 class IEvent;
 class IRenderer;
@@ -39,6 +40,11 @@ public:
 	void setCamera(std::shared_ptr<CameraNode> camera) { this->_camera = camera; }
 	[[nodiscard]] std::shared_ptr<CameraNode> getCamera() const { return this->_camera; }
 
+	void addAlphaSceneNode(std::shared_ptr<AlphaSceneNode> node)
+	{
+		this->_alpha_scene_nodes.push_back(node);
+	}
+
 	[[nodiscard]] std::shared_ptr<IRenderer> renderer() const { return this->_renderer; }
 	[[nodiscard]] std::shared_ptr<ResourceCache> cache() const { return this->_cache; }
 
@@ -52,5 +58,8 @@ private:
 	std::shared_ptr<ResourceCache> _cache {nullptr};
 
 	std::stack<Mat4x4> _matrix_stack {};
+	std::list<std::shared_ptr<AlphaSceneNode>> _alpha_scene_nodes;
 	SceneEntityMap _entity_map {};
+
+	void renderAlphaPass();
 };

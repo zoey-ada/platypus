@@ -1,6 +1,8 @@
 #include "sceneNode.hpp"
 
 #include "../scene.hpp"
+#include "alphaSceneNode.hpp"
+#include "cameraNode.hpp"
 #include "sceneNodeProperties.hpp"
 
 SceneNode::SceneNode(PtSceneNodeData* node_data)
@@ -8,8 +10,8 @@ SceneNode::SceneNode(PtSceneNodeData* node_data)
 	this->_properties->_name = node_data->name;
 	this->_properties->_entity_id = node_data->entity_id;
 	this->_properties->_render_pass = node_data->render_pass;
-	this->_properties->_ambient = Color::white;
-	this->_properties->_diffuse = node_data->diffuse_color;
+	this->_properties->material().setAmbient(Color::white);
+	this->_properties->material().setDiffuse(node_data->diffuse_color);
 	this->setTransform(node_data->to, node_data->from);
 }
 
@@ -18,8 +20,8 @@ SceneNode::SceneNode(PtSceneNodeData node_data): SceneNode(&node_data)
 	this->_properties->_name = std::move(node_data.name);
 	this->_properties->_entity_id = node_data.entity_id;
 	this->_properties->_render_pass = node_data.render_pass;
-	this->_properties->_ambient = Color::white;
-	this->_properties->_diffuse = std::move(node_data.diffuse_color);
+	this->_properties->material().setAmbient(Color::white);
+	this->_properties->material().setDiffuse(std::move(node_data.diffuse_color));
 	this->setTransform(std::move(node_data.to), std::move(node_data.from));
 }
 
@@ -63,8 +65,26 @@ bool SceneNode::renderChildren(const std::shared_ptr<Scene>& scene)
 		{
 			if (child->isVisible(scene))
 			{
-				// handle alpha nodes
-				child->render(scene);
+				const auto& alpha = child->properties()->material().getAlpha();
+				if (alpha == 1.0f)
+				{
+					child->render(scene);
+				}
+				else if (alpha != 0.0f)
+				{
+					std::shared_ptr<AlphaSceneNode> alpha_scene_node =
+						std::make_shared<AlphaSceneNode>();
+					assert(alpha_scene_node);
+					alpha_scene_node->node = child;
+					alpha_scene_node->to_world = scene->getTopMatrix();
+
+					Vec4 world_position(alpha_scene_node->to_world.getPosition());
+					Mat4x4 from_world = scene->getCamera()->properties()->fromWorld();
+					Vec4 screen_position = from_world.transform(world_position);
+					alpha_scene_node->screen_z = screen_position.z;
+
+					scene->addAlphaSceneNode(alpha_scene_node);
+				}
 			}
 
 			child->renderChildren(scene);

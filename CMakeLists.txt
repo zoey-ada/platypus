@@ -147,8 +147,10 @@ set(renderer_srcs
 	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
 	renderer/iVertexShader.hpp
+	renderer/material.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
+	renderer/iRendererState.hpp
 	renderer/scene.hpp
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
@@ -158,6 +160,8 @@ source_group(source\\renderer FILES ${renderer_srcs})
 
 if(WIN32)
 	set(directx_srcs
+		renderer/directx/directXAlphaPass.hpp
+		renderer/directx/directXAlphaPass.cpp
 		renderer/directx/directXObjectCreator.hpp
 		renderer/directx/directXObjectCreator.cpp
 		renderer/directx/directXPixelShader.hpp
@@ -169,8 +173,8 @@ if(WIN32)
 		renderer/directx/directXVertexShader.hpp
 		renderer/directx/directXVertexShader.cpp
 	)
+	source_group(source\\renderer\\directx FILES ${directx_srcs})
 endif()
-source_group(source\\renderer\\directx FILES ${directx_srcs})
 
 set(resource_cache_srcs
 	resource_cache/resourceCache.hpp
@@ -215,6 +219,7 @@ set(resource_cache_stores_srcs
 source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 
 set(scene_node_srcs
+	renderer/scene_nodes/alphaSceneNode.hpp
 	renderer/scene_nodes/cameraNode.hpp
 	renderer/scene_nodes/cameraNode.cpp
 	renderer/scene_nodes/iSceneNode.hpp

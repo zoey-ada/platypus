@@ -26,6 +26,8 @@ public:
 	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
 	std::shared_ptr<MeshResource> createRectangle() override;
 
+	std::shared_ptr<IRendererState> prepareAlphaPass() override;
+
 	void setBackgroundColor(const Color& backgroundColor) override;
 
 	void setWorldTransform(const Mat4x4& world) override;
