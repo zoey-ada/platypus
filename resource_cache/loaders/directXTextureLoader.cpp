@@ -6,6 +6,7 @@
 
 #include <exceptions/creationException.hpp>
 #include <renderer/directx/directXRenderer.hpp>
+#include <renderer/textRenderer.hpp>
 #include <resource_cache/stores/iResourceStore.hpp>
 #include <utilities/logging/logger.hpp>
 #include <utilities/safeDelete.hpp>
@@ -76,6 +77,44 @@ std::shared_ptr<Resource> DirectXTextureLoader::load(const std::shared_ptr<IReso
 	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
 	auto sampler_state = this->_renderer->create()->newSamplerState(sampler_desc);
+
+	PtTextureData texture_data {};
+	texture_data.texture = (PtTexture)texture;
+	texture_data.sampler_state = (PtSamplerState)sampler_state;
+
+	return std::make_shared<TextureResource>(&resource_data, &texture_data);
+}
+
+std::shared_ptr<Resource> DirectXTextureLoader::rasterizeText(
+	const std::shared_ptr<DirectXRenderer>& renderer, const char* message, const char* font_family,
+	const uint16_t point_size)
+{
+	PtResourceData resource_data {};
+	resource_data.name = message;
+	resource_data.buffer = nullptr;
+	resource_data.size = 0;
+	resource_data.store = nullptr;
+	resource_data.cache = nullptr;
+
+	auto texture = createWicTexture(renderer, message, font_family, point_size);
+	if (texture == nullptr)
+	{
+		// log error
+		return nullptr;
+	}
+
+	// Create the sample state
+	D3D11_SAMPLER_DESC sampler_desc;
+	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
+	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
+	sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampler_desc.MinLOD = 0;
+	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	auto sampler_state = renderer->create()->newSamplerState(sampler_desc);
 
 	PtTextureData texture_data {};
 	texture_data.texture = (PtTexture)texture;
@@ -213,6 +252,45 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 
 	// generate mipmaps with texture_view
 
+	return texture;
+}
+
+ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(
+	const std::shared_ptr<DirectXRenderer>& renderer, const char* message, const char* font_family,
+	const uint16_t point_size)
+{
+	TextRenderer text_renderer;
+	if (!text_renderer.initialize() || !text_renderer.loadFont(font_family) ||
+		!text_renderer.setFontSize(point_size))
+	{
+		return nullptr;
+	}
+
+	auto text_metrics = text_renderer.measureText(message);
+	auto pixel_buffer = text_renderer.rasterizeText(message, &text_metrics);
+
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = static_cast<UINT>(text_metrics.size.width);
+	desc.Height = static_cast<UINT>(text_metrics.size.height);
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	uint64_t stride = text_metrics.size.width * 4;
+	uint64_t image_data_size = stride * text_metrics.size.height;
+
+	D3D11_SUBRESOURCE_DATA image_data;
+	image_data.pSysMem = pixel_buffer;
+	image_data.SysMemPitch = static_cast<UINT>(stride);
+	image_data.SysMemSlicePitch = static_cast<UINT>(image_data_size);
+
+	auto texture = renderer->create()->newTexture(desc, image_data);
 	return texture;
 }
 

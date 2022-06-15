@@ -28,6 +28,7 @@ public:
 
 	virtual void drawMesh(const std::shared_ptr<MeshResource>& mesh) = 0;
 	virtual std::shared_ptr<MeshResource> createRectangle() = 0;
+	virtual std::shared_ptr<MeshResource> createTextRectangle() = 0;
 
 	virtual std::shared_ptr<IRendererState> prepareAlphaPass() = 0;
 

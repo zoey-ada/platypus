@@ -197,6 +197,11 @@ std::shared_ptr<MeshResource> DirectXRenderer::createRectangle()
 	return DirectXMeshLoader::createRectangle(this->shared_from_this());
 }
 
+std::shared_ptr<MeshResource> DirectXRenderer::createTextRectangle()
+{
+	return DirectXMeshLoader::createRectangleForText(this->shared_from_this());
+}
+
 std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
 {
 	return std::make_shared<DirectXAlphaPass>(this->shared_from_this());

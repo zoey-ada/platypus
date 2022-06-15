@@ -155,6 +155,8 @@ set(renderer_srcs
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
 	renderer/screenElementScene.cpp
+	renderer/textRenderer.hpp
+	renderer/textRenderer.cpp
 )
 source_group(source\\renderer FILES ${renderer_srcs})
 
@@ -232,6 +234,8 @@ set(scene_node_srcs
 	renderer/scene_nodes/rootNode.cpp
 	renderer/scene_nodes/sceneNode.hpp
 	renderer/scene_nodes/sceneNode.cpp
+	renderer/scene_nodes/textNode.hpp
+	renderer/scene_nodes/textNode.cpp
 	renderer/scene_nodes/sceneNodeProperties.hpp
 )
 source_group(source\\scene_nodes FILES ${scene_node_srcs})

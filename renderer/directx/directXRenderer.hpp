@@ -25,6 +25,7 @@ public:
 
 	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
 	std::shared_ptr<MeshResource> createRectangle() override;
+	std::shared_ptr<MeshResource> createTextRectangle() override;
 
 	std::shared_ptr<IRendererState> prepareAlphaPass() override;
 
