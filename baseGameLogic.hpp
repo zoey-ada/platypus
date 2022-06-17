@@ -39,7 +39,7 @@ public:
 
 	[[nodiscard]] std::list<std::shared_ptr<IView>> views() const { return this->_views; }
 
-private:
+protected:
 	GameState _state {GameState::Initializing};
 	std::list<std::shared_ptr<IView>> _views;
 	std::shared_ptr<EntityFactory> _entity_factory;

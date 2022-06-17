@@ -47,13 +47,13 @@ public:
 	ID3D11Device* device() const { return this->_device; }
 
 private:
-	HWND _hwnd;
-	HINSTANCE _hinstance;
-	ID3D11Device* _device;
-	ID3D11DeviceContext* _context;
-	IDXGISwapChain* _swapChain;
-	ID3D11RenderTargetView* _backBufferTarget;
-	ID3D11RasterizerState* _rasterizer_state;
+	HWND _hwnd {nullptr};
+	HINSTANCE _hinstance {nullptr};
+	ID3D11Device* _device {nullptr};
+	ID3D11DeviceContext* _context {nullptr};
+	IDXGISwapChain* _swapChain {nullptr};
+	ID3D11RenderTargetView* _backBufferTarget {nullptr};
+	ID3D11RasterizerState* _rasterizer_state {nullptr};
 
 	D3D_FEATURE_LEVEL _featureLevel;
 	D3D_DRIVER_TYPE _driverType;
