@@ -31,3 +31,13 @@ std::vector<std::shared_ptr<IInputDevice>> WindowsPlatform::queryInputDevices()
 	devices.push_back(std::make_shared<RawInputKeyboardDevice>(this->_hwnd));
 	return devices;
 }
+
+PtExtent WindowsPlatform::getPixelDensity()
+{
+	SetProcessDPIAware();  // true
+	HDC screen = GetDC(NULL);
+	uint64_t hPixelsPerInch = static_cast<uint64_t>(GetDeviceCaps(screen, LOGPIXELSX));
+	uint64_t vPixelsPerInch = static_cast<uint64_t>(GetDeviceCaps(screen, LOGPIXELSY));
+	ReleaseDC(NULL, screen);
+	return {hPixelsPerInch, vPixelsPerInch};
+}

@@ -2,10 +2,12 @@
 
 #include <array>
 
+#include <resource_cache/loaders/directXMeshLoader.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
 
+#include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
 #include "directXTexture.hpp"
 #include "directXVertexShader.hpp"
@@ -140,6 +142,10 @@ void DirectXRenderer::deinitialize()
 		this->_device->Release();
 	this->_device = nullptr;
 
+	if (this->_rasterizer_state != nullptr)
+		this->_rasterizer_state->Release();
+	this->_rasterizer_state = nullptr;
+
 	_hwnd = nullptr;
 	_hinstance = nullptr;
 }
@@ -158,6 +164,26 @@ bool DirectXRenderer::postRender()
 {
 	HRESULT hr = _swapChain->Present(0, 0);
 	return SUCCEEDED(hr);
+}
+
+void DirectXRenderer::enableDebugMode()
+{
+	D3D11_RASTERIZER_DESC rasterizer_state {};
+	rasterizer_state.FillMode = D3D11_FILL_MODE::D3D11_FILL_WIREFRAME;
+	rasterizer_state.CullMode = D3D11_CULL_MODE::D3D11_CULL_NONE;
+
+	this->_device->CreateRasterizerState(&rasterizer_state, &this->_rasterizer_state);
+	this->_context->RSSetState(this->_rasterizer_state);
+	//   D3D11_FILL_MODE FillMode;
+	//   D3D11_CULL_MODE CullMode;
+	//   BOOL            FrontCounterClockwise;
+	//   INT             DepthBias;
+	//   FLOAT           DepthBiasClamp;
+	//   FLOAT           SlopeScaledDepthBias;
+	//   BOOL            DepthClipEnable;
+	//   BOOL            ScissorEnable;
+	//   BOOL            MultisampleEnable;
+	//   BOOL            AntialiasedLineEnable;
 }
 
 void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
@@ -196,6 +222,16 @@ std::shared_ptr<MeshResource> DirectXRenderer::createRectangle()
 	return DirectXMeshLoader::createRectangle(this->shared_from_this());
 }
 
+std::shared_ptr<MeshResource> DirectXRenderer::createTextRectangle()
+{
+	return DirectXMeshLoader::createRectangleForText(this->shared_from_this());
+}
+
+std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
+{
+	return std::make_shared<DirectXAlphaPass>(this->shared_from_this());
+}
+
 void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
 {
 	this->_backgroundColor = backgroundColor;
@@ -219,7 +255,8 @@ std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
 
 // std::shared_ptr<ITexture> DirectXRenderer::loadTexture(std::string path)
 // {
-// 	return std::make_shared<DirectXTexture>(this->shared_from_this(), this->_cache.lock(), path);
+// 	return std::make_shared<DirectXTexture>(this->shared_from_this(), this->_cache.lock(),
+// path);
 // }
 
 bool DirectXRenderer::doesFormatSupport(DXGI_FORMAT format,

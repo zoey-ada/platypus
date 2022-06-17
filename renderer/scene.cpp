@@ -8,6 +8,7 @@
 #include <utilities/time.hpp>
 
 #include "iRenderer.hpp"
+#include "scene_nodes/alphaSceneNode.hpp"
 #include "scene_nodes/cameraNode.hpp"
 #include "scene_nodes/rootNode.hpp"
 
@@ -66,7 +67,7 @@ bool Scene::onRender()
 		}
 	}
 
-	// render alpha pass
+	this->renderAlphaPass();
 	return true;
 }
 
@@ -135,5 +136,21 @@ void Scene::onNewRenderComponent(std::shared_ptr<IEvent> event)
 	if (!this->addChild(render_event->_entity_id, render_event->_scene_node))
 	{
 		// log error
+	}
+}
+
+void Scene::renderAlphaPass()
+{
+	auto alpha_pass = this->_renderer->prepareAlphaPass();
+
+	this->_alpha_scene_nodes.sort();
+
+	while (!this->_alpha_scene_nodes.empty())
+	{
+		auto iter = this->_alpha_scene_nodes.rbegin();
+		this->pushAndSetMatrix((*iter)->to_world);
+		(*iter)->node->render(this->shared_from_this());
+		this->popMatrix();
+		this->_alpha_scene_nodes.pop_back();
 	}
 }

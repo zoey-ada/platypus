@@ -130,17 +130,55 @@ std::shared_ptr<Resource> DirectXMeshLoader::load(const std::shared_ptr<IResourc
 	return std::make_shared<MeshResource>(&resource_data, &mesh_data);
 }
 
+std::shared_ptr<MeshResource> DirectXMeshLoader::createRectangleForText(
+	const std::shared_ptr<DirectXRenderer>& renderer)
+{
+	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
+		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
+		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)}};
+
+	std::vector<uint32_t> indices {0, 1, 2, 3};
+
+	D3D11_BUFFER_DESC vertex_buffer_desc {};
+	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(graphics::Vertex) * vertices.size());
+	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertex_data {};
+	auto drawable_verts = drawable(vertices);
+	vertex_data.pSysMem = &drawable_verts[0];
+
+	auto vertex_buffer = renderer->create()->newBuffer(vertex_buffer_desc, vertex_data);
+
+	D3D11_BUFFER_DESC index_buffer_desc {};
+	index_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(uint32_t) * indices.size());
+	index_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA index_data {};
+	index_data.pSysMem = &indices[0];
+
+	auto index_buffer = renderer->create()->newBuffer(index_buffer_desc, index_data);
+
+	PtMeshResourceData mesh_data {};
+	mesh_data.primative = PtPrimitiveType::TriangleStrip;
+	mesh_data.vertex_buffer = (PtVertexBuffer)vertex_buffer;
+	mesh_data.index_buffer = (PtIndexBuffer)index_buffer;
+	mesh_data.index_count = indices.size();
+
+	PtResourceData resource_data {};
+	resource_data.name = "rectangle_1x1";
+	resource_data.buffer = nullptr;
+	resource_data.size = 0;
+	resource_data.store = nullptr;
+	resource_data.cache = nullptr;
+
+	return std::make_shared<MeshResource>(&resource_data, &mesh_data);
+}
+
 std::shared_ptr<MeshResource> DirectXMeshLoader::createRectangle(
 	const std::shared_ptr<DirectXRenderer>& renderer)
 {
-	// auto screen_height = 720.0f;
-
-	// std::vector<graphics::Vertex> vertices = {
-	// 	{Vec3(0, screen_height - height, 1), Vec3(1, 1, 0), Vec2(0, 1)},
-	// 	{Vec3(0, screen_height, 1), Vec3(1, 1, 0), Vec2(0, 0)},
-	// 	{Vec3(static_cast<float>(width), screen_height - height, 1), Vec3(1, 1, 0), Vec2(1, 1)},
-	// 	{Vec3(static_cast<float>(width), screen_height, 1), Vec3(1, 1, 0), Vec2(1, 0)}};
-
 	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
 		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},
 		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)}};

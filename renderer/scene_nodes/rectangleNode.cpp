@@ -1,7 +1,5 @@
 #include "rectangleNode.hpp"
 
-#include <sstream>
-
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 

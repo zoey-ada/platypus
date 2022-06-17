@@ -5,6 +5,9 @@
 
 #include <wincodec.h>
 
+#include <ft2build.h>
+#include FT_FREETYPE_H
+
 #include "iResourceLoader.hpp"
 
 class DirectXRenderer;
@@ -12,6 +15,7 @@ class IRenderer;
 
 struct ID3D11ShaderResourceView;
 struct IWICBitmapFrameDecode;
+struct PtFontDesc;
 
 struct compareGuid
 {
@@ -46,6 +50,14 @@ public:
 
 	[[nodiscard]] std::shared_ptr<Resource> load(const std::shared_ptr<IResourceStore>& store,
 		const std::string& filename) override;
+
+	[[nodiscard]] static std::shared_ptr<Resource> rasterizeText(
+		const std::shared_ptr<DirectXRenderer>& renderer, const char* message,
+		const char* font_family, const uint16_t point_size);
+
+	[[nodiscard]] static ID3D11ShaderResourceView* createWicTexture(
+		const std::shared_ptr<DirectXRenderer>& renderer, const char* message,
+		const char* font_family, const uint16_t point_size);
 
 protected:
 	uint8_t* allocate(unsigned int size) override;

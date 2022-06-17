@@ -19,6 +19,8 @@ public:
 
 	std::vector<std::shared_ptr<IInputDevice>> queryInputDevices() override;
 
+	PtExtent getPixelDensity() override;
+
 private:
 	std::string _application_name;
 	HWND _hwnd {nullptr};

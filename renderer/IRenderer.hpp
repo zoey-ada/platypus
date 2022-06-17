@@ -7,6 +7,7 @@
 #include "color.hpp"
 
 class IPixelShader;
+class IRendererState;
 class ITexture;
 class IVertexShader;
 class Mat4x4;
@@ -25,8 +26,13 @@ public:
 	virtual bool preRender() = 0;
 	virtual bool postRender() = 0;
 
+	virtual void enableDebugMode() = 0;
+
 	virtual void drawMesh(const std::shared_ptr<MeshResource>& mesh) = 0;
 	virtual std::shared_ptr<MeshResource> createRectangle() = 0;
+	virtual std::shared_ptr<MeshResource> createTextRectangle() = 0;
+
+	virtual std::shared_ptr<IRendererState> prepareAlphaPass() = 0;
 
 	virtual void setBackgroundColor(const Color& backgroundColor) = 0;
 

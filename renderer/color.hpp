@@ -8,13 +8,9 @@
 class Color
 {
 public:
-	Color()
-		: Color(1.0f, 1.0f, 1.0f)
-	{}
+	Color(): Color(1.0f, 1.0f, 1.0f) {}
 
-	explicit Color(const std::array<float, 4> rgba)
-		: Color(rgba[0], rgba[1], rgba[2], rgba[3])
-	{}
+	explicit Color(const std::array<float, 4> rgba): Color(rgba[0], rgba[1], rgba[2], rgba[3]) {}
 
 	explicit Color(const float r, const float g, const float b, const float a = 1.0f)
 		: _r(r), _g(g), _b(b), _a(a)
@@ -24,9 +20,19 @@ public:
 		: _r(intToFloat(r)), _g(intToFloat(g)), _b(intToFloat(b)), _a(intToFloat(a))
 	{}
 
-	explicit Color(const Vec4& rgba)
-		: Color(rgba.x, rgba.y, rgba.z, rgba.w)
-	{}
+	explicit Color(const Vec4& rgba): Color(rgba.x, rgba.y, rgba.z, rgba.w) {}
+
+	[[nodiscard]] inline float r() const { return this->_r; }
+	inline void r(const float new_r) { this->_r = new_r; }
+
+	[[nodiscard]] inline float g() const { return this->_g; }
+	inline void g(const float new_g) { this->_g = new_g; }
+
+	[[nodiscard]] inline float b() const { return this->_b; }
+	inline void b(const float new_b) { this->_b = new_b; }
+
+	[[nodiscard]] inline float a() const { return this->_a; }
+	inline void a(const float new_a) { this->_a = new_a; }
 
 	[[nodiscard]] std::array<float, 4> toFloat() const;
 	[[nodiscard]] Vec4 toVec4() const;

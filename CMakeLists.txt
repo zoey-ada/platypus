@@ -147,17 +147,23 @@ set(renderer_srcs
 	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
 	renderer/iVertexShader.hpp
+	renderer/material.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
+	renderer/iRendererState.hpp
 	renderer/scene.hpp
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
 	renderer/screenElementScene.cpp
+	renderer/textRenderer.hpp
+	renderer/textRenderer.cpp
 )
 source_group(source\\renderer FILES ${renderer_srcs})
 
 if(WIN32)
 	set(directx_srcs
+		renderer/directx/directXAlphaPass.hpp
+		renderer/directx/directXAlphaPass.cpp
 		renderer/directx/directXObjectCreator.hpp
 		renderer/directx/directXObjectCreator.cpp
 		renderer/directx/directXPixelShader.hpp
@@ -169,8 +175,8 @@ if(WIN32)
 		renderer/directx/directXVertexShader.hpp
 		renderer/directx/directXVertexShader.cpp
 	)
+	source_group(source\\renderer\\directx FILES ${directx_srcs})
 endif()
-source_group(source\\renderer\\directx FILES ${directx_srcs})
 
 set(resource_cache_srcs
 	resource_cache/resourceCache.hpp
@@ -215,6 +221,7 @@ set(resource_cache_stores_srcs
 source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 
 set(scene_node_srcs
+	renderer/scene_nodes/alphaSceneNode.hpp
 	renderer/scene_nodes/cameraNode.hpp
 	renderer/scene_nodes/cameraNode.cpp
 	renderer/scene_nodes/iSceneNode.hpp
@@ -227,6 +234,8 @@ set(scene_node_srcs
 	renderer/scene_nodes/rootNode.cpp
 	renderer/scene_nodes/sceneNode.hpp
 	renderer/scene_nodes/sceneNode.cpp
+	renderer/scene_nodes/textNode.hpp
+	renderer/scene_nodes/textNode.cpp
 	renderer/scene_nodes/sceneNodeProperties.hpp
 )
 source_group(source\\scene_nodes FILES ${scene_node_srcs})
@@ -241,6 +250,11 @@ set(utilities_srcs
 	utilities/wildcardMatch.cpp
 )
 source_group(source\\utilities FILES ${utilities_srcs})
+
+set(utilities_common_srcs
+	utilities/common/ptExtent.hpp
+)
+source_group(source\\utilities\\common FILES ${utilities_common_srcs})
 
 set(utilities_logging_srcs
 	utilities/logging/consoleFormat.hpp
@@ -296,6 +310,7 @@ set(all_srcs
 	${resource_cache_resources_srcs}
 	${resource_cache_stores_srcs}
 	${utilities_srcs}
+	${utilities_common_srcs}
 	${utilities_logging_srcs}
 	${utilities_math_srcs}
 	${views_srcs}

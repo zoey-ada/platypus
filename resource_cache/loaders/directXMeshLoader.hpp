@@ -24,6 +24,9 @@ public:
 	static std::shared_ptr<MeshResource> createRectangle(
 		const std::shared_ptr<DirectXRenderer>& renderer);
 
+	static std::shared_ptr<MeshResource> createRectangleForText(
+		const std::shared_ptr<DirectXRenderer>& renderer);
+
 protected:
 	uint8_t* allocate(unsigned int size) override;
 
