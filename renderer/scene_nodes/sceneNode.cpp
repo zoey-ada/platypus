@@ -101,8 +101,7 @@ bool SceneNode::removeChild(const EntityId /*id*/)
 	return false;
 }
 
-void SceneNode::setTransform(const std::shared_ptr<Mat4x4>& to_world,
-	const std::shared_ptr<Mat4x4> from_world)
+void SceneNode::setTransform(const Mat4x4* to_world, const Mat4x4* from_world)
 {
 	this->_properties->_to_world = *to_world;
 

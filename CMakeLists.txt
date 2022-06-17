@@ -83,10 +83,14 @@ source_group(source\\entities FILES ${entities_srcs})
 
 set(entities_components_srcs
 	entities/components/entityComponent.hpp
-	entities/components/positionComponent.hpp
-	entities/components/positionComponent.cpp
+	entities/components/renderComponent2d.hpp
+	entities/components/renderComponent2d.cpp
 	entities/components/renderComponent3d.hpp
 	entities/components/renderComponent3d.cpp
+	entities/components/transformComponent2d.hpp
+	entities/components/transformComponent2d.cpp
+	entities/components/transformComponent3d.hpp
+	entities/components/transformComponent3d.cpp
 )
 source_group(source\\entities\\components FILES ${entities_components_srcs})
 
@@ -217,6 +221,8 @@ set(scene_node_srcs
 	renderer/scene_nodes/meshNode.hpp
 	renderer/scene_nodes/meshNode.cpp
 	renderer/scene_nodes/renderPass.hpp
+	renderer/scene_nodes/rectangleNode.hpp
+	renderer/scene_nodes/rectangleNode.cpp
 	renderer/scene_nodes/rootNode.hpp
 	renderer/scene_nodes/rootNode.cpp
 	renderer/scene_nodes/sceneNode.hpp

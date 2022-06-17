@@ -7,7 +7,6 @@
 class IPixelShader;
 class IRenderer;
 class IVertexShader;
-class ResourceCache;
 class Scene;
 
 struct ID3D11Buffer;
@@ -41,7 +40,4 @@ private:
 	std::shared_ptr<IVertexShader> _vertex_shader;
 
 	std::shared_ptr<ID3D11Buffer> _vertexBuffer;
-
-	void createRectangle(std::shared_ptr<ResourceCache> cache, std::string name,
-		const uint32_t height, const uint32_t width, std::shared_ptr<DirectXRenderer> renderer);
 };

@@ -31,7 +31,7 @@ void Entity::deinitialize()
 
 void Entity::update(Milliseconds delta)
 {
-	for (auto mapping : this->_components)
+	for (const auto& mapping : this->_components)
 		mapping.second->update(delta);
 }
 

@@ -24,10 +24,11 @@ public:
 	bool postRender() override;
 
 	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
+	std::shared_ptr<MeshResource> createRectangle() override;
 
 	void setBackgroundColor(const Color& backgroundColor) override;
 
-	void setWorldTransform(const std::shared_ptr<Mat4x4>& world) override;
+	void setWorldTransform(const Mat4x4& world) override;
 
 	std::shared_ptr<IVertexShader> loadVertexShader(std::string path) override;
 	std::shared_ptr<IPixelShader> loadPixelShader(std::string path,

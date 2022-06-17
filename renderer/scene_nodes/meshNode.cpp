@@ -42,42 +42,6 @@ MeshNode::MeshNode(PtSceneNodeData* base_node_data, PtMeshNodeData* mesh_node_da
 	return true;
 }
 
-// void MeshNode::createRectangle(std::shared_ptr<ResourceCache>, std::string, const uint32_t
-// height, 	const uint32_t width, std::shared_ptr<DirectXRenderer> renderer)
-// {
-// 	// if (cache == nullptr)
-// 	// 	return nullptr;
-
-// 	auto screenHeight = 720.0f;
-
-// 	std::vector<graphics::Vertex> vertices = {
-// 		{Vec3(0, screenHeight - height, 0), Vec3(1, 1, 0), Vec2(0, 1)},
-// 		{Vec3(0, screenHeight, 0), Vec3(1, 1, 0), Vec2(0, 0)},
-// 		{Vec3(static_cast<float>(width), screenHeight - height, 0), Vec3(1, 1, 0), Vec2(1, 1)},
-// 		{Vec3(static_cast<float>(width), screenHeight, 0), Vec3(1, 1, 0), Vec2(1, 0)}};
-
-// 	D3D11_BUFFER_DESC vertexBufferDesc;
-// 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
-// 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-// 	vertexBufferDesc.ByteWidth =
-// 		static_cast<UINT>(sizeof(graphics::DrawableVertex) * vertices.size());
-// 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-// 	D3D11_SUBRESOURCE_DATA vertexData;
-// 	ZeroMemory(&vertexData, sizeof(vertexData));
-// 	auto drawable_verts = drawable(vertices);
-// 	vertexData.pSysMem = &drawable_verts[0];
-
-// 	ID3D11Buffer* v = nullptr;
-// 	renderer->device()->CreateBuffer(&vertexBufferDesc, &vertexData, &v);
-
-// 	// if (FAILED(hr))
-// 	// 	return false;
-
-// 	this->_vertexBuffer = std::shared_ptr<ID3D11Buffer>(v, [](ID3D11Buffer* v) { v->Release(); });
-// 	// std::vector<uint32_t> indices;
-// }
-
 bool MeshNode::render(const std::shared_ptr<Scene>& scene)
 {
 	if (!this->_pixel_shader->setupRender(scene, this->shared_from_this()) ||

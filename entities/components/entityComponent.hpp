@@ -27,7 +27,7 @@ public:
 	virtual bool initialize(const std::shared_ptr<Message>& data) = 0;
 
 	virtual void postInitialize() {}
-	virtual void update(Milliseconds /*delta*/) {}
+	virtual void update(const Milliseconds /*delta*/) {}
 
 	virtual const char* name() const = 0;
 

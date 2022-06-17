@@ -1,12 +1,13 @@
 #include "renderComponent3d.hpp"
 
+#include <platypus_proto/entity.hpp>
+
 #include <events/events/newRenderComponentEvent.hpp>
 #include <events/iEventManager.hpp>
-#include <platypus_proto/entity.hpp>
 #include <renderer/scene_nodes/meshNode.hpp>
 #include <serviceProvider.hpp>
 
-#include "positionComponent.hpp"
+#include "transformComponent3d.hpp"
 
 bool RenderComponent3d::initialize(const std::shared_ptr<Message>& data)
 {
@@ -21,32 +22,44 @@ void RenderComponent3d::postInitialize()
 	ServiceProvider::getEventManager()->triggerEvent(event);
 }
 
-std::shared_ptr<SceneNode> RenderComponent3d::getSceneNode()
+void RenderComponent3d::update(const Milliseconds /*delta*/)
 {
-	auto position_matrix = Mat4x4::identity();
-
-	auto weak_position = _owner->getComponent<PositionComponent>("position_component");
-	if (!weak_position.expired())
+	auto transform = _owner->getComponent<TransformComponent3d>("transform_component_3d").lock();
+	if (transform != nullptr)
 	{
-		position_matrix->setPosition(weak_position.lock()->getPosition());
+		this->_scene_node->properties()->toWorld(transform->getTransform());
 	}
-
-	PtSceneNodeData node_data {};
-	node_data.render_pass = RenderPass::Entity;
-	node_data.entity_id = _owner->getId();
-	node_data.name = "mesh";
-	node_data.to = position_matrix;
-
-	PtMeshNodeData mesh_node_data {};
-	mesh_node_data.mesh_path = this->_render_data->mesh().c_str();
-	mesh_node_data.texture_path = this->_render_data->texture().c_str();
-	mesh_node_data.pixel_shader_path = this->_render_data->pixel_shader().c_str();
-	mesh_node_data.vetex_shader_path = this->_render_data->vertex_shader().c_str();
-
-	return std::make_shared<MeshNode>(&node_data, &mesh_node_data);
 }
 
-std::shared_ptr<EntityComponent> CreateRenderComponent()
+std::shared_ptr<SceneNode> RenderComponent3d::getSceneNode()
+{
+	if (this->_scene_node != nullptr)
+	{
+		return this->_scene_node;
+	}
+
+	auto transform = _owner->getComponent<TransformComponent3d>("transform_component_3d").lock();
+	if (transform != nullptr)
+	{
+		PtSceneNodeData node_data {};
+		node_data.render_pass = RenderPass::Entity;
+		node_data.entity_id = _owner->getId();
+		node_data.name = "mesh";
+		node_data.to = &transform->getTransform();
+
+		PtMeshNodeData mesh_node_data {};
+		mesh_node_data.mesh_path = this->_render_data->mesh().c_str();
+		mesh_node_data.texture_path = this->_render_data->texture().c_str();
+		mesh_node_data.pixel_shader_path = this->_render_data->pixel_shader().c_str();
+		mesh_node_data.vetex_shader_path = this->_render_data->vertex_shader().c_str();
+
+		this->_scene_node = std::make_shared<MeshNode>(&node_data, &mesh_node_data);
+	}
+
+	return this->_scene_node;
+}
+
+std::shared_ptr<EntityComponent> createRenderComponent3d()
 {
 	return std::make_shared<RenderComponent3d>();
 }

@@ -75,7 +75,8 @@ class Vec4: public dx::XMFLOAT4
 
 public:
 	inline Vec4(const Vec4& copy) = default;
-	inline explicit Vec4(const float _x = 1.0f, const float _y = 1.0f, const float _z = 1.0f, const float _w = 1.0f);
+	inline explicit Vec4(const float _x = 1.0f, const float _y = 1.0f, const float _z = 1.0f,
+		const float _w = 1.0f);
 
 	inline explicit Vec4(const Vec3& copy);
 
@@ -122,7 +123,8 @@ public:
 
 	inline void rotateAboutAxis(const Vec3& axis, const float radians);
 
-	inline void buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians, const float rollRadians);
+	inline void buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians,
+		const float rollRadians);
 	inline void buildRotationQuaternion(const Quaternion& q);
 	inline void buildRotationLookAt(const Vec3& eye, const Vec3& at, const Vec3& up);
 
@@ -132,7 +134,7 @@ public:
 
 	[[nodiscard]] inline dx::XMMATRIX load() const { return dx::XMLoadFloat4x4(this); }
 
-	[[nodiscard]] static inline std::shared_ptr<Mat4x4> identity() { return std::make_shared<Mat4x4>(); }
+	[[nodiscard]] static inline Mat4x4* identity() { return new (std::nothrow) Mat4x4(); }
 
 private:
 	inline void store(const dx::XMMATRIX& _m) { dx::XMStoreFloat4x4(this, _m); }
@@ -150,7 +152,8 @@ public:
 	inline void slerp(const Quaternion& begin, const Quaternion& end, const float percent);
 	inline void getAxisAngle(Vec3& axis, float& angle) const;
 
-	inline void buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians, const float rollRadians);
+	inline void buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians,
+		const float rollRadians);
 	inline void buildAxisAngle(const Vec3& axis, const float radians);
 	inline void build(const Mat4x4& matrix);
 
@@ -182,10 +185,11 @@ private:
 	inline void store(const dx::XMVECTOR& p) { dx::XMStoreFloat4(this, p); }
 };
 
-const float default_field_of_view = dx::XM_PI / 4.0f;  // default field of view is 90 degrees (PI/4 rads)
-const float default_aspect = 1.0f / 1.0f;              // default aspect ratio is 1:1
-const float default_near_dist = 1.0f;                  // default near plane is 1m away from the camera
-const float default_far_dist = 1000.0f;                // default far plane is 1km away from the camera
+const float default_field_of_view =
+	dx::XM_PI / 4.0f;                      // default field of view is 90 degrees (PI/4 rads)
+const float default_aspect = 1.0f / 1.0f;  // default aspect ratio is 1:1
+const float default_near_dist = 1.0f;      // default near plane is 1m away from the camera
+const float default_far_dist = 1000.0f;    // default far plane is 1km away from the camera
 
 class Frustum
 {
@@ -202,11 +206,13 @@ public:
 	};
 
 	inline Frustum();
-	inline explicit Frustum(const float fieldOfView, const float aspect, const float nearDist, const float farDist);
+	inline explicit Frustum(const float fieldOfView, const float aspect, const float nearDist,
+		const float farDist);
 
 	virtual ~Frustum() = default;
 
-	inline void initialize(const float fieldOfView, const float aspect, const float nearDist, const float farDist);
+	inline void initialize(const float fieldOfView, const float aspect, const float nearDist,
+		const float farDist);
 
 	[[nodiscard]] inline bool contains(const Vec3& point) const;
 	[[nodiscard]] inline bool contains(const Vec3& point, float radius) const;
@@ -344,7 +350,8 @@ inline Vec3 Vec3::operator/(const float& rhs) const
 }
 
 // Vec4
-inline Vec4::Vec4(const float _x, const float _y, const float _z, const float _w): dx::XMFLOAT4(_x, _y, _z, _w)
+inline Vec4::Vec4(const float _x, const float _y, const float _z, const float _w)
+	: dx::XMFLOAT4(_x, _y, _z, _w)
 {}
 
 inline Vec4::Vec4(const Vec3& copy): Vec4(copy.x, copy.y, copy.z, 1.0f)
@@ -475,7 +482,8 @@ inline void Mat4x4::rotateAboutAxis(const Vec3& axis, const float radians)
 	store(dx::XMMatrixMultiply(load(), dx::XMMatrixRotationAxis(axis.load(), radians)));
 }
 
-inline void Mat4x4::buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians, const float rollRadians)
+inline void Mat4x4::buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians,
+	const float rollRadians)
 {
 	store(dx::XMMatrixRotationRollPitchYaw(pitchRadians, yawRadians, rollRadians));
 }
@@ -521,8 +529,8 @@ inline void Quaternion::getAxisAngle(Vec3& axis, float& angle) const
 	axis.store(loadedAxis);
 }
 
-inline void Quaternion::buildRotationYawPitchRoll(
-	const float yawRadians, const float pitchRadians, const float rollRadians)
+inline void Quaternion::buildRotationYawPitchRoll(const float yawRadians, const float pitchRadians,
+	const float rollRadians)
 {
 	store(dx::XMQuaternionRotationRollPitchYaw(pitchRadians, yawRadians, rollRadians));
 }
@@ -594,12 +602,14 @@ inline Frustum::Frustum()
 	initialize(_fieldOfView, _aspect, _nearDist, _farDist);
 }
 
-inline Frustum::Frustum(const float fieldOfView, const float aspect, const float nearDist, const float farDist)
+inline Frustum::Frustum(const float fieldOfView, const float aspect, const float nearDist,
+	const float farDist)
 {
 	initialize(fieldOfView, aspect, nearDist, farDist);
 }
 
-inline void Frustum::initialize(const float fieldOfView, const float aspect, const float nearDist, const float farDist)
+inline void Frustum::initialize(const float fieldOfView, const float aspect, const float nearDist,
+	const float farDist)
 {
 	_fieldOfView = fieldOfView;
 	_aspect = aspect;
@@ -625,7 +635,8 @@ inline void Frustum::initialize(const float fieldOfView, const float aspect, con
 
 	// now that we have all 8 points, we can create the 6 planes
 	Vec3 origin(0.0f, 0.0f, 0.0f);
-	_planes[static_cast<unsigned int>(Side::Near)].initialize(_nearClip[2], _nearClip[1], _nearClip[0]);
+	_planes[static_cast<unsigned int>(Side::Near)].initialize(_nearClip[2], _nearClip[1],
+		_nearClip[0]);
 	_planes[static_cast<unsigned int>(Side::Far)].initialize(_farClip[0], _farClip[1], _farClip[2]);
 	_planes[static_cast<unsigned int>(Side::Right)].initialize(_farClip[2], _farClip[1], origin);
 	_planes[static_cast<unsigned int>(Side::Top)].initialize(_farClip[1], _farClip[0], origin);
@@ -635,14 +646,14 @@ inline void Frustum::initialize(const float fieldOfView, const float aspect, con
 
 inline bool Frustum::contains(const Vec3& point) const
 {
-	return std::ranges::all_of(
-		_planes.begin(), _planes.end(), [&](const Plane& plane) { return plane.contains(point); });
+	return std::ranges::all_of(_planes.begin(), _planes.end(),
+		[&](const Plane& plane) { return plane.contains(point); });
 }
 
 inline bool Frustum::contains(const Vec3& point, float radius) const
 {
-	return std::ranges::all_of(
-		_planes.begin(), _planes.end(), [&](const Plane& plane) { return plane.contains(point, radius); });
+	return std::ranges::all_of(_planes.begin(), _planes.end(),
+		[&](const Plane& plane) { return plane.contains(point, radius); });
 }
 
 inline const Plane& Frustum::getSide(Side side) const

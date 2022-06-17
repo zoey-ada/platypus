@@ -173,10 +173,27 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 	this->context()->IASetIndexBuffer(index_buffer, DXGI_FORMAT::DXGI_FORMAT_R32_UINT, 0);
 
 	// render
-	this->context()->IASetPrimitiveTopology(
-		D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// D3D11_PRIMITIVE_TOPOLOGY::D3D10_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	switch (mesh->getPrimitiveType())
+	{
+	case PtPrimitiveType::TriangleList:
+	{
+		this->context()->IASetPrimitiveTopology(
+			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		break;
+	}
+	case PtPrimitiveType::TriangleStrip:
+	{
+		this->context()->IASetPrimitiveTopology(
+			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+		break;
+	}
+	}
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
+}
+
+std::shared_ptr<MeshResource> DirectXRenderer::createRectangle()
+{
+	return DirectXMeshLoader::createRectangle(this->shared_from_this());
 }
 
 void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
@@ -184,7 +201,7 @@ void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
 	this->_backgroundColor = backgroundColor;
 }
 
-void DirectXRenderer::setWorldTransform(const std::shared_ptr<Mat4x4>& /*world*/)
+void DirectXRenderer::setWorldTransform(const Mat4x4& /*world*/)
 {}
 
 std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path)

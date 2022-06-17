@@ -6,6 +6,7 @@
 
 class DirectXRenderer;
 class IRenderer;
+class MeshResource;
 
 class DirectXMeshLoader: public IResourceLoader
 {
@@ -20,8 +21,8 @@ public:
 	std::shared_ptr<Resource> load(const std::shared_ptr<IResourceStore>& store,
 		const std::string& filename) override;
 
-	// std::shared_ptr<Resource> CreateRectangle(std::shared_ptr<ResourceCache> cache,
-	// 	std::string name, const uint32_t height, const uint32_t width);
+	static std::shared_ptr<MeshResource> createRectangle(
+		const std::shared_ptr<DirectXRenderer>& renderer);
 
 protected:
 	uint8_t* allocate(unsigned int size) override;
