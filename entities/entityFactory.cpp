@@ -5,6 +5,7 @@
 #include <google/protobuf/message.h>
 
 #include "components/entityComponent.hpp"
+#include "components/movementComponent2d.hpp"
 #include "components/renderComponent2d.hpp"
 #include "components/renderComponent3d.hpp"
 #include "components/transformComponent2d.hpp"
@@ -12,10 +13,11 @@
 
 EntityFactory::EntityFactory()
 {
-	this->_entity_component_creators["RenderComponent_3d"] = createRenderComponent3d;
+	this->_entity_component_creators["MovementComponent_2d"] = createMovementComponent2d;
 	this->_entity_component_creators["RenderComponent_2d"] = createRenderComponent2d;
-	this->_entity_component_creators["TransformComponent_3d"] = createTransformComponent3d;
+	this->_entity_component_creators["RenderComponent_3d"] = createRenderComponent3d;
 	this->_entity_component_creators["TransformComponent_2d"] = createTransformComponent2d;
+	this->_entity_component_creators["TransformComponent_3d"] = createTransformComponent3d;
 }
 
 std::shared_ptr<Entity> EntityFactory::createEntity(const char* entity_resource)
