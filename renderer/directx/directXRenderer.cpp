@@ -9,7 +9,6 @@
 
 #include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
-#include "directXTexture.hpp"
 #include "directXVertexShader.hpp"
 
 DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
