@@ -2,7 +2,7 @@
 
 #include <memory>
 
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 class Entity;
 

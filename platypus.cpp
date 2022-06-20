@@ -11,22 +11,32 @@
 #include <renderer/rendererFactory.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <utilities/logging/logger.hpp>
+#include <utilities/time/systemClock.hpp>
 #include <views/iView.hpp>
 
 #include "baseGameLogic.hpp"
 #include "serviceProvider.hpp"
 
-Platypus::Platypus(const std::string& appName)
-	: _platform(PlatformFactory::getPlatform(appName.c_str()))
-{
-	ServiceProvider::registerPlatform(this->_platform);
-}
+Platypus::Platypus(const char* appName)
+	: Platypus::Platypus(appName, std::make_shared<SystemClock>())
+{}
+
+Platypus::Platypus(const char* appName, std::shared_ptr<IClock> clock)
+	: _platform(PlatformFactory::getPlatform(appName)), _clock(clock)
+{}
 
 bool Platypus::initialize()
 {
 	this->LoadSettings();
 
-	configureLogger(this->_settings.loggers());
+	configureLogger(this->_settings.loggers(), this->_clock);
+
+	if (this->_platform == nullptr || !this->_platform->initialize())
+	{
+		// log error
+		return false;
+	}
+	ServiceProvider::registerPlatform(this->_platform);
 
 	this->_window = this->_platform->createWindow(this->_settings.renderer_settings().resolution());
 	if (this->_window == nullptr)
@@ -58,7 +68,8 @@ bool Platypus::initialize()
 
 int Platypus::run()
 {
-	return this->_window->runLoop(this->getUpdateFunction(), this->getRenderFunction());
+	return this->_window->runLoop(this->getUpdateFunction(), this->getRenderFunction(),
+		this->_clock);
 }
 
 void Platypus::deinitialize()

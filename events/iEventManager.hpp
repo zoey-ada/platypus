@@ -3,7 +3,7 @@
 #include <functional>
 #include <string>
 
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 class IEvent;
 

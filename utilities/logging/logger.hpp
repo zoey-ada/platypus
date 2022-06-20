@@ -1,14 +1,16 @@
 #pragma once
 
-#include <platypus_proto/settings.hpp>
-#include "consoleLogger.hpp"
-#include "fileLogger.hpp"
-#include "verbosityDecorator.hpp"
-
 #include <functional>
 #include <iostream>
 #include <list>
 #include <mutex>
+
+#include <platypus_proto/settings.hpp>
+
+#include "../time/SystemClock.hpp"
+#include "consoleLogger.hpp"
+#include "fileLogger.hpp"
+#include "verbosityDecorator.hpp"
 
 using LoggerSettingsList = google::protobuf::RepeatedPtrField<platypus::LoggerSettings>;
 
@@ -58,12 +60,12 @@ public:
 		Logger::forEachLogger([&](auto l) { l->error(message, channel); });
 	}
 
-	static void configureLogger(const LoggerSettingsList& settings)
+	static void configureLogger(const LoggerSettingsList& settings, std::shared_ptr<IClock> clock)
 	{
 		Logger::_mutex.lock();
 
 		Logger::_settings = settings;
-
+		Logger::_clock = clock;
 		Logger::_logger = std::unique_ptr<Logger>(new (std::nothrow) Logger);
 
 		for (const auto& l : settings)
@@ -71,9 +73,11 @@ public:
 			std::shared_ptr<VerbosityLogger> logger = nullptr;
 
 			if (l.type() == "console")
-				logger = std::make_shared<VerbosityLogger>(std::make_shared<ConsoleLogger>());
+				logger = std::make_shared<VerbosityLogger>(
+					std::make_shared<ConsoleLogger>(Logger::_clock));
 			else if (l.type() == "file")
-				logger = std::make_shared<VerbosityLogger>(std::make_shared<FileLogger>(l.file_logger_settings()));
+				logger = std::make_shared<VerbosityLogger>(
+					std::make_shared<FileLogger>(l.file_logger_settings(), Logger::_clock));
 
 			if (l.level() == "debug")
 				logger->setVerbosity(VerbosityLevel::Debug);
@@ -98,6 +102,12 @@ public:
 	}
 
 private:
+	static std::shared_ptr<IClock> _clock;
+	static std::mutex _mutex;
+	static std::unique_ptr<Logger> _logger;
+	std::list<std::shared_ptr<VerbosityLogger>> _attachedLoggers;
+	static LoggerSettingsList _settings;
+
 	Logger() = default;
 	static Logger* get()
 	{
@@ -106,8 +116,10 @@ private:
 		if (!Logger::_logger)
 		{
 			std::cout << "creating logger" << std::endl;
+			Logger::_clock = std::make_shared<SystemClock>();
 			Logger::_logger = std::unique_ptr<Logger>(new (std::nothrow) Logger);
-			Logger::_logger->attachLogger(std::make_shared<VerbosityLogger>(std::make_shared<ConsoleLogger>()));
+			Logger::_logger->attachLogger(
+				std::make_shared<VerbosityLogger>(std::make_shared<ConsoleLogger>(Logger::_clock)));
 			Logger::_logger->_attachedLoggers.front()->setVerbosity(VerbosityLevel::Debug);
 		}
 
@@ -121,16 +133,11 @@ private:
 		for (const auto& l : Logger::get()->_attachedLoggers)
 			func(l);
 	}
-
-	static std::mutex _mutex;
-	static std::unique_ptr<Logger> _logger;
-	std::list<std::shared_ptr<VerbosityLogger>> _attachedLoggers;
-	static LoggerSettingsList _settings;
 };
 
-inline void configureLogger(const LoggerSettingsList& settings)
+inline void configureLogger(const LoggerSettingsList& settings, std::shared_ptr<IClock> clock)
 {
-	Logger::configureLogger(settings);
+	Logger::configureLogger(settings, clock);
 }
 
 inline void logDebug(std::string_view message)

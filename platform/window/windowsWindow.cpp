@@ -3,6 +3,7 @@
 #include <iostream>
 
 #include <utilities/encoding.hpp>
+#include <utilities/time/iClock.hpp>
 
 const int16_t max_console_history = 500;
 
@@ -71,7 +72,8 @@ bool WindowsWindow::initialize(const platypus::RectSize& dimensions)
 	return true;
 }
 
-int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc)
+int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc,
+	std::shared_ptr<IClock> clock)
 {
 	MSG msg;
 	ZeroMemory(&msg, sizeof(MSG));
@@ -84,7 +86,7 @@ int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc)
 		}
 		else
 		{
-			auto now = getCurrentTime();
+			auto now = clock->getCurrentTime();
 			auto delta = now - this->_prevTime;
 
 			updateFunc(now, delta);

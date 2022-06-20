@@ -4,10 +4,11 @@
 
 #include <platform/file_system/standardFileSystem.hpp>
 
-#include "../time.hpp"
+#include "../time/iClock.hpp"
 
-FileLogger::FileLogger(std::string_view rootDir, const bool useSingleFile)
-	: _mutex(), _rootDir(rootDir), _files(), _useSingleFile(useSingleFile)
+FileLogger::FileLogger(std::shared_ptr<IClock> clock, std::string_view rootDir,
+	const bool useSingleFile)
+	: _mutex(), _rootDir(rootDir), _files(), _useSingleFile(useSingleFile), _clock(clock)
 {}
 
 FileLogger::~FileLogger()
@@ -51,7 +52,7 @@ void FileLogger::log(std::string_view message, std::string_view channel)
 		cFile.file.open(this->_rootDir / (entry + ".log"), std::ios_base::app);
 	}
 
-	cFile.file << "[" << getCurrentTimestamp() << "] ";
+	cFile.file << "[" << this->_clock->getCurrentTimestamp() << "] ";
 
 	if (this->_useSingleFile && !channel.empty())
 		cFile.file << "<" << channel << "> ";

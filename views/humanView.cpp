@@ -8,7 +8,7 @@
 #include <renderer/screenElementScene.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <utilities/logging/logger.hpp>
-#include <utilities/time.hpp>
+#include <utilities/math/utils.hpp>
 
 HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache,
 	const platypus::Settings& settings)

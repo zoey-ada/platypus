@@ -6,7 +6,7 @@
 #include <Windows.h>
 
 #include <input/devices/raw_input/iRawInputDevice.hpp>
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 #include "iWindow.hpp"
 
@@ -18,7 +18,8 @@ public:
 	virtual ~WindowsWindow() = default;
 
 	bool initialize(const platypus::RectSize& dimensions) override;
-	int runLoop(UpdateFunction updateFunc, RenderFunction renderFunc) override;
+	int runLoop(UpdateFunction updateFunc, RenderFunction renderFunc,
+		std::shared_ptr<IClock> clock) override;
 
 	static LRESULT CALLBACK initialWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 	static LRESULT CALLBACK staticWndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

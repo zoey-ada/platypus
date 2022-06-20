@@ -1,17 +1,18 @@
 #include "consoleLogger.hpp"
 
-#include "../time.hpp"
-
 #include <iostream>
+
+#include "../time/iClock.hpp"
 
 void ConsoleLogger::log(std::string_view message)
 {
 	const std::lock_guard lock(this->_mutex);
-	std::cout << "[" << getCurrentTimestamp() << "] " << message << std::endl;
+	std::cout << "[" << this->_clock->getCurrentTimestamp() << "] " << message << std::endl;
 }
 
 void ConsoleLogger::log(std::string_view message, std::string_view channel)
 {
 	const std::lock_guard lock(this->_mutex);
-	std::cout << "[" << getCurrentTimestamp() << "] <" << channel << "> " << message << std::endl;
+	std::cout << "[" << this->_clock->getCurrentTimestamp() << "] <" << channel << "> " << message
+			  << std::endl;
 }

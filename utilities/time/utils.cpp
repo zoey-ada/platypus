@@ -1,25 +1,7 @@
-#include "time.hpp"
+#include "utils.hpp"
 
-#include <chrono>
 #include <cmath>
-
-#include "math/utils.hpp"
-
-namespace chrono = std::chrono;
-
-Milliseconds getCurrentTime()
-{
-	auto now = chrono::system_clock::now();
-	auto now_ms = chrono::time_point_cast<chrono::milliseconds>(now);
-
-	auto value = now_ms.time_since_epoch();
-	return static_cast<Milliseconds>(value.count());
-}
-
-std::string getCurrentTimestamp()
-{
-	return toTimestamp(getCurrentTime());
-}
+#include <ctime>
 
 std::string toTimestamp(const Milliseconds time)
 {
@@ -40,14 +22,4 @@ std::string toTimestamp(const Milliseconds time)
 	sprintf(timestamp + len, ".%03u", ms);
 
 	return std::string(timestamp).append(hrOffset).append(":").append(minOffset);
-}
-
-Milliseconds frametimeFromFrameRate(const platypus::Fraction& frame_rate)
-{
-	return frametimeFromFrameRate(resolveAndInvertFraction(frame_rate));
-}
-
-Milliseconds frametimeFromFrameRate(const float frame_rate)
-{
-	return static_cast<Milliseconds>(truncf(milliseconds_in_second * frame_rate));
 }

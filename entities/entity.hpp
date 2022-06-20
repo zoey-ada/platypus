@@ -4,7 +4,8 @@
 #include <map>
 
 #include <platypus_proto/entity.hpp>
-#include <utilities/time.hpp>
+
+#include <utilities/time/utils.hpp>
 
 using EntityId = uint64_t;
 extern const EntityId InvalidEntityId;
