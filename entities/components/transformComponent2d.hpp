@@ -9,6 +9,7 @@ namespace platypus
 class TransformComponent_2d;
 }
 
+class IEvent;
 class SceneNode;
 
 class TransformComponent2d: public EntityComponent
@@ -19,6 +20,8 @@ public:
 
 	[[nodiscard]] bool initialize(const std::shared_ptr<Message>& data) override;
 	void postInitialize() override;
+
+	void update(const Milliseconds delta) override;
 	[[nodiscard]] const char* name() const override { return "transform_component_2d"; }
 
 	[[nodiscard]] Vec2 getPosition() const;
@@ -39,6 +42,9 @@ public:
 	void setRotationClockwise(float radians);
 
 	[[nodiscard]] const Mat4x4& getTransform() const { return this->_transform; }
+
+	void registerEventSinks();
+	void onInput(std::shared_ptr<IEvent> event);
 
 private:
 	std::shared_ptr<platypus::TransformComponent_2d> _transform_data;

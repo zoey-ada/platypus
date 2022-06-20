@@ -2,6 +2,12 @@
 
 #include <platypus_proto/entity.hpp>
 
+#include <events/events/inputEvent.hpp>
+#include <events/iEventManager.hpp>
+#include <serviceProvider.hpp>
+
+#include "movementComponent2d.hpp"
+
 bool TransformComponent2d::initialize(const std::shared_ptr<Message>& data)
 {
 	this->_transform_data = std::dynamic_pointer_cast<platypus::TransformComponent_2d>(data);
@@ -11,6 +17,16 @@ bool TransformComponent2d::initialize(const std::shared_ptr<Message>& data)
 
 void TransformComponent2d::postInitialize()
 {}
+
+void TransformComponent2d::update(const Milliseconds /*delta*/)
+{
+	auto movement = _owner->getComponent<MovementComponent2d>("movement_component_2d").lock();
+	if (movement != nullptr)
+	{
+		this->setPosition(this->getPosition() + movement->getVelocity());
+		this->updateTransform();
+	}
+}
 
 Vec2 TransformComponent2d::getPosition() const
 {
