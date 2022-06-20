@@ -3,7 +3,7 @@
 #include <memory>
 
 #include <entities/entity.hpp>
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 #include "sceneNodeProperties.hpp"
 

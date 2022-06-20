@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../entities/entity.hpp"
-#include "../utilities/time.hpp"
-
 #include <cstdint>
+
+#include <entities/entity.hpp>
+#include <utilities/time/utils.hpp>
 
 enum class ViewType
 {

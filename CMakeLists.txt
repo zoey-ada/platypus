@@ -246,12 +246,19 @@ set(utilities_srcs
 	utilities/encoding.hpp
 	utilities/encoding.cpp
 	utilities/safeDelete.hpp
-	utilities/time.hpp
-	utilities/time.cpp
 	utilities/wildcardMatch.hpp
 	utilities/wildcardMatch.cpp
 )
 source_group(source\\utilities FILES ${utilities_srcs})
+
+set(utilities_time_srcs
+	utilities/time/iClock.hpp
+	utilities/time/systemClock.hpp
+	utilities/time/systemClock.cpp
+	utilities/time/utils.hpp
+	utilities/time/utils.cpp
+)
+source_group(source\\utilities\\time FILES ${utilities_time_srcs})
 
 set(utilities_common_srcs
 	utilities/common/ptExtent.hpp
@@ -312,6 +319,7 @@ set(all_srcs
 	${resource_cache_resources_srcs}
 	${resource_cache_stores_srcs}
 	${utilities_srcs}
+	${utilities_time_srcs}
 	${utilities_common_srcs}
 	${utilities_logging_srcs}
 	${utilities_math_srcs}

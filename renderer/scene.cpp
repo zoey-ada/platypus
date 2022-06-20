@@ -5,7 +5,7 @@
 #include <resource_cache/resourceCache.hpp>
 #include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 #include "iRenderer.hpp"
 #include "scene_nodes/alphaSceneNode.hpp"

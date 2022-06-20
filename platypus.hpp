@@ -8,6 +8,7 @@
 #include <platform/window/iWindow.hpp>
 
 class BaseGameLogic;
+class IClock;
 class IEventManager;
 class InputManager;
 class IPlatform;
@@ -17,7 +18,8 @@ class ResourceCache;
 class Platypus
 {
 public:
-	explicit Platypus(const std::string& appName);
+	explicit Platypus(const char* appName);
+	explicit Platypus(const char* appName, std::shared_ptr<IClock> clock);
 	virtual ~Platypus() = default;
 
 protected:
@@ -31,15 +33,16 @@ protected:
 	platypus::Settings DefaultSettings();
 
 	platypus::Settings _settings;
-	std::shared_ptr<IRenderer> _renderer;
-	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IRenderer> _renderer {nullptr};
+	std::shared_ptr<ResourceCache> _cache {nullptr};
 
 private:
-	std::shared_ptr<IPlatform> _platform;
-	std::shared_ptr<IWindow> _window;
-	std::shared_ptr<BaseGameLogic> _logic;
-	std::shared_ptr<InputManager> _input_manager;
-	std::shared_ptr<IEventManager> _event_manager;
+	std::shared_ptr<IClock> _clock {nullptr};
+	std::shared_ptr<IPlatform> _platform {nullptr};
+	std::shared_ptr<IWindow> _window {nullptr};
+	std::shared_ptr<BaseGameLogic> _logic {nullptr};
+	std::shared_ptr<InputManager> _input_manager {nullptr};
+	std::shared_ptr<IEventManager> _event_manager {nullptr};
 
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
 	[[nodiscard]] RenderFunction getRenderFunction() const;

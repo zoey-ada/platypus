@@ -4,7 +4,7 @@
 #include <memory>
 
 #include <entities/entity.hpp>
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 class IView;
 class EntityFactory;

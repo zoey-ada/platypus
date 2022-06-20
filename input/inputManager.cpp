@@ -10,6 +10,7 @@
 #include <platform/iPlatform.hpp>
 #include <serviceProvider.hpp>
 #include <utilities/logging/logger.hpp>
+#include <utilities/math/utils.hpp>
 
 #include "devices/iInputDevice.hpp"
 

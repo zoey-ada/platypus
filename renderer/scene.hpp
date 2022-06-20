@@ -6,7 +6,7 @@
 
 #include <entities/entity.hpp>
 #include <utilities/math/mathTypes.hpp>
-#include <utilities/time.hpp>
+#include <utilities/time/utils.hpp>
 
 struct AlphaSceneNode;
 class CameraNode;

@@ -1,13 +1,15 @@
 #pragma once
 
-#include "iLogger.hpp"
-
 #include <mutex>
 
-class ConsoleLogger : public ILogger
+#include "iLogger.hpp"
+
+class IClock;
+
+class ConsoleLogger: public ILogger
 {
 public:
-	ConsoleLogger() = default;
+	ConsoleLogger(std::shared_ptr<IClock> clock): _clock(clock) {};
 	virtual ~ConsoleLogger() = default;
 
 	void log(std::string_view message) override;
@@ -17,4 +19,5 @@ public:
 
 private:
 	std::mutex _mutex;
+	std::shared_ptr<IClock> _clock;
 };
