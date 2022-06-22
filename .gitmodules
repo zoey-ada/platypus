@@ -17,3 +17,7 @@
 [submodule "libraries/assimp"]
 	path = libraries/assimp
 	url = https://github.com/assimp/assimp.git
+[submodule "libraries/catch"]
+	path = libraries/catch
+	url = https://github.com/catchorg/Catch2.git
+	branch = "v2.x"

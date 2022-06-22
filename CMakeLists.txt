@@ -363,3 +363,5 @@ if(WIN32)
 			windowscodecs.lib
 	)
 endif()
+
+add_subdirectory(tests)
