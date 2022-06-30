@@ -7,8 +7,8 @@
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/pixelShaderResource.hpp>
 #include <resource_cache/resources/textureResource.hpp>
+#include <utilities/common/safeRelease.hpp>
 #include <utilities/logging/logger.hpp>
-#include <utilities/safeDelete.hpp>
 
 #include "../scene.hpp"
 #include "../scene_nodes/cameraNode.hpp"

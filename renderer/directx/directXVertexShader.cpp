@@ -6,8 +6,8 @@
 #include <exceptions/creationException.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/vertexShaderResource.hpp>
+#include <utilities/common/safeRelease.hpp>
 #include <utilities/logging/logger.hpp>
-#include <utilities/safeDelete.hpp>
 
 #include "../scene.hpp"
 #include "../scene_nodes/cameraNode.hpp"

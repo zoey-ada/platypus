@@ -3,7 +3,6 @@
 #include <Windows.h>
 
 #include <utilities/encoding.hpp>
-#include <utilities/safeDelete.hpp>
 
 #include "utils.hpp"
 

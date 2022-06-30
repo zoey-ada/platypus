@@ -1,154 +1,95 @@
-#include "directXTextureLoader.hpp"
+#include "wicTextureLoader.hpp"
 
 #include <d3d11.h>
 #include <dxgiformat.h>
-#include <wincodec.h>
 
-#include <exceptions/creationException.hpp>
-#include <renderer/directx/directXRenderer.hpp>
-#include <renderer/textRenderer.hpp>
-#include <resource_cache/stores/iResourceStore.hpp>
+#include <utilities/common/safeRelease.hpp>
 #include <utilities/logging/logger.hpp>
-#include <utilities/safeDelete.hpp>
 
-#include "../resourceCache.hpp"
-#include "../resources/textureResource.hpp"
+#include "../textRenderer.hpp"
+#include "directXRenderer.hpp"
 
-DirectXTextureLoader::DirectXTextureLoader(std::shared_ptr<ResourceCache> cache,
-	const std::shared_ptr<IRenderer>& renderer)
-	: _cache(std::move(cache))
+bool compareGuid::operator()(REFGUID rguid1, REFGUID rguid2) const
 {
-	this->_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
-	this->loadWicDxgiMappings();
+	if (rguid1.Data1 == rguid2.Data1)
+	{
+		if (rguid1.Data2 == rguid2.Data2)
+		{
+			return rguid1.Data3 < rguid2.Data3;
+		}
+
+		return rguid1.Data2 < rguid2.Data2;
+	}
+
+	return rguid1.Data1 < rguid2.Data1;
+}
+
+bool WicTextureLoader::initialize()
+{
+	HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
+		__uuidof(IWICImagingFactory), reinterpret_cast<LPVOID*>(&this->_wic_factory));
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to create WIC factory.", hr, "render");
+		return false;
+	}
+
 	this->loadSupportedWicMappings();
+	this->loadWicDxgiMappings();
+
+	return true;
 }
 
-std::shared_ptr<Resource> DirectXTextureLoader::load(const std::shared_ptr<IResourceStore>& store,
-	const std::string& filename)
+void WicTextureLoader::deinitialize()
 {
-	if (_cache == nullptr || store == nullptr || filename.empty() || _renderer == nullptr)
-		return nullptr;
-
-	auto size = store->getResourceSize(filename);
-	auto* buffer = new (std::nothrow) uint8_t[size];
-
-	if (buffer == nullptr)
-	{
-		// log res cache full...
-		return nullptr;
-	}
-
-	if (!store->getResource(filename, buffer))
-	{
-		// log error
-		return nullptr;
-	}
-
-	PtResourceData resource_data {};
-	resource_data.name = filename;
-	resource_data.buffer = buffer;
-	resource_data.size = size;
-	resource_data.store = store;
-	resource_data.cache = this->_cache;
-
-	Scoped<IWICBitmapFrameDecode> wic_frame = this->createTextureFromWic(buffer, size);
-	if (wic_frame.isNull())
-	{
-		// log error
-		return nullptr;
-	}
-
-	auto texture = this->createWicTexture(wic_frame.get());
-	if (texture == nullptr)
-	{
-		// log error
-		return nullptr;
-	}
-
-	// Create the sample state
-	D3D11_SAMPLER_DESC sampler_desc;
-	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampler_desc.MinLOD = 0;
-	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	auto sampler_state = this->_renderer->create()->newSamplerState(sampler_desc);
-
-	PtTextureData texture_data {};
-	texture_data.texture = (PtTexture)texture;
-	texture_data.sampler_state = (PtSamplerState)sampler_state;
-
-	return std::make_shared<TextureResource>(&resource_data, &texture_data);
+	safeRelease(&this->_wic_factory);
 }
 
-std::shared_ptr<Resource> DirectXTextureLoader::rasterizeText(
-	const std::shared_ptr<DirectXRenderer>& renderer, const char* message, const char* font_family,
-	const uint16_t point_size)
+ID3D11ShaderResourceView* WicTextureLoader::loadTexture(std::byte* image_data,
+	const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer)
 {
-	PtResourceData resource_data {};
-	resource_data.name = message;
-	resource_data.buffer = nullptr;
-	resource_data.size = 0;
-	resource_data.store = nullptr;
-	resource_data.cache = nullptr;
-
-	auto texture = createWicTexture(renderer, message, font_family, point_size);
-	if (texture == nullptr)
+	IWICBitmapFrameDecode* wic_frame = this->createTextureFromWic(image_data, data_size);
+	if (wic_frame != nullptr)
 	{
-		// log error
-		return nullptr;
+		auto texture = this->createWicTexture(wic_frame, renderer);
+		return texture;
 	}
 
-	// Create the sample state
-	D3D11_SAMPLER_DESC sampler_desc;
-	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	sampler_desc.AddressU = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampler_desc.AddressV = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampler_desc.AddressW = D3D11_TEXTURE_ADDRESS_MODE::D3D11_TEXTURE_ADDRESS_CLAMP;
-	sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-	sampler_desc.MinLOD = 0;
-	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
-
-	auto sampler_state = renderer->create()->newSamplerState(sampler_desc);
-
-	PtTextureData texture_data {};
-	texture_data.texture = (PtTexture)texture;
-	texture_data.sampler_state = (PtSamplerState)sampler_state;
-
-	return std::make_shared<TextureResource>(&resource_data, &texture_data);
+	return nullptr;
 }
 
-uint8_t* DirectXTextureLoader::allocate(unsigned int size)
-{
-	return this->_cache->allocate(size);
-}
-
-IWICBitmapFrameDecode* DirectXTextureLoader::createTextureFromWic(const uint8_t* image_data,
+IWICBitmapFrameDecode* WicTextureLoader::createTextureFromWic(std::byte* image_data,
 	const uint64_t image_data_size)
 {
-	Scoped<IWICStream> wic_stream = this->_renderer->create()->newWicStream();
-	wic_stream->InitializeFromMemory(const_cast<uint8_t*>(image_data),
-		static_cast<DWORD>(image_data_size));
+	auto wic_stream = this->newWicStream();
+	if (wic_stream == nullptr)
+	{
+		return nullptr;
+	}
 
-	Scoped<IWICBitmapDecoder> wic_decoder =
-		this->_renderer->create()->newWicBitmapDecoder(wic_stream.get());
+	wic_stream->InitializeFromMemory((uint8_t*)(image_data), static_cast<DWORD>(image_data_size));
+	auto wic_decoder = this->newWicBitmapDecoder(wic_stream);
+	safeRelease(&wic_stream);
+
+	if (wic_decoder == nullptr)
+	{
+		return nullptr;
+	}
 
 	IWICBitmapFrameDecode* frame = nullptr;
 	auto hr = wic_decoder->GetFrame(0, &frame);
 	if (FAILED(hr))
 	{
-		throw CreationException("frame", "Unable to get WIC frame from WIC bitmap decoder.");
+		logWarning("Unable to get WIC frame from WIC bitmap decoder.", hr, "render");
 	}
 
+	safeRelease(&wic_decoder);
 	return frame;
 }
 
-ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrameDecode* frame)
+ID3D11ShaderResourceView* WicTextureLoader::createWicTexture(IWICBitmapFrameDecode* frame,
+	const std::shared_ptr<DirectXRenderer>& renderer)
 {
 	IWICBitmapSource* source = frame;
 
@@ -157,25 +98,33 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 	auto hr = source->GetSize(&width, &height);
 	if (FAILED(hr) || width == 0 || height == 0)
 	{
-		throw CreationException("texture", "Unable to get size of texture from WIC frame");
+		logWarning("Unable to get size of texture from WIC frame", hr, "render");
+		return nullptr;
 	}
 
-	Scoped<IWICFormatConverter> format_converter =
-		this->_renderer->create()->newWicFormatConverter();
-	hr = format_converter->Initialize(source, GUID_WICPixelFormat32bppRGBA,
-		WICBitmapDitherType::WICBitmapDitherTypeNone, nullptr, 0.0,
-		WICBitmapPaletteType::WICBitmapPaletteTypeCustom);
-
-	if (FAILED(hr) || width == 0 || height == 0)
+	IWICFormatConverter* format_converter = this->newWicFormatConverter();
+	if (format_converter == nullptr)
 	{
-		throw CreationException("texture", "Unable to configure format converter");
+		return nullptr;
+	}
+
+	hr = format_converter->Initialize(source, GUID_WICPixelFormat32bppRGBA, WICBitmapDitherTypeNone,
+		nullptr, 0.0, WICBitmapPaletteTypeCustom);
+
+	safeRelease(&format_converter);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to convert image format", hr, "render");
+		return nullptr;
 	}
 
 	WICPixelFormatGUID pixel_format = GUID_WICPixelFormatUndefined;
 	hr = source->GetPixelFormat(&pixel_format);
 	if (FAILED(hr) || pixel_format == GUID_WICPixelFormatUndefined)
 	{
-		throw CreationException("texture", "Unable to get pixel format of texture from WIC frame");
+		logWarning("Unable to get pixel format of texture from WIC frame", hr, "render");
+		return nullptr;
 	}
 	else if (pixel_format != GUID_WICPixelFormat32bppRGBA)
 	{
@@ -183,7 +132,8 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 		hr = WICConvertBitmapSource(GUID_WICPixelFormat32bppRGBA, source, &converted);
 		if (FAILED(hr))
 		{
-			throw CreationException("texture", "Unable to convert to 32bit RGBA pixel format.");
+			logWarning("Unable to convert to 32bit RGBA pixel format", hr, "render");
+			return nullptr;
 		}
 		source = converted;
 		pixel_format = GUID_WICPixelFormat32bppRGBA;
@@ -192,15 +142,15 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 	DXGI_FORMAT format = this->toDxgiFormat(pixel_format);
 	if (format == DXGI_FORMAT_UNKNOWN)
 	{
-		throw CreationException("texture",
-			"Unable to convert WIC pixel format to DXGI pixel format");
+		logWarning("Unable to convert WIC pixel format to DXGI pixel format", "render");
+		return nullptr;
 	}
 
-	if (!this->_renderer->doesFormatSupport(format,
-			D3D11_FORMAT_SUPPORT::D3D11_FORMAT_SUPPORT_TEXTURE2D))
+	if (!renderer->doesFormatSupport(format, D3D11_FORMAT_SUPPORT::D3D11_FORMAT_SUPPORT_TEXTURE2D))
 	{
-		throw CreationException("texture", "The pixel format of the texture is not supported");
-		// // Fallback to RGBA 32-bit format which is supported by all devices
+		logWarning("The pixel format of the texture is not supported", "render");
+		return nullptr;
+		// Fallback to RGBA 32-bit format which is supported by all devices
 		// memcpy(&convertGUID, &GUID_WICPixelFormat32bppRGBA, sizeof(WICPixelFormatGUID));
 		// format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		// bpp = 32;
@@ -209,8 +159,8 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 	uint64_t bpp = this->getBitsPerPixel(pixel_format);
 	if (bpp == 0)
 	{
-		throw CreationException("texture",
-			"Unable to determine bits per pixel of texture from pixel format");
+		logWarning("Unable to determine bits per pixel of texture from pixel format", "render");
+		return nullptr;
 	}
 
 	// stride => the number of bytes in a single row of the image
@@ -248,16 +198,16 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(IWICBitmapFrame
 	image_data.SysMemPitch = stride;
 	image_data.SysMemSlicePitch = image_data_size;
 
-	auto texture = this->_renderer->create()->newTexture(desc, image_data);
+	auto texture = renderer->create()->newTexture(desc, image_data);
 
 	// generate mipmaps with texture_view
 
 	return texture;
 }
 
-ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(
-	const std::shared_ptr<DirectXRenderer>& renderer, const char* message, const char* font_family,
-	const uint16_t point_size)
+ID3D11ShaderResourceView* WicTextureLoader::createTextTexture(const char* message,
+	const char* font_family, const uint16_t point_size,
+	const std::shared_ptr<DirectXRenderer>& renderer)
 {
 	TextRenderer text_renderer;
 	if (!text_renderer.initialize() || !text_renderer.loadFont(font_family) ||
@@ -294,7 +244,7 @@ ID3D11ShaderResourceView* DirectXTextureLoader::createWicTexture(
 	return texture;
 }
 
-DXGI_FORMAT DirectXTextureLoader::toDxgiFormat(WICPixelFormatGUID& pixel_format) const
+DXGI_FORMAT WicTextureLoader::toDxgiFormat(WICPixelFormatGUID& pixel_format) const
 {
 	try
 	{
@@ -306,47 +256,48 @@ DXGI_FORMAT DirectXTextureLoader::toDxgiFormat(WICPixelFormatGUID& pixel_format)
 	}
 }
 
-uint64_t DirectXTextureLoader::getBitsPerPixel(const WICPixelFormatGUID& pixel_format) const
+uint64_t WicTextureLoader::getBitsPerPixel(const WICPixelFormatGUID& pixel_format) const
 {
-	try
-	{
-		Scoped<IWICComponentInfo> component_info =
-			this->_renderer->create()->newWicComponentInfo(pixel_format);
-
-		WICComponentType type = WICComponentType::WICCOMPONENTTYPE_FORCE_DWORD;
-		auto hr = component_info->GetComponentType(&type);
-		if (FAILED(hr) || type != WICComponentType::WICPixelFormat)
-		{
-			throw CreationException("texture",
-				"Unable to get component info type for pixel format");
-		}
-
-		Scoped<IWICPixelFormatInfo> pixel_format_info = nullptr;
-		hr = component_info->QueryInterface(__uuidof(IWICPixelFormatInfo),
-			reinterpret_cast<void**>(&pixel_format_info));
-		if (FAILED(hr))
-		{
-			throw CreationException("texture",
-				"Unable to get pixel format info from component info");
-		}
-
-		UINT bpp = 0;
-		hr = pixel_format_info->GetBitsPerPixel(&bpp);
-		if (FAILED(hr))
-		{
-			throw CreationException("texture",
-				"Unable to get bit per pixel from pixel format info");
-		}
-
-		return bpp;
-	}
-	catch (const std::exception&)
+	IWICComponentInfo* component_info = this->newWicComponentInfo(pixel_format);
+	if (component_info == nullptr)
 	{
 		return 0;
 	}
+
+	WICComponentType type = WICComponentType::WICCOMPONENTTYPE_FORCE_DWORD;
+	auto hr = component_info->GetComponentType(&type);
+	if (FAILED(hr) || type != WICComponentType::WICPixelFormat)
+	{
+		logWarning("Unable to get component info type for pixel format", hr, "render");
+		safeRelease(&component_info);
+		return 0;
+	}
+
+	IWICPixelFormatInfo* pixel_format_info = nullptr;
+	hr = component_info->QueryInterface(__uuidof(IWICPixelFormatInfo),
+		reinterpret_cast<void**>(&pixel_format_info));
+
+	safeRelease(&component_info);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to get pixel format info from component info", hr, "render");
+		return 0;
+	}
+
+	UINT bpp = 0;
+	hr = pixel_format_info->GetBitsPerPixel(&bpp);
+	if (FAILED(hr))
+	{
+		logWarning("Unable to get bit per pixel from pixel format info", hr, "render");
+	}
+
+	safeRelease(&pixel_format_info);
+
+	return bpp;
 }
 
-void DirectXTextureLoader::loadWicDxgiMappings()
+void WicTextureLoader::loadWicDxgiMappings()
 {
 	auto& mappings = this->_wic_to_dxgi_format_mappings;
 	mappings[GUID_WICPixelFormat128bppRGBAFloat] = DXGI_FORMAT_R32G32B32A32_FLOAT;
@@ -372,7 +323,7 @@ void DirectXTextureLoader::loadWicDxgiMappings()
 #endif
 }
 
-void DirectXTextureLoader::loadSupportedWicMappings()
+void WicTextureLoader::loadSupportedWicMappings()
 {
 	auto& mappings = this->_wic_format_to_supported_format_mappings;
 
@@ -457,4 +408,82 @@ void DirectXTextureLoader::loadSupportedWicMappings()
 	// DXGI_FORMAT_R16G16B16A16_FLOAT
 	mappings[GUID_WICPixelFormat64bppPRGBAHalf] = GUID_WICPixelFormat64bppRGBAHalf;
 #endif
+}
+
+IWICStream* WicTextureLoader::newWicStream() const
+{
+	if (this->_wic_factory == nullptr)
+	{
+		logWarning("Unable to aquire WIC factory to create WIC stream.", "render");
+		return nullptr;
+	}
+
+	IWICStream* stream = nullptr;
+	auto hr = this->_wic_factory->CreateStream(&stream);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to create  WIC stream", hr, "render");
+	}
+
+	return stream;
+}
+
+IWICBitmapDecoder* WicTextureLoader::newWicBitmapDecoder(IWICStream* stream) const
+{
+	if (this->_wic_factory == nullptr)
+	{
+		logWarning("Unable to aquire WIC factory to create WIC bitmap decoder.", "render");
+		return nullptr;
+	}
+
+	IWICBitmapDecoder* decoder = nullptr;
+	auto hr = this->_wic_factory->CreateDecoderFromStream(stream, 0,
+		WICDecodeOptions::WICDecodeMetadataCacheOnDemand, &decoder);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to create  WIC bitmap decoder", hr, "render");
+	}
+
+	return decoder;
+}
+
+IWICComponentInfo* WicTextureLoader::newWicComponentInfo(
+	const WICPixelFormatGUID& pixel_format) const
+{
+	if (this->_wic_factory == nullptr)
+	{
+		logWarning("Unable to aquire WIC factory to create WIC component info.", "render");
+		return nullptr;
+	}
+
+	IWICComponentInfo* component_info = nullptr;
+	auto hr = this->_wic_factory->CreateComponentInfo(pixel_format, &component_info);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to create  WIC component info", hr, "render");
+	}
+
+	return component_info;
+}
+
+IWICFormatConverter* WicTextureLoader::newWicFormatConverter() const
+{
+	if (this->_wic_factory == nullptr)
+	{
+		logWarning("Unable to aquire WIC factory to create WIC format converter.", "render");
+		return nullptr;
+	}
+
+	IWICFormatConverter* converter = nullptr;
+	auto hr = this->_wic_factory->CreateFormatConverter(&converter);
+
+	if (FAILED(hr))
+	{
+		logWarning("Unable to create  WIC format converter", hr, "render");
+	}
+
+	return converter;
 }

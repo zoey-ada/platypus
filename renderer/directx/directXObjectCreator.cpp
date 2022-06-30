@@ -1,9 +1,16 @@
 #include "directXObjectCreator.hpp"
 
+#include <vector>
+
 #include <exceptions/creationException.hpp>
+#include <utilities/common/safeRelease.hpp>
+#include <utilities/logging/logger.hpp>
 #include <utilities/safeDelete.hpp>
 
+#include "../graphics.hpp"
 #include "directXRenderer.hpp"
+#include "directXShaderLoader.hpp"
+#include "wicTextureLoader.hpp"
 
 bool DirectXObjectCreator::initialize(const std::shared_ptr<DirectXRenderer>& renderer)
 {
@@ -12,70 +19,63 @@ bool DirectXObjectCreator::initialize(const std::shared_ptr<DirectXRenderer>& re
 
 	this->_renderer = renderer;
 
-	IWICImagingFactory* factory = nullptr;
-	HRESULT hr = CoCreateInstance(CLSID_WICImagingFactory, nullptr, CLSCTX_INPROC_SERVER,
-		__uuidof(IWICImagingFactory), reinterpret_cast<LPVOID*>(&factory));
-
-	if (FAILED(hr))
-	{
-		return false;
-	}
-
-	this->_wic_factory = toSharedPtr(&factory);
-
-	return true;
-}
-
-ID3D11VertexShader* DirectXObjectCreator::newVertexShader(ID3DBlob* shader_bytecode) const
-{
-	auto* device = this->_renderer->_device;
-	if (device == nullptr)
-		throw CreationException("vertex shader", "Unable to aquire D3D device.");
-
-	ID3D11VertexShader* shader = nullptr;
-	auto hr = device->CreateVertexShader(shader_bytecode->GetBufferPointer(),
-		shader_bytecode->GetBufferSize(), nullptr, &shader);
-
-	if (FAILED(hr))
-		throw CreationException("vertex shader",
-			"D3D device was unable to create vertex shader object.");
-
-	return shader;
-}
-
-ID3D11PixelShader* DirectXObjectCreator::newPixelShader(ID3DBlob* shader_bytecode) const
-{
-	auto* device = this->_renderer->_device;
-	if (device == nullptr)
-		throw CreationException("pixel shader", "Unable to aquire D3D device.");
-
-	ID3D11PixelShader* shader = nullptr;
-	auto hr = device->CreatePixelShader(shader_bytecode->GetBufferPointer(),
-		shader_bytecode->GetBufferSize(), nullptr, &shader);
-
-	if (FAILED(hr))
-		throw CreationException("pixel shader",
-			"D3D device was unable to create pixel shader object.");
-
-	return shader;
+	this->_texture_loader = std::make_shared<WicTextureLoader>();
+	return this->_texture_loader->initialize();
 }
 
 ID3D11InputLayout* DirectXObjectCreator::newInputLayout(ID3DBlob* shader_bytecode,
 	const D3D11_INPUT_ELEMENT_DESC input_element_description[],
-	const unsigned int number_of_elements) const
+	const uint64_t number_of_elements) const
 {
 	auto* device = this->_renderer->_device;
 	if (device == nullptr)
 		throw CreationException("input layout", "Unable to aquire D3D device.");
 
 	ID3D11InputLayout* input_layout = nullptr;
-	auto hr = device->CreateInputLayout(input_element_description, number_of_elements,
+	auto hr = device->CreateInputLayout(input_element_description, (UINT)number_of_elements,
 		shader_bytecode->GetBufferPointer(), shader_bytecode->GetBufferSize(), &input_layout);
 
 	if (FAILED(hr))
 		throw CreationException("input layout",
 			"D3D device was unable to create input layout object.");
 
+	return input_layout;
+}
+
+DXGI_FORMAT toDirectXFormat(const PtInputFormat format)
+{
+	static std::map<PtInputFormat, DXGI_FORMAT> conversions {
+		{PtInputFormat::Vec1_32bit_float, DXGI_FORMAT_R32_FLOAT},
+		{PtInputFormat::Vec2_32bit_float, DXGI_FORMAT_R32G32_FLOAT},
+		{PtInputFormat::Vec3_32bit_float, DXGI_FORMAT_R32G32B32_FLOAT}};
+
+	return conversions.at(format);
+}
+
+[[nodiscard]] ID3D11InputLayout* DirectXObjectCreator::newInputLayout(std::byte* shader_data,
+	const uint64_t data_size, const PtInputLayoutDesc* layout_elements,
+	const uint64_t element_count) const
+{
+	ID3DBlob* bytecode = nullptr;
+	if (!loadShaderFromBuffer(shader_data, data_size, &bytecode))
+	{
+		logWarning("Unable to load vertex shader data to bytecode", "render");
+		return nullptr;
+	}
+
+	std::vector<D3D11_INPUT_ELEMENT_DESC> input_desc(element_count);
+
+	for (int i = 0; i < element_count; ++i)
+	{
+		input_desc[i] = {layout_elements[i].name, layout_elements[i].index,
+			toDirectXFormat(layout_elements[i].format), 0, D3D11_APPEND_ALIGNED_ELEMENT,
+			D3D11_INPUT_PER_VERTEX_DATA, 0};
+	}
+
+	ID3D11InputLayout* input_layout =
+		this->newInputLayout(bytecode, input_desc.data(), element_count);
+
+	safeRelease(&bytecode);
 	return input_layout;
 }
 
@@ -110,18 +110,56 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	return buffer;
 }
 
+[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(const graphics::Vertex* vertices,
+	const uint64_t vertex_count) const
+{
+	D3D11_BUFFER_DESC vertex_buffer_desc {};
+	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	vertex_buffer_desc.ByteWidth =
+		static_cast<UINT>(sizeof(graphics::DrawableVertex) * vertex_count);
+	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertex_data {};
+	auto drawable_verts = drawable(vertices, vertex_count);
+	vertex_data.pSysMem = drawable_verts.data();
+
+	auto vertex_buffer = this->newBuffer(vertex_buffer_desc, vertex_data);
+	return vertex_buffer;
+}
+
+[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newIndexBuffer(const uint32_t* indices,
+	const uint64_t index_count) const
+{
+	D3D11_BUFFER_DESC index_buffer_desc {};
+	index_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(uint32_t) * index_count);
+	index_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA index_data {};
+	index_data.pSysMem = &indices[0];
+
+	auto index_buffer = this->newBuffer(index_buffer_desc, index_data);
+	return index_buffer;
+}
+
 ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const D3D11_TEXTURE2D_DESC& texture_desc,
 	const D3D11_SUBRESOURCE_DATA texture_data) const
 {
 	auto* device = this->_renderer->_device;
 	if (device == nullptr)
-		throw CreationException("buffer", "Unable to aquire D3D device.");
+	{
+		logWarning("Unable to aquire D3D device to create texture.", "render");
+		return nullptr;
+	}
 
 	ID3D11Texture2D* texture = nullptr;
 	auto hr = device->CreateTexture2D(&texture_desc, &texture_data, &texture);
 
 	if (FAILED(hr))
-		throw CreationException("texture", "D3D device was unable to create texture object.");
+	{
+		logWarning("Unable to create texture 2d", hr, "render");
+		return nullptr;
+	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shader_res_desc = {};
 	shader_res_desc.Format = texture_desc.Format;
@@ -133,9 +171,28 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const D3D11_TEXTURE2D
 	hr = device->CreateShaderResourceView(texture, &shader_res_desc, &texture_view);
 
 	if (FAILED(hr))
-		throw CreationException("texture", "D3D device was unable to create texture view object.");
+	{
+		logWarning("Unable to create texture view", hr, "render");
+	}
 
+	safeRelease(&texture);
 	return texture_view;
+}
+
+ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(std::byte* texture_data,
+	const uint64_t data_size)
+{
+	auto texture = this->_texture_loader->loadTexture(texture_data, data_size, this->_renderer);
+	return texture;
+}
+
+ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
+	const char* font_family, const uint16_t point_size)
+{
+	auto texture =
+		this->_texture_loader->createTextTexture(message, font_family, point_size, this->_renderer);
+
+	return texture;
 }
 
 ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
@@ -155,64 +212,37 @@ ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
 	return sampler_state;
 }
 
-IWICStream* DirectXObjectCreator::newWicStream() const
+D3D11_TEXTURE_ADDRESS_MODE toDxAddressMode(const PtAddressOverscanMode overscan_mode)
 {
-	if (this->_wic_factory == nullptr)
-		throw CreationException("wic_stream", "Unable to aquire WIC factory.");
-
-	IWICStream* stream = nullptr;
-	auto hr = this->_wic_factory->CreateStream(&stream);
-
-	if (FAILED(hr))
-		throw CreationException("wic_stream",
-			"WIC factory was unable to create WIC stream object.");
-
-	return stream;
+	switch (overscan_mode)
+	{
+	case PtAddressOverscanMode::Border:
+		return D3D11_TEXTURE_ADDRESS_BORDER;
+	case PtAddressOverscanMode::Mirror:
+		return D3D11_TEXTURE_ADDRESS_MIRROR;
+	case PtAddressOverscanMode::MirrorOnce:
+		return D3D11_TEXTURE_ADDRESS_MIRROR_ONCE;
+	case PtAddressOverscanMode::Wrap:
+		return D3D11_TEXTURE_ADDRESS_WRAP;
+	case PtAddressOverscanMode::Clamp:
+	default:
+		return D3D11_TEXTURE_ADDRESS_CLAMP;
+	}
 }
 
-IWICBitmapDecoder* DirectXObjectCreator::newWicBitmapDecoder(IWICStream* stream) const
+ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
+	const PtAddressOverscanMode overscan_mode) const
 {
-	if (this->_wic_factory == nullptr)
-		throw CreationException("wic_bitmap_decoder", "Unable to aquire WIC factory.");
+	D3D11_SAMPLER_DESC sampler_desc;
+	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
+	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.AddressU = toDxAddressMode(overscan_mode);
+	sampler_desc.AddressV = toDxAddressMode(overscan_mode);
+	sampler_desc.AddressW = toDxAddressMode(overscan_mode);
+	sampler_desc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	sampler_desc.MinLOD = 0;
+	sampler_desc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	IWICBitmapDecoder* decoder = nullptr;
-	auto hr = this->_wic_factory->CreateDecoderFromStream(stream, 0,
-		WICDecodeOptions::WICDecodeMetadataCacheOnDemand, &decoder);
-
-	if (FAILED(hr))
-		throw CreationException("wic_bitmap_decoder",
-			"WIC factory was unable to create WIC bitmap decoder object.");
-
-	return decoder;
-}
-
-IWICComponentInfo* DirectXObjectCreator::newWicComponentInfo(
-	const WICPixelFormatGUID& pixel_format) const
-{
-	if (this->_wic_factory == nullptr)
-		throw CreationException("wic_component_info", "Unable to aquire WIC factory.");
-
-	IWICComponentInfo* component_info = nullptr;
-	auto hr = this->_wic_factory->CreateComponentInfo(pixel_format, &component_info);
-
-	if (FAILED(hr))
-		throw CreationException("wic_component_info",
-			"WIC factory was unable to create WIC component info object.");
-
-	return component_info;
-}
-
-IWICFormatConverter* DirectXObjectCreator::newWicFormatConverter() const
-{
-	if (this->_wic_factory == nullptr)
-		throw CreationException("wic_stream", "Unable to aquire WIC factory.");
-
-	IWICFormatConverter* converter = nullptr;
-	auto hr = this->_wic_factory->CreateFormatConverter(&converter);
-
-	if (FAILED(hr))
-		throw CreationException("wic_format_converter",
-			"WIC factory was unable to create WIC format converter object.");
-
-	return converter;
+	auto sampler_state = this->_renderer->create()->newSamplerState(sampler_desc);
+	return sampler_state;
 }
