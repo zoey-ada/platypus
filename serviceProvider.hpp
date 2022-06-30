@@ -6,6 +6,7 @@
 class IEventManager;
 class IPlatform;
 class IWindow;
+class IRenderer;
 
 #define registrableService(service_type)                                         \
                                                                                  \
@@ -33,6 +34,7 @@ class ServiceProvider
 	registrableService(Platform);
 	registrableService(Window);
 	registrableService(EventManager);
+	registrableService(Renderer);
 
 public:
 	inline static void unregisterAllServices()
@@ -40,5 +42,6 @@ public:
 		ServiceProvider::_Platform.reset();
 		ServiceProvider::_Window.reset();
 		ServiceProvider::_EventManager.reset();
+		ServiceProvider::_Renderer.reset();
 	}
 };

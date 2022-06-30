@@ -6,18 +6,21 @@
 
 class IRenderer;
 
-class DirectXPixelShaderLoader: public IResourceLoader
+class PixelShaderLoader: public IResourceLoader
 {
 public:
-	explicit DirectXPixelShaderLoader(std::shared_ptr<ResourceCache> cache,
+	explicit PixelShaderLoader(std::shared_ptr<ResourceCache> cache,
 		std::shared_ptr<IRenderer> renderer);
-	virtual ~DirectXPixelShaderLoader() = default;
+	virtual ~PixelShaderLoader() = default;
 
-	inline std::string getPattern() override { return std::string(".*\\.(cso)|(hlsl)"); }
-	inline ResourceType getType() override { return ResourceType::PixelShader; }
+	[[nodiscard]] inline ResourceType getType() override { return ResourceType::PixelShader; }
+	[[nodiscard]] inline std::string getPattern() override
+	{
+		return std::string(".*\\.(cso)|(hlsl)");
+	}
 
-	std::shared_ptr<Resource> load(const std::shared_ptr<IResourceStore>& store,
-		const std::string& filename) override;
+	[[nodiscard]] std::shared_ptr<Resource> load(const char* resource_id, const char* store_id,
+		std::byte* resource_data, const uint64_t data_size) override;
 
 protected:
 	uint8_t* allocate(unsigned int size) override;

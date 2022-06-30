@@ -50,7 +50,15 @@ bool compileShaderFromFile(const std::string& filename, const D3D_SHADER_MACRO* 
 }
 
 bool compileShaderFromBuffer(const std::string& filename, uint8_t* buffer, const uint64_t size,
-	const D3D_SHADER_MACRO* defines, LPCSTR entry_point, std::string shader_compiler,
+	const D3D_SHADER_MACRO* defines, LPCSTR entry_point, const ShaderType shader_compiler,
+	ID3DBlob** bytecode)
+{
+	return compileShaderFromBuffer(filename, (std::byte*)buffer, size, defines, entry_point,
+		shader_compiler, bytecode);
+}
+
+bool compileShaderFromBuffer(const std::string& filename, std::byte* buffer, const uint64_t size,
+	const D3D_SHADER_MACRO* defines, LPCSTR entry_point, const ShaderType shader_compiler,
 	ID3DBlob** bytecode)
 {
 	UINT compiler_flags = D3DCOMPILE_ENABLE_STRICTNESS | D3DCOMPILE_PACK_MATRIX_COLUMN_MAJOR;
@@ -61,9 +69,9 @@ bool compileShaderFromBuffer(const std::string& filename, uint8_t* buffer, const
 
 	ID3DBlob* error_blob = nullptr;
 
-	HRESULT hr =
-		D3DCompile(buffer, size, filename.c_str(), defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			entry_point, shader_compiler.c_str(), compiler_flags, 0, bytecode, &error_blob);
+	HRESULT hr = D3DCompile(buffer, size, filename.c_str(), defines,
+		D3D_COMPILE_STANDARD_FILE_INCLUDE, entry_point, compilers.at(shader_compiler).c_str(),
+		compiler_flags, 0, bytecode, &error_blob);
 
 	if (FAILED(hr))
 	{
@@ -93,6 +101,11 @@ bool loadShaderFromFile(const std::string& filename, ID3DBlob** bytecode)
 }
 
 bool loadShaderFromBuffer(uint8_t* buffer, const uint64_t size, ID3DBlob** bytecode)
+{
+	return loadShaderFromBuffer((std::byte*)buffer, size, bytecode);
+}
+
+bool loadShaderFromBuffer(std::byte* buffer, const uint64_t size, ID3DBlob** bytecode)
 {
 	if (FAILED(D3DCreateBlob(size, bytecode)))
 	{
@@ -131,10 +144,9 @@ bool loadShaderBytecode(const std::string& filename, uint8_t* buffer, const uint
 	}
 	else
 	{
-		auto compiler = compilers.at(type);
-
 		if (buffer == nullptr)
 		{
+			auto compiler = compilers.at(type);
 			if (!compileShaderFromFile(filename, nullptr, "main", compiler, bytecode))
 			{
 				// log error
@@ -143,8 +155,7 @@ bool loadShaderBytecode(const std::string& filename, uint8_t* buffer, const uint
 		}
 		else
 		{
-			if (!compileShaderFromBuffer(filename, buffer, size, nullptr, "main", compiler,
-					bytecode))
+			if (!compileShaderFromBuffer(filename, buffer, size, nullptr, "main", type, bytecode))
 			{
 				// log error
 				return false;

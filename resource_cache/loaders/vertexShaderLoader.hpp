@@ -6,18 +6,21 @@
 
 class IRenderer;
 
-class DirectXVertexShaderLoader: public IResourceLoader
+class VertexShaderLoader: public IResourceLoader
 {
 public:
-	explicit DirectXVertexShaderLoader(std::shared_ptr<ResourceCache> cache,
+	explicit VertexShaderLoader(std::shared_ptr<ResourceCache> cache,
 		std::shared_ptr<IRenderer> renderer);
-	virtual ~DirectXVertexShaderLoader() = default;
+	virtual ~VertexShaderLoader() = default;
 
-	inline std::string getPattern() override { return std::string(".*\\.(cso)|(hlsl)"); }
-	inline ResourceType getType() override { return ResourceType::VertexShader; }
+	[[nodiscard]] inline ResourceType getType() override { return ResourceType::VertexShader; }
+	[[nodiscard]] inline std::string getPattern() override
+	{
+		return std::string(".*\\.(cso)|(hlsl)");
+	}
 
-	std::shared_ptr<Resource> load(const std::shared_ptr<IResourceStore>& store,
-		const std::string& filename) override;
+	[[nodiscard]] std::shared_ptr<Resource> load(const char* resource_id, const char* store_id,
+		std::byte* resource_data, const uint64_t data_size) override;
 
 protected:
 	uint8_t* allocate(unsigned int size) override;

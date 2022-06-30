@@ -37,7 +37,7 @@ bool RectangleNode::initialize(const std::shared_ptr<Scene>& scene)
 	auto cache = scene->cache();
 	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1"))
 	{
-		auto rect = scene->renderer()->createRectangle();
+		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle);
 		if (!cache->addResource(rect))
 		{
 			// log error about creating sprite resource

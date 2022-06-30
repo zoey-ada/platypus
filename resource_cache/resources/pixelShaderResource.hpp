@@ -4,7 +4,7 @@
 
 #include "resource.hpp"
 
-struct PtPixelShaderData
+struct PtPixelShaderData: public PtResourceData
 {
 	PtPixelShader pixel_shader;
 };
@@ -12,13 +12,13 @@ struct PtPixelShaderData
 class PixelShaderResource: public Resource
 {
 public:
-	explicit PixelShaderResource(PtResourceData* resource_data, PtPixelShaderData* shader_data);
-	virtual ~PixelShaderResource() = default;
+	explicit PixelShaderResource(PtPixelShaderData* resource_data);
+	virtual ~PixelShaderResource();
 
-	ResourceType type() const override { return ResourceType::PixelShader; }
+	[[nodiscard]] ResourceType type() const override { return ResourceType::PixelShader; }
 
-	PtPixelShader getShader() const { return this->_shader; }
+	[[nodiscard]] PtPixelShader getShader() const { return this->_shader; }
 
 private:
-	PtPixelShader _shader;
+	PtPixelShader _shader {nullptr};
 };

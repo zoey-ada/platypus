@@ -3,11 +3,10 @@
 #include <vector>
 
 #include <renderer/graphics.hpp>
-#include <utilities/math/mathTypes.hpp>
 
 #include "resource.hpp"
 
-struct PtMeshResourceData
+struct PtMeshResourceData: public PtResourceData
 {
 	PtPrimitiveType primative;
 	PtVertexBuffer vertex_buffer;
@@ -18,9 +17,8 @@ struct PtMeshResourceData
 class MeshResource: public Resource
 {
 public:
-	explicit MeshResource(PtResourceData* resource_data, PtMeshResourceData* mesh_data);
-
-	virtual ~MeshResource() = default;
+	explicit MeshResource(PtMeshResourceData* resource_data);
+	virtual ~MeshResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::Mesh; }
 

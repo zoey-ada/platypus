@@ -1,58 +1,31 @@
-#include "directXMeshLoader.hpp"
+#include "meshLoader.hpp"
 
 #include <assimp/cimport.h>
 #include <assimp/scene.h>
 
-#include <d3d11.h>
-
-#include <exceptions/creationException.hpp>
-#include <renderer/directx/directXRenderer.hpp>
 #include <renderer/graphics.hpp>
 #include <renderer/iRenderer.hpp>
-#include <utilities/safeDelete.hpp>
 
 #include "../resourceCache.hpp"
 #include "../resources/meshResource.hpp"
-#include "../resources/resource.hpp"
-#include "../stores/iResourceStore.hpp"
 
-DirectXMeshLoader::DirectXMeshLoader(std::shared_ptr<ResourceCache> cache,
+MeshLoader::MeshLoader(std::shared_ptr<ResourceCache> cache,
 	const std::shared_ptr<IRenderer>& renderer)
-	: _cache(std::move(cache))
+	: _cache(std::move(cache)), _renderer(std::move(renderer))
+{}
+
+std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* store_id,
+	std::byte* resource_data, const uint64_t data_size)
 {
-	this->_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
-}
-
-std::shared_ptr<Resource> DirectXMeshLoader::load(const std::shared_ptr<IResourceStore>& store,
-	const std::string& filename)
-{
-	if (_cache == nullptr || store == nullptr || filename.empty() || _renderer == nullptr)
-		return nullptr;
-
-	auto size = store->getResourceSize(filename);
-	auto* buffer = new (std::nothrow) uint8_t[size];
-
-	if (buffer == nullptr)
+	if (strlen(resource_id) == 0 || _cache == nullptr || _renderer == nullptr ||
+		resource_data == nullptr)
 	{
-		// log res cache full...
 		return nullptr;
 	}
 
-	if (!store->getResource(filename, buffer))
-	{
-		// log error
-		return nullptr;
-	}
-
-	PtResourceData resource_data {};
-	resource_data.name = filename;
-	resource_data.buffer = buffer;
-	resource_data.size = size;
-	resource_data.store = store;
-	resource_data.cache = this->_cache;
-
-	auto assimp_scene = std::shared_ptr<const aiScene>(aiImportFileFromMemory(
-		reinterpret_cast<const char*>(buffer), static_cast<uint32_t>(size), 0, filename.c_str()));
+	auto assimp_scene = std::shared_ptr<const aiScene>(
+		aiImportFileFromMemory(reinterpret_cast<const char*>(resource_data),
+			static_cast<uint32_t>(data_size), 0, resource_id));
 	if (assimp_scene == nullptr)
 	{
 		// log
@@ -62,9 +35,7 @@ std::shared_ptr<Resource> DirectXMeshLoader::load(const std::shared_ptr<IResourc
 	// TODO: handle loading multiple meshes from the same file
 	auto mesh = assimp_scene->mMeshes[assimp_scene->mRootNode->mChildren[0]->mMeshes[0]];
 
-	std::vector<graphics::Vertex> vertices;
-	std::vector<uint32_t> indices;
-
+	std::vector<graphics::Vertex> vertices(mesh->mNumVertices);
 	for (auto i = 0u; i < mesh->mNumVertices; ++i)
 	{
 		graphics::Vertex v;
@@ -88,6 +59,7 @@ std::shared_ptr<Resource> DirectXMeshLoader::load(const std::shared_ptr<IResourc
 		vertices.push_back(v);
 	}
 
+	std::vector<uint32_t> indices;
 	for (auto i = 0u; i < mesh->mNumFaces; ++i)
 	{
 		auto face = mesh->mFaces[i];
@@ -100,129 +72,21 @@ std::shared_ptr<Resource> DirectXMeshLoader::load(const std::shared_ptr<IResourc
 
 	// handle materials
 
-	D3D11_BUFFER_DESC vertex_buffer_desc {};
-	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(graphics::Vertex) * vertices.size());
-	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA vertex_data {};
-	auto drawable_verts = drawable(vertices);
-	vertex_data.pSysMem = &drawable_verts[0];
-
-	auto vertex_buffer = this->_renderer->create()->newBuffer(vertex_buffer_desc, vertex_data);
-
-	D3D11_BUFFER_DESC index_buffer_desc {};
-	index_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(uint32_t) * indices.size());
-	index_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA index_data {};
-	index_data.pSysMem = &indices[0];
-
-	auto index_buffer = this->_renderer->create()->newBuffer(index_buffer_desc, index_data);
+	auto vertex_buffer = this->_renderer->createVertexBuffer(vertices.data(), vertices.size());
+	auto index_buffer = this->_renderer->createIndexBuffer(indices.data(), indices.size());
 
 	PtMeshResourceData mesh_data {};
+	mesh_data.resource_id = resource_id;
+	mesh_data.store_id = store_id;
 	mesh_data.primative = PtPrimitiveType::TriangleList;
-	mesh_data.vertex_buffer = (PtVertexBuffer)vertex_buffer;
-	mesh_data.index_buffer = (PtIndexBuffer)index_buffer;
+	mesh_data.vertex_buffer = vertex_buffer;
+	mesh_data.index_buffer = index_buffer;
 	mesh_data.index_count = indices.size();
 
-	return std::make_shared<MeshResource>(&resource_data, &mesh_data);
+	return std::make_shared<MeshResource>(&mesh_data);
 }
 
-std::shared_ptr<MeshResource> DirectXMeshLoader::createRectangleForText(
-	const std::shared_ptr<DirectXRenderer>& renderer)
-{
-	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
-		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
-		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)}};
-
-	std::vector<uint32_t> indices {0, 1, 2, 3};
-
-	D3D11_BUFFER_DESC vertex_buffer_desc {};
-	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(graphics::Vertex) * vertices.size());
-	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA vertex_data {};
-	auto drawable_verts = drawable(vertices);
-	vertex_data.pSysMem = &drawable_verts[0];
-
-	auto vertex_buffer = renderer->create()->newBuffer(vertex_buffer_desc, vertex_data);
-
-	D3D11_BUFFER_DESC index_buffer_desc {};
-	index_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(uint32_t) * indices.size());
-	index_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA index_data {};
-	index_data.pSysMem = &indices[0];
-
-	auto index_buffer = renderer->create()->newBuffer(index_buffer_desc, index_data);
-
-	PtMeshResourceData mesh_data {};
-	mesh_data.primative = PtPrimitiveType::TriangleStrip;
-	mesh_data.vertex_buffer = (PtVertexBuffer)vertex_buffer;
-	mesh_data.index_buffer = (PtIndexBuffer)index_buffer;
-	mesh_data.index_count = indices.size();
-
-	PtResourceData resource_data {};
-	resource_data.name = "rectangle_1x1";
-	resource_data.buffer = nullptr;
-	resource_data.size = 0;
-	resource_data.store = nullptr;
-	resource_data.cache = nullptr;
-
-	return std::make_shared<MeshResource>(&resource_data, &mesh_data);
-}
-
-std::shared_ptr<MeshResource> DirectXMeshLoader::createRectangle(
-	const std::shared_ptr<DirectXRenderer>& renderer)
-{
-	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
-		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},
-		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)}};
-
-	std::vector<uint32_t> indices {0, 1, 2, 3};
-
-	D3D11_BUFFER_DESC vertex_buffer_desc {};
-	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	vertex_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(graphics::Vertex) * vertices.size());
-	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA vertex_data {};
-	auto drawable_verts = drawable(vertices);
-	vertex_data.pSysMem = &drawable_verts[0];
-
-	auto vertex_buffer = renderer->create()->newBuffer(vertex_buffer_desc, vertex_data);
-
-	D3D11_BUFFER_DESC index_buffer_desc {};
-	index_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	index_buffer_desc.ByteWidth = static_cast<UINT>(sizeof(uint32_t) * indices.size());
-	index_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_INDEX_BUFFER;
-
-	D3D11_SUBRESOURCE_DATA index_data {};
-	index_data.pSysMem = &indices[0];
-
-	auto index_buffer = renderer->create()->newBuffer(index_buffer_desc, index_data);
-
-	PtMeshResourceData mesh_data {};
-	mesh_data.primative = PtPrimitiveType::TriangleStrip;
-	mesh_data.vertex_buffer = (PtVertexBuffer)vertex_buffer;
-	mesh_data.index_buffer = (PtIndexBuffer)index_buffer;
-	mesh_data.index_count = indices.size();
-
-	PtResourceData resource_data {};
-	resource_data.name = "rectangle_1x1";
-	resource_data.buffer = nullptr;
-	resource_data.size = 0;
-	resource_data.store = nullptr;
-	resource_data.cache = nullptr;
-
-	return std::make_shared<MeshResource>(&resource_data, &mesh_data);
-}
-
-uint8_t* DirectXMeshLoader::allocate(unsigned int size)
+uint8_t* MeshLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }

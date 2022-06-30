@@ -3,11 +3,11 @@
 #include <renderer/iRenderer.hpp>
 #include <utilities/logging/logger.hpp>
 
-#include "loaders/directXMeshLoader.hpp"
-#include "loaders/directXPixelShaderLoader.hpp"
-#include "loaders/directXTextureLoader.hpp"
-#include "loaders/directXVertexShaderLoader.hpp"
 #include "loaders/iResourceLoader.hpp"
+#include "loaders/meshLoader.hpp"
+#include "loaders/pixelShaderLoader.hpp"
+#include "loaders/textureLoader.hpp"
+#include "loaders/vertexShaderLoader.hpp"
 #include "resources/meshResource.hpp"
 #include "resources/pixelShaderResource.hpp"
 #include "resources/resource.hpp"
@@ -43,10 +43,10 @@ bool ResourceCache::initialize(const std::shared_ptr<IRenderer>& renderer)
 {
 	auto cache = this->shared_from_this();
 
-	this->registerLoader(std::make_shared<DirectXVertexShaderLoader>(cache, renderer));
-	this->registerLoader(std::make_shared<DirectXPixelShaderLoader>(cache, renderer));
-	this->registerLoader(std::make_shared<DirectXTextureLoader>(cache, renderer));
-	this->registerLoader(std::make_shared<DirectXMeshLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<VertexShaderLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<PixelShaderLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<TextureLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<MeshLoader>(cache, renderer));
 
 	return true;
 }
@@ -113,7 +113,7 @@ bool ResourceCache::addResource(const std::shared_ptr<Resource>& resource)
 		return false;
 
 	this->_allocated += resource->size();
-	this->_resources[resource->type()][resource->path()] = resource;
+	this->_resources[resource->type()][resource->id()] = resource;
 	this->_recently_used.push_front(resource);
 
 	return true;
@@ -200,12 +200,23 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 		return nullptr;
 	}
 
-	auto resource = loader->load(resource_store, name);
+	auto resource_data = this->loadResourceData(name.c_str(), resource_store);
+	if (resource_data == nullptr)
+	{
+		logWarning("failed to load resource " + name + " from store " + store, "resource_cache");
+		return nullptr;
+	}
+
+	auto data_size = resource_store->getResourceSize(name);
+	auto resource = loader->load(name.c_str(), store.c_str(), resource_data, data_size);
 	if (resource == nullptr)
 	{
 		logWarning("failed to load resource " + path, "resource_cache");
 		return nullptr;
 	}
+
+	delete[] resource_data;
+	resource_data = nullptr;
 
 	logVerbose("successfully loaded resource " + path, "resource_cache");
 
@@ -214,9 +225,30 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 	return resource;
 }
 
+std::byte* ResourceCache::loadResourceData(const char* relative_filepath,
+	const std::shared_ptr<IResourceStore>& store)
+{
+	auto size = store->getResourceSize(relative_filepath);
+	auto buffer = new (std::nothrow) std::byte[size];
+
+	if (buffer == nullptr)
+	{
+		// log out of memory...
+		return nullptr;
+	}
+
+	if (!store->getResource(relative_filepath, (std::uint8_t*)buffer))
+	{
+		// log error
+		return nullptr;
+	}
+
+	return buffer;
+}
+
 void ResourceCache::updateResource(const std::shared_ptr<Resource>& resource)
 {
-	logDebug("moving " + resource->path() + " to the front of the recently used list",
+	logDebug("moving " + std::string(resource->id()) + " to the front of the recently used list",
 		"resource_cache");
 	this->_recently_used.remove(resource);
 	this->_recently_used.push_front(resource);
@@ -224,12 +256,12 @@ void ResourceCache::updateResource(const std::shared_ptr<Resource>& resource)
 
 void ResourceCache::free(const std::shared_ptr<Resource>& resource)
 {
-	logVerbose("removing " + resource->path() + " (" + std::to_string(resource->size()) +
+	logVerbose("removing " + std::string(resource->id()) + " (" + std::to_string(resource->size()) +
 			") from the cache",
 		"resource_cache");
 
 	auto type = resource->type();
-	_resources[type].erase(resource->path());
+	_resources[type].erase(resource->id());
 	this->_recently_used.remove(resource);
 
 	if (_resources[type].empty())

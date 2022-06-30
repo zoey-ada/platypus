@@ -1,9 +1,27 @@
 #include "MeshResource.hpp"
 
-MeshResource::MeshResource(PtResourceData* resource_data, PtMeshResourceData* mesh_data)
+#include <renderer/iRenderer.hpp>
+#include <serviceProvider.hpp>
+
+MeshResource::MeshResource(PtMeshResourceData* resource_data)
 	: Resource(resource_data),
-	  _primative(mesh_data->primative),
-	  _vertex_buffer(mesh_data->vertex_buffer),
-	  _index_buffer(mesh_data->index_buffer),
-	  _index_count(mesh_data->index_count)
+	  _primative(resource_data->primative),
+	  _vertex_buffer(resource_data->vertex_buffer),
+	  _index_buffer(resource_data->index_buffer),
+	  _index_count(resource_data->index_count)
 {}
+
+MeshResource::~MeshResource()
+{
+	if (this->_vertex_buffer != nullptr)
+	{
+		ServiceProvider::getRenderer()->destroyVertexBuffer(this->_vertex_buffer);
+		this->_vertex_buffer = nullptr;
+	}
+
+	if (this->_index_buffer != nullptr)
+	{
+		ServiceProvider::getRenderer()->destroyIndexBuffer(this->_index_buffer);
+		this->_index_buffer = nullptr;
+	}
+}

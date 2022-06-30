@@ -53,6 +53,8 @@ protected:
 		const std::string& path) const;
 
 	std::shared_ptr<Resource> loadResource(const ResourceType& type, const std::string& path);
+	std::byte* loadResourceData(const char* relative_filepath,
+		const std::shared_ptr<IResourceStore>& store);
 
 	void updateResource(const std::shared_ptr<Resource>& resource);
 	void free(const std::shared_ptr<Resource>& source);

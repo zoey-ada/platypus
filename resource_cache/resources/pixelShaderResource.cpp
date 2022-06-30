@@ -1,8 +1,17 @@
 #include "pixelShaderResource.hpp"
 
-#include "../stores/iResourceStore.hpp"
+#include <renderer/iRenderer.hpp>
+#include <serviceProvider.hpp>
 
-PixelShaderResource::PixelShaderResource(PtResourceData* resource_data,
-	PtPixelShaderData* shader_data)
-	: Resource(resource_data), _shader(shader_data->pixel_shader)
+PixelShaderResource::PixelShaderResource(PtPixelShaderData* resource_data)
+	: Resource(resource_data), _shader(resource_data->pixel_shader)
 {}
+
+PixelShaderResource::~PixelShaderResource()
+{
+	if (this->_shader)
+	{
+		ServiceProvider::getRenderer()->shaderManager()->destroyPixelShader(this->_shader);
+		this->_shader = nullptr;
+	}
+};

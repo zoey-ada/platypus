@@ -4,33 +4,26 @@
 
 #include "iResourceLoader.hpp"
 
-class DirectXRenderer;
 class IRenderer;
 class MeshResource;
 
-class DirectXMeshLoader: public IResourceLoader
+class MeshLoader: public IResourceLoader
 {
 public:
-	explicit DirectXMeshLoader(std::shared_ptr<ResourceCache> cache,
+	explicit MeshLoader(std::shared_ptr<ResourceCache> cache,
 		const std::shared_ptr<IRenderer>& renderer);
-	virtual ~DirectXMeshLoader() = default;
+	virtual ~MeshLoader() = default;
 
-	inline std::string getPattern() override { return std::string(".*\\.(dae)"); }
-	inline ResourceType getType() override { return ResourceType::Mesh; }
+	[[nodiscard]] inline ResourceType getType() override { return ResourceType::Mesh; }
+	[[nodiscard]] inline std::string getPattern() override { return std::string(".*\\.(dae)"); }
 
-	std::shared_ptr<Resource> load(const std::shared_ptr<IResourceStore>& store,
-		const std::string& filename) override;
-
-	static std::shared_ptr<MeshResource> createRectangle(
-		const std::shared_ptr<DirectXRenderer>& renderer);
-
-	static std::shared_ptr<MeshResource> createRectangleForText(
-		const std::shared_ptr<DirectXRenderer>& renderer);
+	[[nodiscard]] std::shared_ptr<Resource> load(const char* resource_id, const char* store_id,
+		std::byte* resource_data, const uint64_t data_size) override;
 
 protected:
 	uint8_t* allocate(unsigned int size) override;
 
 private:
 	std::shared_ptr<ResourceCache> _cache;
-	std::shared_ptr<DirectXRenderer> _renderer;
+	std::shared_ptr<IRenderer> _renderer;
 };

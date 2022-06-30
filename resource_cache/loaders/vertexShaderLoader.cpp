@@ -1,100 +1,51 @@
-#include "directXVertexShaderLoader.hpp"
+#include "vertexShaderLoader.hpp"
 
-#include <d3d11.h>
-
-#include <exceptions/creationException.hpp>
-#include <renderer/directx/directXRenderer.hpp>
-#include <renderer/directx/directXShaderLoader.hpp>
 #include <renderer/iRenderer.hpp>
-#include <utilities/safeDelete.hpp>
+#include <utilities/wildcardMatch.hpp>
 
 #include "../resourceCache.hpp"
-#include "../resources/resource.hpp"
 #include "../resources/vertexShaderResource.hpp"
-#include "../stores/iResourceStore.hpp"
 
-DirectXVertexShaderLoader::DirectXVertexShaderLoader(std::shared_ptr<ResourceCache> cache,
+VertexShaderLoader::VertexShaderLoader(std::shared_ptr<ResourceCache> cache,
 	std::shared_ptr<IRenderer> renderer)
 	: _cache(std::move(cache)), _renderer(std::move(renderer))
 {}
 
-std::shared_ptr<Resource> DirectXVertexShaderLoader::load(
-	const std::shared_ptr<IResourceStore>& store, const std::string& filename)
+std::shared_ptr<Resource> VertexShaderLoader::load(const char* resource_id, const char* store_id,
+	std::byte* resource_data, const uint64_t data_size)
 {
-	if (_cache == nullptr || store == nullptr || filename.empty() || _renderer == nullptr)
-		return nullptr;
-
-	auto d3d_renderer = std::dynamic_pointer_cast<DirectXRenderer>(_renderer);
-	if (d3d_renderer == nullptr)
-		return nullptr;
-
-	auto size = store->getResourceSize(filename);
-	auto* buffer = new (std::nothrow) uint8_t[size];
-
-	if (buffer == nullptr)
+	if (strlen(resource_id) == 0 || _cache == nullptr || _renderer == nullptr ||
+		resource_data == nullptr)
 	{
-		// log res cache full...
 		return nullptr;
 	}
 
-	if (!store->getResource(filename, buffer))
-	{
-		// log error
-		return nullptr;
-	}
+	bool is_precompiled = wildcardMatch("*.cso", resource_id);
 
-	PtResourceData resource_data {};
-	resource_data.name = filename;
-	resource_data.buffer = buffer;
-	resource_data.size = size;
-	resource_data.store = store;
-	resource_data.cache = this->_cache;
+	PtVertexShader shader = is_precompiled ?
+		this->_renderer->shaderManager()->createVertexShader(resource_data, data_size) :
+		this->_renderer->shaderManager()->compileVertexShader(resource_data, data_size,
+			resource_id);
 
-	// load the shader
-	ID3DBlob* bytecode = nullptr;
-	if (!loadShaderBytecode(filename, buffer, size, &bytecode, ShaderType::Vertex))
-	{
-		// log error
-		safeDeleteArray(&buffer);
-		return nullptr;
-	}
+	// TODO: need to load this from somewhere on a per shader basis
+	std::array<PtInputLayoutDesc, 3> input_desc = {
+		PtInputLayoutDesc {"POSITION", 0, PtInputFormat::Vec3_32bit_float},
+		PtInputLayoutDesc {"NORMAL", 0, PtInputFormat::Vec3_32bit_float},
+		PtInputLayoutDesc {"TEXCOORD", 0, PtInputFormat::Vec2_32bit_float}};
 
-	ID3D11VertexShader* shader = nullptr;
-	ID3D11InputLayout* input_layout = nullptr;
+	PtInputLayout input_layout = this->_renderer->createInputLayout(resource_data, data_size,
+		input_desc.data(), input_desc.size());
 
-	try
-	{
-		shader = d3d_renderer->create()->newVertexShader(bytecode);
+	PtVertexShaderData shader_data {};
+	shader_data.resource_id = resource_id;
+	shader_data.store_id = store_id;
+	shader_data.vertex_shader = shader;
+	shader_data.input_layout = input_layout;
 
-		const D3D11_INPUT_ELEMENT_DESC input_desc[] = {
-			{"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT,
-				D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT,
-				D3D11_INPUT_PER_VERTEX_DATA, 0},
-			{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT,
-				D3D11_INPUT_PER_VERTEX_DATA, 0}};
-		input_layout =
-			d3d_renderer->create()->newInputLayout(bytecode, input_desc, ARRAYSIZE(input_desc));
-
-		safeRelease(&bytecode);
-
-		PtVertexShaderData shader_data {};
-		shader_data.vertex_shader = (PtVertexShader)shader;
-		shader_data.input_layout = (PtInputLayout)input_layout;
-
-		return std::make_shared<VertexShaderResource>(&resource_data, &shader_data);
-	}
-	catch (CreationException&)
-	{
-		safeDeleteArray(&buffer);
-		safeRelease(&bytecode);
-		safeRelease(&shader);
-		safeRelease(&input_layout);
-		throw;
-	}
+	return std::make_shared<VertexShaderResource>(&shader_data);
 }
 
-uint8_t* DirectXVertexShaderLoader::allocate(unsigned int size)
+uint8_t* VertexShaderLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }

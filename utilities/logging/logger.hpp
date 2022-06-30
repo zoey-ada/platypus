@@ -189,3 +189,69 @@ inline void logError(std::string_view message, std::string_view channel)
 {
 	Logger::error(message, channel);
 }
+
+#ifdef _WIN32
+
+	#include <Windows.h>
+
+inline void logDebug(std::string_view message, const HRESULT& hr)
+{
+	Logger::debug(message);
+	Logger::debug("Windows Error Code: " + std::to_string(hr));
+}
+
+inline void logDebug(std::string_view message, const HRESULT& hr, std::string_view channel)
+{
+	Logger::debug(message, channel);
+	Logger::debug("Windows Error Code: " + std::to_string(hr), channel);
+}
+
+inline void logVerbose(std::string_view message, const HRESULT& hr)
+{
+	Logger::verbose(message);
+	Logger::verbose("Windows Error Code: " + std::to_string(hr));
+}
+
+inline void logVerbose(std::string_view message, const HRESULT& hr, std::string_view channel)
+{
+	Logger::verbose(message, channel);
+	Logger::verbose("Windows Error Code: " + std::to_string(hr), channel);
+}
+
+inline void logInfo(std::string_view message, const HRESULT& hr)
+{
+	Logger::info(message);
+	Logger::info("Windows Error Code: " + std::to_string(hr));
+}
+
+inline void logInfo(std::string_view message, const HRESULT& hr, std::string_view channel)
+{
+	Logger::info(message, channel);
+	Logger::info("Windows Error Code: " + std::to_string(hr), channel);
+}
+
+inline void logWarning(std::string_view message, const HRESULT& hr)
+{
+	Logger::warning(message);
+	Logger::warning("Windows Error Code: " + std::to_string(hr));
+}
+
+inline void logWarning(std::string_view message, const HRESULT& hr, std::string_view channel)
+{
+	Logger::warning(message, channel);
+	Logger::warning("Windows Error Code: " + std::to_string(hr), channel);
+}
+
+inline void logError(std::string_view message, const HRESULT& hr)
+{
+	Logger::error(message);
+	Logger::error("Windows Error Code: " + std::to_string(hr));
+}
+
+inline void logError(std::string_view message, const HRESULT& hr, std::string_view channel)
+{
+	Logger::error(message, channel);
+	Logger::error("Windows Error Code: " + std::to_string(hr), channel);
+}
+
+#endif

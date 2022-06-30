@@ -28,17 +28,6 @@ void safeDeleteArray(T** ptr_array)
 	#include <Unknwnbase.h>
 
 template<class T>
-void safeRelease(T** object)
-{
-	if (*object != nullptr)
-	{
-		(*object)->Release();
-	}
-
-	*object = nullptr;
-}
-
-template<class T>
 std::shared_ptr<T> toSharedPtr(T** object)
 {
 	auto shared_object = std::shared_ptr<T>(*object, [](T* raw_object) { raw_object->Release(); });

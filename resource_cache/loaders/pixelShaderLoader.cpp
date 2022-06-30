@@ -1,86 +1,39 @@
-#include "directXPixelShaderLoader.hpp"
+#include "pixelShaderLoader.hpp"
 
-#include <d3d11.h>
-
-#include <exceptions/creationException.hpp>
-#include <renderer/directx/directXRenderer.hpp>
-#include <renderer/directx/directXShaderLoader.hpp>
 #include <renderer/iRenderer.hpp>
-#include <utilities/safeDelete.hpp>
+#include <utilities/wildcardMatch.hpp>
 
 #include "../resourceCache.hpp"
 #include "../resources/pixelShaderResource.hpp"
-#include "../resources/resource.hpp"
-#include "../stores/iResourceStore.hpp"
 
-DirectXPixelShaderLoader::DirectXPixelShaderLoader(std::shared_ptr<ResourceCache> cache,
+PixelShaderLoader::PixelShaderLoader(std::shared_ptr<ResourceCache> cache,
 	std::shared_ptr<IRenderer> renderer)
 	: _cache(std::move(cache)), _renderer(std::move(renderer))
 {}
 
-std::shared_ptr<Resource> DirectXPixelShaderLoader::load(
-	const std::shared_ptr<IResourceStore>& store, const std::string& filename)
+std::shared_ptr<Resource> PixelShaderLoader::load(const char* resource_id, const char* store_id,
+	std::byte* resource_data, const uint64_t data_size)
 {
-	if (_cache == nullptr || store == nullptr || filename.empty() || _renderer == nullptr)
-		return nullptr;
-
-	auto d3d_renderer = std::dynamic_pointer_cast<DirectXRenderer>(_renderer);
-	if (d3d_renderer == nullptr)
-		return nullptr;
-
-	auto size = store->getResourceSize(filename);
-	auto* buffer = new (std::nothrow) uint8_t[size];
-
-	if (buffer == nullptr)
+	if (strlen(resource_id) == 0 || _cache == nullptr || _renderer == nullptr ||
+		resource_data == nullptr)
 	{
-		// log res cache full...
 		return nullptr;
 	}
 
-	if (!store->getResource(filename, buffer))
-	{
-		// log error
-		return nullptr;
-	}
+	bool is_precompiled = wildcardMatch("*.cso", resource_id);
 
-	PtResourceData resource_data {};
-	resource_data.name = filename;
-	resource_data.buffer = buffer;
-	resource_data.size = size;
-	resource_data.store = store;
-	resource_data.cache = this->_cache;
+	PtPixelShader shader = is_precompiled ?
+		this->_renderer->shaderManager()->createPixelShader(resource_data, data_size) :
+		this->_renderer->shaderManager()->compilePixelShader(resource_data, data_size, resource_id);
 
-	// load the shader
-	ID3DBlob* bytecode = nullptr;
-	if (!loadShaderBytecode(filename, buffer, size, &bytecode, ShaderType::Pixel))
-	{
-		// log error
-		safeDeleteArray(&buffer);
-		return nullptr;
-	}
-
-	ID3D11PixelShader* shader = nullptr;
-
-	try
-	{
-		shader = d3d_renderer->create()->newPixelShader(bytecode);
-		safeRelease(&bytecode);
-
-		PtPixelShaderData shader_data {};
-		shader_data.pixel_shader = (PtPixelShader)shader;
-
-		return std::make_shared<PixelShaderResource>(&resource_data, &shader_data);
-	}
-	catch (CreationException&)
-	{
-		safeDeleteArray(&buffer);
-		safeRelease(&bytecode);
-		safeRelease(&shader);
-		throw;
-	}
+	PtPixelShaderData shader_data {};
+	shader_data.resource_id = resource_id;
+	shader_data.store_id = store_id;
+	shader_data.pixel_shader = shader;
+	return std::make_shared<PixelShaderResource>(&shader_data);
 }
 
-uint8_t* DirectXPixelShaderLoader::allocate(unsigned int size)
+uint8_t* PixelShaderLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
