@@ -4,7 +4,7 @@
 
 #include "resource.hpp"
 
-struct PtVertexShaderData
+struct PtVertexShaderData: public PtResourceData
 {
 	PtVertexShader vertex_shader;
 	PtInputLayout input_layout;
@@ -13,8 +13,8 @@ struct PtVertexShaderData
 class VertexShaderResource: public Resource
 {
 public:
-	explicit VertexShaderResource(PtResourceData* resource_data, PtVertexShaderData* shader_data);
-	virtual ~VertexShaderResource() = default;
+	explicit VertexShaderResource(PtVertexShaderData* resource_data);
+	virtual ~VertexShaderResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::VertexShader; }
 

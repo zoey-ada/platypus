@@ -1,42 +1,35 @@
 #pragma once
 
-#include <memory>
-#include <string>
-
 #include "resourceType.hpp"
-
-class IResourceStore;
-class ResourceCache;
 
 struct PtResourceData
 {
-	std::string name;
-	uint8_t* buffer;
+	const char* resource_id;
+	const char* store_id;
 	uint64_t size;
-	std::shared_ptr<IResourceStore> store;
-	std::shared_ptr<ResourceCache> cache;
 };
 
 class Resource
 {
 public:
-	Resource(PtResourceData* resource_data);
+	Resource(PtResourceData* resource_data)
+		: _resource_id(resource_data->resource_id),
+		  _store_id(resource_data->store_id),
+		  _size(resource_data->size)
+	{}
 
-	virtual ~Resource();
+	virtual ~Resource() = default;
 
-	[[nodiscard]] std::string path();
+	// [[nodiscard]] std::string path();
 
-	[[nodiscard]] inline std::shared_ptr<IResourceStore> store() const { return _store; }
-	[[nodiscard]] inline std::string name() const { return _name; }
-	[[nodiscard]] inline uint64_t size() const { return _size; }
-	[[nodiscard]] inline uint8_t* buffer() const { return _buffer; }
-	[[nodiscard]] inline uint8_t* writableBuffer() const { return _buffer; }
 	[[nodiscard]] virtual ResourceType type() const { return ResourceType::General; }
 
+	[[nodiscard]] inline const char* id() const { return _resource_id; }
+	[[nodiscard]] inline const char* store_id() const { return _store_id; }
+	[[nodiscard]] inline uint64_t size() const { return _size; }
+
 protected:
-	std::string _name;
-	uint8_t* _buffer {nullptr};
+	const char* _resource_id {""};
+	const char* _store_id {""};
 	uint64_t _size {0};
-	std::shared_ptr<IResourceStore> _store {nullptr};
-	std::shared_ptr<ResourceCache> _cache {nullptr};
 };

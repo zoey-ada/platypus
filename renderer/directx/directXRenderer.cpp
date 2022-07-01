@@ -2,14 +2,16 @@
 
 #include <array>
 
-#include <resource_cache/loaders/directXMeshLoader.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
+#include <utilities/common/safeRelease.hpp>
 
 #include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
 #include "directXVertexShader.hpp"
+#include "dxCommonMeshes.hpp"
+#include "dxShaderManager.hpp"
 
 DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 	: _hwnd(hwnd),
@@ -118,32 +120,31 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
 	this->_context->RSSetViewports(1, &viewport);
 
 	this->_creator = std::make_shared<DirectXObjectCreator>();
-	this->_creator->initialize(this->shared_from_this());
+	if (!this->_creator->initialize(this->shared_from_this()))
+	{
+		// error
+		return false;
+	}
+
+	this->_shader_manager = std::make_shared<DxShaderManager>();
+	if (!this->_shader_manager->initialize(this->_device))
+	{
+		// error
+		return false;
+	}
 
 	return true;
 }
 
 void DirectXRenderer::deinitialize()
 {
-	if (this->_backBufferTarget != nullptr)
-		this->_backBufferTarget->Release();
-	this->_backBufferTarget = nullptr;
+	this->_shader_manager->deinitialize();
 
-	if (this->_swapChain != nullptr)
-		this->_swapChain->Release();
-	this->_swapChain = nullptr;
-
-	if (this->_context != nullptr)
-		this->_context->Release();
-	this->_context = nullptr;
-
-	if (this->_device != nullptr)
-		this->_device->Release();
-	this->_device = nullptr;
-
-	if (this->_rasterizer_state != nullptr)
-		this->_rasterizer_state->Release();
-	this->_rasterizer_state = nullptr;
+	safeRelease(&this->_backBufferTarget);
+	safeRelease(&this->_swapChain);
+	safeRelease(&this->_context);
+	safeRelease(&this->_device);
+	safeRelease(&this->_rasterizer_state);
 
 	_hwnd = nullptr;
 	_hinstance = nullptr;
@@ -185,6 +186,11 @@ void DirectXRenderer::enableDebugMode()
 	//   BOOL            AntialiasedLineEnable;
 }
 
+std::shared_ptr<IShaderManager> DirectXRenderer::shaderManager()
+{
+	return this->_shader_manager;
+}
+
 void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 {
 	// IA setup
@@ -216,14 +222,9 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }
 
-std::shared_ptr<MeshResource> DirectXRenderer::createRectangle()
+std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type)
 {
-	return DirectXMeshLoader::createRectangle(this->shared_from_this());
-}
-
-std::shared_ptr<MeshResource> DirectXRenderer::createTextRectangle()
-{
-	return DirectXMeshLoader::createRectangleForText(this->shared_from_this());
+	return ::createCommonMesh(mesh_type, this->shared_from_this());
 }
 
 std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
@@ -238,6 +239,82 @@ void DirectXRenderer::setBackgroundColor(const Color& backgroundColor)
 
 void DirectXRenderer::setWorldTransform(const Mat4x4& /*world*/)
 {}
+
+PtInputLayout DirectXRenderer::createInputLayout(std::byte* shader_data, const uint64_t data_size,
+	PtInputLayoutDesc* layout_elements, const uint64_t element_count)
+{
+	return (PtInputLayout)this->_creator->newInputLayout(shader_data, data_size, layout_elements,
+		element_count);
+}
+
+void DirectXRenderer::destroyInputLayout(PtInputLayout layout)
+{
+	reinterpret_cast<ID3D11InputLayout*>(layout)->Release();
+}
+
+PtSamplerState DirectXRenderer::createSamplerState(const PtAddressOverscanMode overscan_mode)
+{
+	return (PtSamplerState)this->_creator->newSamplerState(overscan_mode);
+}
+
+void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state)
+{
+	reinterpret_cast<ID3D11SamplerState*>(sampler_state)->Release();
+}
+
+PtTexture DirectXRenderer::createTexture(std::byte* texture_data, const uint64_t data_size)
+{
+	return (PtTexture)this->_creator->newTexture(texture_data, data_size);
+}
+
+void DirectXRenderer::destroyTexture(PtTexture texture)
+{
+	reinterpret_cast<ID3D11ShaderResourceView*>(texture)->Release();
+}
+
+PtVertexBuffer DirectXRenderer::createVertexBuffer(const graphics::Vertex* vertices,
+	const uint64_t vertex_count)
+{
+	return (PtVertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
+}
+
+void DirectXRenderer::destroyVertexBuffer(PtVertexBuffer buffer)
+{
+	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+PtIndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
+	const uint64_t index_count)
+{
+	return (PtIndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
+}
+
+void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer)
+{
+	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* message,
+	const char* font_family, const uint16_t point_size)
+{
+	auto texture = (PtTexture)this->_creator->newTexture(message, font_family, point_size);
+	if (texture == nullptr)
+	{
+		// log error
+		return nullptr;
+	}
+
+	auto sampler_state = this->createSamplerState(PtAddressOverscanMode::Clamp);
+
+	PtTextureData texture_data {};
+	texture_data.resource_id = message;
+	texture_data.store_id = "internal";
+	texture_data.size = 0;
+	texture_data.texture = texture;
+	texture_data.sampler_state = sampler_state;
+
+	return std::make_shared<TextureResource>(&texture_data);
+}
 
 std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path)
 {

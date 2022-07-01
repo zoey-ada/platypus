@@ -1,12 +1,8 @@
 #include "textNode.hpp"
 
-#include <d3d11.h>
-
-#include <renderer/directx/directXRenderer.hpp>
 #include <renderer/iPixelShader.hpp>
 #include <renderer/iRenderer.hpp>
 #include <renderer/iVertexShader.hpp>
-#include <resource_cache/loaders/directXTextureLoader.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/textureResource.hpp>
@@ -44,9 +40,7 @@ bool TextNode::initialize(const std::shared_ptr<Scene>& scene)
 
 	if (!cache->exists(ResourceType::Mesh, this->_message))
 	{
-		auto d3d_renderer = std::dynamic_pointer_cast<DirectXRenderer>(scene->renderer());
-		auto texture = DirectXTextureLoader::rasterizeText(d3d_renderer, this->_message.c_str(),
-			"hack.ttf", 48);
+		auto texture = scene->renderer()->rasterizeText(this->_message.c_str(), "hack.ttf", 48);
 		// "umeboshi_.ttf", 48);
 
 		if (!cache->addResource(texture))
@@ -58,9 +52,9 @@ bool TextNode::initialize(const std::shared_ptr<Scene>& scene)
 	this->_pixel_shader->setTexture(this->_message);
 
 	// force the sprite to reload
-	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1"))
+	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1_u_flipped"))
 	{
-		auto rect = scene->renderer()->createTextRectangle();
+		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle_uFlipped);
 		if (!cache->addResource(rect))
 		{
 			// log error about creating sprite resource

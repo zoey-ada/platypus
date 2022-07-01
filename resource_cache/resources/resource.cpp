@@ -1,26 +1,20 @@
 #include "resource.hpp"
 
-Resource::Resource(PtResourceData* resource_data)
-	: _name(std::move(resource_data->name)),
-	  _buffer(resource_data->buffer),
-	  _size(resource_data->size),
-	  _store(std::move(resource_data->store)),
-	  _cache(std::move(resource_data->cache))
-{}
+// Resource::Resource(PtResourceData* resource_data)
+// 	: _resource_id(std::move(resource_data->resource_id)),
+// 	  _store_id(std::move(resource_data->store_id)),
+// 	  _size(resource_data->size)
+// {}
 
-Resource::~Resource()
-{
-	if (_buffer != nullptr)
-		delete[](_buffer);
-	_buffer = nullptr;
+// Resource::~Resource()
+// {
+// 	// _cache->memoryHasBeenFreed(_size);
+// }
 
-	// _cache->memoryHasBeenFreed(_size);
-}
+// std::string Resource::path()
+// {
+// 	// if (_archive)
+// 	// 	return _archive->getArchivePath() + std::string("/") + _name;
 
-std::string Resource::path()
-{
-	// if (_archive)
-	// 	return _archive->getArchivePath() + std::string("/") + _name;
-
-	return _name;
-}
+// 	return _name;
+// }

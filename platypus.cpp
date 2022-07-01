@@ -52,6 +52,8 @@ bool Platypus::initialize()
 
 	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
 		return false;
+	// this->_renderer->enableDebugMode();
+	ServiceProvider::registerRenderer(this->_renderer);
 
 	this->_event_manager = std::make_shared<EventManager>(
 		this->_settings.general_settings().event_manager_queue_count());

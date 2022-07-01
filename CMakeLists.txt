@@ -144,15 +144,18 @@ source_group(source\\libraries FILES ${libraries_srcs})
 set(renderer_srcs
 	renderer/color.hpp
 	renderer/color.cpp
+	renderer/commonMesh.hpp
 	renderer/graphics.hpp
 	renderer/graphics.cpp
 	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
+	renderer/iRendererState.hpp
+	renderer/iShaderManager.hpp
 	renderer/iVertexShader.hpp
 	renderer/material.hpp
+	renderer/ptAddressOverscanMode.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
-	renderer/iRendererState.hpp
 	renderer/scene.hpp
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
@@ -176,6 +179,12 @@ if(WIN32)
 		renderer/directx/directXShaderLoader.cpp
 		renderer/directx/directXVertexShader.hpp
 		renderer/directx/directXVertexShader.cpp
+		renderer/directx/dxCommonMeshes.hpp
+		renderer/directx/dxCommonMeshes.cpp
+		renderer/directx/dxShaderManager.hpp
+		renderer/directx/dxShaderManager.cpp
+		renderer/directx/wicTextureLoader.hpp
+		renderer/directx/wicTextureLoader.cpp
 	)
 	source_group(source\\renderer\\directx FILES ${directx_srcs})
 endif()
@@ -187,14 +196,14 @@ set(resource_cache_srcs
 source_group(source\\resource_cache FILES ${resource_cache_srcs})
 
 set(resource_cache_loaders_srcs
-	resource_cache/loaders/directXMeshLoader.hpp
-	resource_cache/loaders/directXMeshLoader.cpp
-	resource_cache/loaders/directXPixelShaderLoader.hpp
-	resource_cache/loaders/directXPixelShaderLoader.cpp
-	resource_cache/loaders/directXTextureLoader.hpp
-	resource_cache/loaders/directXTextureLoader.cpp
-	resource_cache/loaders/directXVertexShaderLoader.hpp
-	resource_cache/loaders/directXVertexShaderLoader.cpp
+	resource_cache/loaders/meshLoader.hpp
+	resource_cache/loaders/meshLoader.cpp
+	resource_cache/loaders/pixelShaderLoader.hpp
+	resource_cache/loaders/pixelShaderLoader.cpp
+	resource_cache/loaders/textureLoader.hpp
+	resource_cache/loaders/textureLoader.cpp
+	resource_cache/loaders/vertexShaderLoader.hpp
+	resource_cache/loaders/vertexShaderLoader.cpp
 	resource_cache/loaders/iResourceLoader.hpp
 )
 source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
@@ -262,6 +271,7 @@ source_group(source\\utilities\\time FILES ${utilities_time_srcs})
 
 set(utilities_common_srcs
 	utilities/common/ptExtent.hpp
+	utilities/common/safeRelease.hpp
 )
 source_group(source\\utilities\\common FILES ${utilities_common_srcs})
 
@@ -363,3 +373,5 @@ if(WIN32)
 			windowscodecs.lib
 	)
 endif()
+
+add_subdirectory(tests)
