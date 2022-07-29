@@ -6,6 +6,7 @@
 
 #include "components/entityComponent.hpp"
 #include "components/movementComponent2d.hpp"
+#include "components/physicsComponent.hpp"
 #include "components/renderComponent2d.hpp"
 #include "components/renderComponent3d.hpp"
 #include "components/transformComponent2d.hpp"
@@ -14,6 +15,7 @@
 EntityFactory::EntityFactory()
 {
 	this->_entity_component_creators["MovementComponent_2d"] = createMovementComponent2d;
+	this->_entity_component_creators["PhysicsComponent"] = createPhysicsComponent;
 	this->_entity_component_creators["RenderComponent_2d"] = createRenderComponent2d;
 	this->_entity_component_creators["RenderComponent_3d"] = createRenderComponent3d;
 	this->_entity_component_creators["TransformComponent_2d"] = createTransformComponent2d;

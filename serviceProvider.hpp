@@ -7,6 +7,7 @@ class IEventManager;
 class IPlatform;
 class IWindow;
 class IRenderer;
+class IPhysicsSystem;
 
 #define registrableService(service_type)                                         \
                                                                                  \
@@ -35,6 +36,7 @@ class ServiceProvider
 	registrableService(Window);
 	registrableService(EventManager);
 	registrableService(Renderer);
+	registrableService(PhysicsSystem);
 
 public:
 	inline static void unregisterAllServices()
