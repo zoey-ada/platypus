@@ -1,40 +1,35 @@
 #pragma once
 
+#include <utilities/math/mathTypes.hpp>
+
 class RigidBodyObject;
+
+struct Manifold
+{
+	RigidBodyObject* obj_a {nullptr};
+	RigidBodyObject* obj_b {nullptr};
+	Vec3 normal {0.0f, 0.0f, 0.0f};
+	float penetration {0.0f};
+};
 
 class Collision
 {
 public:
-	Collision(RigidBodyObject* obj_a, RigidBodyObject* obj_b);
+	Collision(Manifold collision_data);
 	virtual ~Collision() = default;
 
-	virtual void resolve() = 0;
-	virtual void resolveOverlap() = 0;
-	virtual void resolveForces() = 0;
+	void resolve();
 
-	virtual bool passesThreshold() = 0;
+	void resolveOverlap();
+	void resolveForces();
+	bool collisionIsSignificant();
 
 protected:
 	RigidBodyObject* _obj_a {nullptr};
 	RigidBodyObject* _obj_b {nullptr};
+	Vec3 _normal {Vec3(0.0f, 0.0f, 0.0f)};
+	float _penetration {0.0f};
 
 	float _ratio_a {0.0f};
 	float _ratio_b {0.0f};
-};
-
-class RectangleRectangleCollision: public Collision
-{
-public:
-	RectangleRectangleCollision(RigidBodyObject* obj_a, RigidBodyObject* obj_b, float overlap_x,
-		float overlap_y);
-
-	void resolve() override;
-	void resolveOverlap() override;
-	void resolveForces() override;
-
-	bool passesThreshold() override;
-
-private:
-	float _overlap_x;
-	float _overlap_y;
 };

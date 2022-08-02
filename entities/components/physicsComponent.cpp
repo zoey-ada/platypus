@@ -45,7 +45,8 @@ RigidBodyObject* PhysicsComponent::getPhysicsObject()
 
 	this->_physics_object =
 		new (std::nothrow) RigidBodyObject(this->_owner, Vec2(this->_physics_data->max_velocity()),
-			Vec2(this->_physics_data->friction()), this->_physics_data->mass());
+			Vec2(this->_physics_data->friction()), this->_physics_data->mass(),
+			this->_physics_data->restitution(), this->_physics_data->is_solid());
 
 	this->_physics_object->setShape(ShapeFactory::createShape(this->_physics_data));
 	return this->_physics_object;

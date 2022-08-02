@@ -160,6 +160,8 @@ set(physics_srcs
 source_group(source\\physics FILES ${physics_srcs})
 
 set(physics_shapes_srcs
+	physics/shapes/circleShape.hpp
+	physics/shapes/circleShape.cpp
 	physics/shapes/collisions.hpp
 	physics/shapes/collisions.cpp
 	physics/shapes/iShape.hpp

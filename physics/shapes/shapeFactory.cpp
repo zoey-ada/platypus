@@ -3,6 +3,7 @@
 #include <platypus_proto/common.hpp>
 #include <platypus_proto/entity.hpp>
 
+#include "circleShape.hpp"
 #include "rectangleShape.hpp"
 
 namespace
@@ -13,6 +14,10 @@ IShape* create2dShape(const platypus::Shape_2d& shape_data)
 	if (shape_data.has_rectangle_data())
 	{
 		return createRectangleShape(shape_data.rectangle_data());
+	}
+	else if (shape_data.has_circle_data())
+	{
+		return createCircleShape(shape_data.circle_data());
 	}
 
 	return nullptr;

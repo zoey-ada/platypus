@@ -6,7 +6,9 @@
 RectangleShape::RectangleShape(const platypus::Rectangle& rectangle_data)
 	: _offset(Vec2(rectangle_data.center().x(), rectangle_data.center().y())),
 	  _height(rectangle_data.dimensions().height()),
-	  _width(rectangle_data.dimensions().width())
+	  _width(rectangle_data.dimensions().width()),
+	  _moment_of_inertia_without_mass(
+		  (this->_width * this->_width + this->_height * this->_height) / 12)
 {}
 
 RectangleShapeData RectangleShape::getShapeData(const Vec2& position) const
@@ -64,7 +66,34 @@ Collision* RectangleShape::testCollision(const RectangleShape* other, RigidBodyO
 	if (overlap_y > a_data.height || overlap_y > b_data.height)
 		overlap_y = 0;
 
-	return new (std::nothrow) RectangleRectangleCollision(obj_a, obj_b, overlap_x, overlap_y);
+	Manifold manifold {};
+	manifold.obj_a = obj_a;
+	manifold.obj_b = obj_b;
+
+	if (overlap_y == 0 || (overlap_x < overlap_y && overlap_x != 0))
+	{
+		if (translation.x < 0)
+			manifold.normal = Vec3(-1, 0);
+		else
+			manifold.normal = Vec3(1, 0);
+		manifold.penetration = overlap_x;
+	}
+	else
+	{
+		if (translation.y < 0)
+			manifold.normal = Vec3(0, -1);
+		else
+			manifold.normal = Vec3(0, 1);
+		manifold.penetration = overlap_y;
+	}
+
+	return new (std::nothrow) Collision(manifold);
+}
+
+Collision* RectangleShape::testCollision(const CircleShape* /*other*/, RigidBodyObject* /*obj_a*/,
+	RigidBodyObject* /*obj_b*/) const
+{
+	return nullptr;
 }
 
 IShape* createRectangleShape(const platypus::Rectangle& rectangle_data)

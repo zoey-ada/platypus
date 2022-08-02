@@ -4,26 +4,21 @@
 
 #include "iShape.hpp"
 
-struct RectangleShapeData
+struct CircleShapeData
 {
 	Vec2 center;
-	float left;
-	float right;
-	float top;
-	float bottom;
-	float width;
-	float height;
+	float radius;
 };
 
-class RectangleShape: public IShape
+class CircleShape: public IShape
 {
 public:
-	explicit RectangleShape(const platypus::Rectangle& rectangle_data);
-	virtual ~RectangleShape() = default;
+	explicit CircleShape(const platypus::Circle& circle_data);
+	virtual ~CircleShape() = default;
 
-	RectangleShapeData getShapeData(const Vec2& position) const;
+	CircleShapeData getShapeData(const Vec2& position) const;
 
-	RectangleShapeData getShapeData(const Vec3& position) const
+	CircleShapeData getShapeData(const Vec3& position) const
 	{
 		return this->getShapeData(Vec2(position.x, position.y));
 	}
@@ -44,9 +39,8 @@ public:
 
 private:
 	Vec2 _offset;
-	float _height;
-	float _width;
+	float _radius;
 	float _moment_of_inertia_without_mass;
 };
 
-IShape* createRectangleShape(const platypus::Rectangle& rectangle_data);
+IShape* createCircleShape(const platypus::Circle& circle_data);
