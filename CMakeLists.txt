@@ -107,6 +107,7 @@ source_group(source\\events FILES ${events_srcs})
 
 set(events_events_src
 	events/events/iEvent.hpp
+	events/events/collisionEvent.hpp
 	events/events/inputEvent.hpp
 	events/events/newPhysicsComponentEvent.hpp
 	events/events/newRenderComponentEvent.hpp

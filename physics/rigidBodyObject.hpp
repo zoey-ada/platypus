@@ -26,6 +26,7 @@ public:
 	void updateEntityTransform() const;
 
 	EntityId entityId() const { return this->_entity.lock()->getId(); }
+	std::weak_ptr<Entity> getEntity() const { return this->_entity; }
 
 	ForceId applyForce(Force force);
 	void removeForce(ForceId id);

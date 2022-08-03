@@ -1,5 +1,9 @@
 #include "collisions.hpp"
 
+#include <events/events/collisionEvent.hpp>
+#include <events/iEventManager.hpp>
+#include <serviceProvider.hpp>
+
 #include "../rigidBodyObject.hpp"
 
 const float collision_threshold = 0.000001f;
@@ -17,15 +21,16 @@ Collision::Collision(Manifold manifold)
 
 void Collision::resolve()
 {
-	if (!this->collisionIsSignificant() || !this->_obj_a->isSolid() || !this->_obj_b->isSolid())
+	if (this->collisionIsSignificant() && this->_obj_a->isSolid() && this->_obj_b->isSolid())
 	{
-		return;
+		this->resolveForces();
+		this->resolveOverlap();
 	}
 
-	this->resolveForces();
-	this->resolveOverlap();
-
 	// trigger collision event
+	auto collision_event =
+		std::make_shared<CollisionEvent>(this->_obj_a->getEntity(), this->_obj_b->getEntity());
+	ServiceProvider::getEventManager()->triggerEvent(collision_event);
 }
 
 void Collision::resolveForces()
