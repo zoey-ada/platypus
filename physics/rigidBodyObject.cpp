@@ -18,22 +18,25 @@ RigidBodyObject::RigidBodyObject(std::shared_ptr<Entity> entity, Vec3 max_veloci
 	  _is_solid(is_solid)
 {
 	this->setMass(mass);
-	auto transform = entity->getComponent<TransformComponent3d>("transform_component_3d").lock();
-	this->_position = transform->getPosition();
-}
 
-RigidBodyObject::RigidBodyObject(std::shared_ptr<Entity> entity, Vec2 max_velocity, Vec2 friction,
-	float mass, float restitution, bool is_solid)
-	: _entity(entity),
-	  _max_linear_velocity(max_velocity),
-	  _friction(friction),
-	  _restitution(restitution),
-	  _is_solid(is_solid)
-{
-	this->setMass(mass);
-	auto transform = entity->getComponent<TransformComponent2d>("transform_component_2d").lock();
-	auto position = transform->getPosition();
-	this->_position = Vec3(position.x, position.y, transform->getDepth());
+	auto transform_comp_3d =
+		entity->getComponent<TransformComponent3d>("transform_component_3d").lock();
+
+	if (transform_comp_3d != nullptr)
+	{
+		this->_position = transform_comp_3d->getPosition();
+	}
+	else
+	{
+		auto transform_comp_2d =
+			entity->getComponent<TransformComponent2d>("transform_component_2d").lock();
+
+		if (transform_comp_2d != nullptr)
+		{
+			auto position = transform_comp_2d->getPosition();
+			this->_position = Vec3(position.x, position.y, transform_comp_2d->getDepth());
+		}
+	}
 }
 
 RigidBodyObject::~RigidBodyObject()
@@ -80,6 +83,7 @@ void RigidBodyObject::caluculateNetForce(const Milliseconds& delta)
 void RigidBodyObject::applyLinearForce(const float& seconds_delta)
 {
 	auto linear_acceleration = this->_net_linear_force * this->getInverseMass();
+
 	this->_linear_velocity += linear_acceleration * seconds_delta;
 	this->_linear_velocity = dampenForce(this->_linear_velocity, (this->_friction * seconds_delta));
 	this->_linear_velocity =
