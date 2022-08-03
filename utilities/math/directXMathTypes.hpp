@@ -30,11 +30,7 @@ public:
 	inline Vec2(const Vec2& copy) = default;
 	virtual ~Vec2() = default;
 
-	[[nodiscard]] inline float length() const;
-	[[nodiscard]] inline Vec2 normalize() const;
-	[[nodiscard]] inline float dotProduct(const Vec2& b) const;
-	[[nodiscard]] inline Vec2 crossProduct(const Vec2& b) const;
-
+	[[nodiscard]] inline Vec2 operator-() const;
 	[[nodiscard]] inline Vec2 operator-(const Vec2& rhs) const;
 	inline Vec2& operator-=(const Vec2& rhs);
 	[[nodiscard]] inline Vec2 operator+(const Vec2& rhs) const;
@@ -43,6 +39,14 @@ public:
 	inline Vec2& operator*=(const float& rhs);
 	[[nodiscard]] inline Vec2 operator/(const float& rhs) const;
 	inline Vec2& operator/=(const float& rhs);
+
+	[[nodiscard]] inline explicit operator Vec3() const;
+	[[nodiscard]] inline explicit operator Vec4() const;
+
+	[[nodiscard]] inline float length() const;
+	[[nodiscard]] inline Vec2 normalize() const;
+	[[nodiscard]] inline float dotProduct(const Vec2& b) const;
+	[[nodiscard]] inline Vec2 crossProduct(const Vec2& b) const;
 
 	[[nodiscard]] inline dx::XMVECTOR load() const { return dx::XMLoadFloat2(this); }
 
@@ -67,11 +71,7 @@ public:
 	inline Vec3(const Vec3& copy) = default;
 	virtual ~Vec3() = default;
 
-	[[nodiscard]] inline float length() const;
-	[[nodiscard]] inline Vec3 normalize() const;
-	[[nodiscard]] inline float dotProduct(const Vec3& b) const;
-	[[nodiscard]] inline Vec3 crossProduct(const Vec3& b) const;
-
+	[[nodiscard]] inline Vec3 operator-() const;
 	[[nodiscard]] inline Vec3 operator-(const Vec3& rhs) const;
 	inline Vec3& operator-=(const Vec3& rhs);
 	[[nodiscard]] inline Vec3 operator+(const Vec3& rhs) const;
@@ -80,6 +80,14 @@ public:
 	inline Vec3& operator*=(const float& rhs);
 	[[nodiscard]] inline Vec3 operator/(const float& rhs) const;
 	inline Vec3& operator/=(const float& rhs);
+
+	[[nodiscard]] inline explicit operator Vec2() const;
+	[[nodiscard]] inline explicit operator Vec4() const;
+
+	[[nodiscard]] inline float length() const;
+	[[nodiscard]] inline Vec3 normalize() const;
+	[[nodiscard]] inline float dotProduct(const Vec3& b) const;
+	[[nodiscard]] inline Vec3 crossProduct(const Vec3& b) const;
 
 	[[nodiscard]] inline dx::XMVECTOR load() const { return dx::XMLoadFloat3(this); }
 
@@ -104,6 +112,7 @@ public:
 	inline Vec4(const Vec4& copy) = default;
 	virtual ~Vec4() = default;
 
+	[[nodiscard]] inline Vec4 operator-() const;
 	[[nodiscard]] inline Vec4 operator-(const Vec4& rhs) const;
 	inline Vec4& operator-=(const Vec4& rhs);
 	[[nodiscard]] inline Vec4 operator+(const Vec4& rhs) const;
@@ -112,6 +121,9 @@ public:
 	inline Vec4& operator*=(const float& rhs);
 	[[nodiscard]] inline Vec4 operator/(const float& rhs) const;
 	inline Vec4& operator/=(const float& rhs);
+
+	[[nodiscard]] inline explicit operator Vec2() const;
+	[[nodiscard]] inline explicit operator Vec3() const;
 
 	[[nodiscard]] inline float length() const;
 	[[nodiscard]] inline Vec4 normalize() const;
@@ -308,6 +320,11 @@ inline Vec2 Vec2::crossProduct(const Vec2& b) const
 	return cross;
 }
 
+inline Vec2 Vec2::operator-() const
+{
+	return Vec2(-this->x, -this->y);
+}
+
 inline Vec2 Vec2::operator-(const Vec2& rhs) const
 {
 	return Vec2(this->x - rhs.x, this->y - rhs.y);
@@ -356,6 +373,16 @@ inline Vec2& Vec2::operator/=(const float& rhs)
 	return *this;
 }
 
+inline Vec2::operator Vec3() const
+{
+	return Vec3(*this);
+}
+
+inline Vec2::operator Vec4() const
+{
+	return Vec4(*this);
+}
+
 // Vec3
 inline Vec3::Vec3(const Vec4& v): Vec3(v.x, v.y, v.z)
 {}
@@ -386,6 +413,11 @@ inline Vec3 Vec3::crossProduct(const Vec3& b) const
 	Vec3 vec;
 	vec.store(dx::XMVector3Cross(load(), b.load()));
 	return vec;
+}
+
+inline Vec3 Vec3::operator-() const
+{
+	return Vec3(-this->x, -this->y, -this->z);
 }
 
 inline Vec3 Vec3::operator-(const Vec3& rhs) const
@@ -440,6 +472,16 @@ inline Vec3& Vec3::operator/=(const float& rhs)
 	return *this;
 }
 
+inline Vec3::operator Vec2() const
+{
+	return Vec2(*this);
+}
+
+inline Vec3::operator Vec4() const
+{
+	return Vec4(*this);
+}
+
 // Vec4
 inline float Vec4::length() const
 {
@@ -460,6 +502,11 @@ inline float Vec4::dotProduct(const Vec4& b) const
 	float dot = 0.0f;
 	dx::XMStoreFloat(&dot, dx::XMVector4Dot(load(), b.load()));
 	return dot;
+}
+
+inline Vec4 Vec4::operator-() const
+{
+	return Vec4(-this->x, -this->y, -this->z, -this->w);
 }
 
 inline Vec4 Vec4::operator-(const Vec4& rhs) const
@@ -516,6 +563,16 @@ inline Vec4& Vec4::operator/=(const float& rhs)
 	this->z /= rhs;
 	this->w /= rhs;
 	return *this;
+}
+
+inline Vec4::operator Vec2() const
+{
+	return Vec2(*this);
+}
+
+inline Vec4::operator Vec3() const
+{
+	return Vec3(*this);
 }
 
 // Mat4x4
