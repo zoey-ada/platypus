@@ -42,6 +42,9 @@ public:
 	[[nodiscard]] inline Vec2 operator/(const float& rhs) const;
 	inline Vec2& operator/=(const float& rhs);
 
+	[[nodiscard]] inline bool operator==(const Vec2& b) const;
+	[[nodiscard]] inline bool operator!=(const Vec2& b) const;
+
 	[[nodiscard]] inline explicit operator Vec3() const;
 	[[nodiscard]] inline explicit operator Vec4() const;
 
@@ -83,6 +86,9 @@ public:
 	[[nodiscard]] inline Vec3 operator/(const float& rhs) const;
 	inline Vec3& operator/=(const float& rhs);
 
+	[[nodiscard]] inline bool operator==(const Vec3& b) const;
+	[[nodiscard]] inline bool operator!=(const Vec3& b) const;
+
 	[[nodiscard]] inline explicit operator Vec2() const;
 	[[nodiscard]] inline explicit operator Vec4() const;
 
@@ -123,6 +129,9 @@ public:
 	inline Vec4& operator*=(const float& rhs);
 	[[nodiscard]] inline Vec4 operator/(const float& rhs) const;
 	inline Vec4& operator/=(const float& rhs);
+
+	[[nodiscard]] inline bool operator==(const Vec4& b) const;
+	[[nodiscard]] inline bool operator!=(const Vec4& b) const;
 
 	[[nodiscard]] inline explicit operator Vec2() const;
 	[[nodiscard]] inline explicit operator Vec3() const;
@@ -375,6 +384,16 @@ inline Vec2& Vec2::operator/=(const float& rhs)
 	return *this;
 }
 
+[[nodiscard]] inline bool Vec2::operator==(const Vec2& b) const
+{
+	return this->x == b.x && this->y == b.y;
+}
+
+[[nodiscard]] inline bool Vec2::operator!=(const Vec2& b) const
+{
+	return this->x != b.x || this->y != b.y;
+}
+
 inline Vec2::operator Vec3() const
 {
 	return Vec3(*this);
@@ -474,6 +493,16 @@ inline Vec3& Vec3::operator/=(const float& rhs)
 	return *this;
 }
 
+[[nodiscard]] inline bool Vec3::operator==(const Vec3& b) const
+{
+	return this->x == b.x && this->y == b.y && this->z == b.z;
+}
+
+[[nodiscard]] inline bool Vec3::operator!=(const Vec3& b) const
+{
+	return this->x != b.x || this->y != b.y || this->z != b.z;
+}
+
 inline Vec3::operator Vec2() const
 {
 	return Vec2(*this);
@@ -565,6 +594,16 @@ inline Vec4& Vec4::operator/=(const float& rhs)
 	this->z /= rhs;
 	this->w /= rhs;
 	return *this;
+}
+
+[[nodiscard]] inline bool Vec4::operator==(const Vec4& b) const
+{
+	return this->x == b.x && this->y == b.y && this->z == b.z && this->w == b.w;
+}
+
+[[nodiscard]] inline bool Vec4::operator!=(const Vec4& b) const
+{
+	return this->x != b.x || this->y != b.y || this->z != b.z || this->w != b.w;
 }
 
 inline Vec4::operator Vec2() const
