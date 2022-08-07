@@ -5,6 +5,8 @@
 #include <Windows.h>
 #include <hidsdi.h>
 #include <hidusage.h>
+#undef min
+#undef max
 
 #include <platform/window/windowsWindow.hpp>
 #include <serviceProvider.hpp>

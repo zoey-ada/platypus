@@ -1,6 +1,8 @@
 #pragma once
 
 #include <Windows.h>
+#undef min
+#undef max
 
 #include "../iInputDevice.hpp"
 

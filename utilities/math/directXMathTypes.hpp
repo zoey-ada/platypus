@@ -5,6 +5,8 @@
 #include <memory>
 
 #include <DirectXMath.h>
+#undef min
+#undef max
 
 #include <platypus_proto/common.hpp>
 

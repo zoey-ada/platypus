@@ -1,6 +1,8 @@
 #include <cstdint>
 
 #include <Windows.h>
+#undef min
+#undef max
 
 #include <utilities/encoding.hpp>
 
