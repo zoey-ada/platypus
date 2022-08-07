@@ -3,9 +3,9 @@
 #include <map>
 
 #include <entities/entity.hpp>
+#include <utilities/logging/logger.hpp>
 #include <utilities/math/mathTypes.hpp>
 
-#include "force.hpp"
 #include "shapes/iShape.hpp"
 
 class RigidBodyObject
@@ -13,24 +13,21 @@ class RigidBodyObject
 public:
 	RigidBodyObject(std::shared_ptr<Entity> entity, Vec3 max_velocity, Vec3 friction, float mass,
 		float restitution, bool is_solid);
-	RigidBodyObject(std::shared_ptr<Entity> entity, Vec2 max_velocity, Vec2 friction, float mass,
-		float restitution, bool is_solid);
+
 	virtual ~RigidBodyObject();
 
-	void update(const Milliseconds delta);
-
-	void caluculateNetForce(const Milliseconds& delta);
-	void step(const float& seconds_delta);
-	void applyLinearForce(const float& seconds_delta);
-	void applyAngularForce(const float& seconds_delta);
-	void updateEntityTransform() const;
+	void step(const Milliseconds delta);
 
 	EntityId entityId() const { return this->_entity.lock()->getId(); }
 	std::weak_ptr<Entity> getEntity() const { return this->_entity; }
 
-	ForceId applyForce(Force force);
-	void removeForce(ForceId id);
-	void removeAllForces() { this->_forces.clear(); }
+	void applyForce(const Vec3& force)
+	{
+		this->_net_linear_force += force;
+		// logInfo("add force: x: " + std::to_string(force.x) + ", y: " + std::to_string(force.y),
+		// 	"physics");
+	};
+	void removeAllLinearForce() { this->_net_linear_force = Vec3(); }
 
 	void applyTorque(const float torque) { this->_net_torque += torque; };
 	void removeAllTorque() { this->_net_torque = 0.0f; }
@@ -81,8 +78,6 @@ private:
 
 	IShape* _shape {nullptr};
 
-	ForceId _last_force_id = InvalidForceId;
-	std::map<ForceId, Force> _forces;
 	Vec3 _net_linear_force {0.0f, 0.0f, 0.0f};
 	float _net_torque {0.0f};
 
@@ -104,4 +99,8 @@ private:
 	Vec3 _friction {0.0f, 0.0f, 0.0f};
 	float _angular_friction {0.0f};
 	bool _is_solid {true};
+
+	void applyLinearForce(const float& seconds_delta);
+	void applyAngularForce(const float& seconds_delta);
+	void updateEntityTransform() const;
 };

@@ -149,7 +149,6 @@ set(libraries_srcs
 source_group(source\\libraries FILES ${libraries_srcs})
 
 set(physics_srcs
-	physics/force.hpp
 	physics/iPhysicsSystem.hpp
 	physics/physicsSystem.hpp
 	physics/physicsSystem.cpp

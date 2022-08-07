@@ -192,9 +192,7 @@ inline void logError(std::string_view message, std::string_view channel)
 
 #ifdef _WIN32
 
-	#include <Windows.h>
-	#undef min
-	#undef max
+using HRESULT = long;
 
 inline void logDebug(std::string_view message, const HRESULT& hr)
 {

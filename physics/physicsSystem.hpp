@@ -22,6 +22,8 @@ public:
 	void addRigidObject(RigidBodyObject* object) override;
 	void removeRigidObject(const EntityId entity_id) override;
 
+	void setGravity(const Vec3& gravity) { this->_gravity = gravity; }
+
 	std::vector<Collision*> detectCollisions();
 	void resolveCollisions(std::vector<Collision*> collisions);
 
@@ -32,5 +34,6 @@ public:
 private:
 	std::map<EntityId, RigidBodyObject*> _objects;
 
-	Vec3 _gravity {0, -9.81f, 0};
+	// Vec3 _gravity {0, -9.81f, 0};
+	Vec3 _gravity {0, 0, 0};
 };

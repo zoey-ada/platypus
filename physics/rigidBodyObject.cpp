@@ -46,38 +46,24 @@ RigidBodyObject::~RigidBodyObject()
 	this->_shape = nullptr;
 }
 
-void RigidBodyObject::update(const Milliseconds delta)
+void RigidBodyObject::step(const Milliseconds delta)
 {
-	this->caluculateNetForce(delta);
-	this->step(delta / 1000.0f);
+	const float seconds_delta = static_cast<float>(delta) / milliseconds_in_second;
+	this->applyLinearForce(seconds_delta);
+	this->applyAngularForce(seconds_delta);
+	// logInfo("vel x: " + std::to_string(this->_linear_velocity.x) +
+	// 		", vel y: " + std::to_string(this->_linear_velocity.y),
+	// 	"physics");
+
 	this->updateEntityTransform();
-	// logInfo("x: " + std::to_string(this->_position.x) + ", y: " +
-	// std::to_string(this->_position.y), 	"physics");
 }
 
-void RigidBodyObject::caluculateNetForce(const Milliseconds& delta)
+void RigidBodyObject::setShape(IShape* shape)
 {
-	Vec3 net_force(0.0f, 0.0f, 0.0f);
-	std::list<ForceId> expired_forces;
+	if (this->_shape != nullptr)
+		delete this->_shape;
 
-	for (auto [id, force] : this->_forces)
-	{
-		net_force += force.vector;
-
-		if (delta >= force.timeout)
-		{
-			expired_forces.push_back(id);
-		}
-		else if (force.timeout != Infinity)
-		{
-			force.timeout -= delta;
-		}
-	}
-
-	for (const auto id : expired_forces)
-		this->_forces.erase(id);
-
-	this->_net_linear_force = net_force;
+	this->_shape = shape;
 }
 
 void RigidBodyObject::applyLinearForce(const float& seconds_delta)
@@ -90,6 +76,7 @@ void RigidBodyObject::applyLinearForce(const float& seconds_delta)
 		clampForceMagnitude(this->_linear_velocity, this->_max_linear_velocity);
 
 	this->_position += this->_linear_velocity * seconds_delta;
+	this->_net_linear_force = Vec3();
 }
 
 void RigidBodyObject::applyAngularForce(const float& seconds_delta)
@@ -103,12 +90,7 @@ void RigidBodyObject::applyAngularForce(const float& seconds_delta)
 		clampValueMagnitude(this->_angular_velocity, this->_max_angular_velocity);
 
 	this->_angle += this->_angular_velocity * seconds_delta;
-}
-
-void RigidBodyObject::step(const float& seconds_delta)
-{
-	this->applyLinearForce(seconds_delta);
-	this->applyAngularForce(seconds_delta);
+	this->_net_torque = 0.0f;
 }
 
 void RigidBodyObject::updateEntityTransform() const
@@ -117,25 +99,4 @@ void RigidBodyObject::updateEntityTransform() const
 		this->_entity.lock()->getComponent<TransformComponent2d>("transform_component_2d").lock();
 	transform->setPosition(this->_position.x, this->_position.y);
 	transform->setDepth(this->_position.z);
-}
-
-ForceId RigidBodyObject::applyForce(Force force)
-{
-	this->_last_force_id++;
-	this->_forces[this->_last_force_id] = force;
-	return this->_last_force_id;
-}
-
-void RigidBodyObject::removeForce(ForceId id)
-{
-	if (this->_forces.contains(id))
-		this->_forces.erase(id);
-}
-
-void RigidBodyObject::setShape(IShape* shape)
-{
-	if (this->_shape != nullptr)
-		delete this->_shape;
-
-	this->_shape = shape;
 }

@@ -4,7 +4,6 @@
 
 #include <events/events/inputEvent.hpp>
 #include <events/iEventManager.hpp>
-#include <physics/force.hpp>
 #include <physics/rigidBodyObject.hpp>
 #include <serviceProvider.hpp>
 
@@ -99,83 +98,50 @@ void MovementComponent2d::onInput(std::shared_ptr<IEvent> event)
 
 	if (input_event->_command_name.compare("move-up") == 0)
 	{
-		static ForceId up_force_id = InvalidForceId;
-
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			Force force {InvalidForceId, Vec3(0.0f, this->_movement_data->acceleration_y(), 0.0f),
-				Infinity};
+			auto force = Vec3(0.0f, this->_movement_data->acceleration_y(), 0.0f);
 
 			auto physics_component =
 				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			up_force_id = physics_component->getPhysicsObject()->applyForce(force);
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			auto physics_component =
-				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			physics_component->getPhysicsObject()->removeForce(up_force_id);
-			up_force_id = InvalidForceId;
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-down") == 0)
 	{
-		static ForceId down_force_id = InvalidForceId;
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			Force force {InvalidForceId, Vec3(0.0f, -this->_movement_data->acceleration_y(), 0.0f),
-				Infinity};
+			auto force = Vec3(0.0f, -this->_movement_data->acceleration_y(), 0.0f);
 
 			auto physics_component =
 				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			down_force_id = physics_component->getPhysicsObject()->applyForce(force);
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			auto physics_component =
-				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			physics_component->getPhysicsObject()->removeForce(down_force_id);
-			down_force_id = InvalidForceId;
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-left") == 0)
 	{
-		static ForceId left_force_id = InvalidForceId;
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			Force force {InvalidForceId, Vec3(-this->_movement_data->acceleration_x(), 0.0f, 0.0f),
-				Infinity};
+			auto force = Vec3(-this->_movement_data->acceleration_x(), 0.0f, 0.0f);
 
 			auto physics_component =
 				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			left_force_id = physics_component->getPhysicsObject()->applyForce(force);
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			auto physics_component =
-				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			physics_component->getPhysicsObject()->removeForce(left_force_id);
-			left_force_id = InvalidForceId;
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-right") == 0)
 	{
-		static ForceId right_force_id = InvalidForceId;
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			Force force {InvalidForceId, Vec3(this->_movement_data->acceleration_x(), 0.0f, 0.0f),
-				Infinity};
+			auto force = Vec3(this->_movement_data->acceleration_x(), 0.0f, 0.0f);
 
 			auto physics_component =
 				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			right_force_id = physics_component->getPhysicsObject()->applyForce(force);
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			auto physics_component =
-				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
-			physics_component->getPhysicsObject()->removeForce(right_force_id);
-			right_force_id = InvalidForceId;
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 }

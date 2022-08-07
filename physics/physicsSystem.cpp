@@ -24,12 +24,17 @@ void PhysicsSystem::deinitialize()
 void PhysicsSystem::update(const Milliseconds delta)
 {
 	// either we were debugging, or we are dropping some serious frames
-	if (delta > milliseconds_in_second / 2)
+	if (delta > 500)
 		return;
 
 	for (auto [id, object] : this->_objects)
 	{
-		object->update(delta);
+		if (this->_gravity != Vec3())
+		{
+			object->applyForce(this->_gravity);
+		}
+
+		object->step(delta);
 	}
 
 	auto collisions = this->detectCollisions();

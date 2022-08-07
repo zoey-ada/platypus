@@ -3,6 +3,7 @@
 #include <platypus_proto/util.hpp>
 
 #include <google/protobuf/message.h>
+#include <utilities/logging/logger.hpp>
 
 #include "components/entityComponent.hpp"
 #include "components/movementComponent2d.hpp"
@@ -75,6 +76,7 @@ std::shared_ptr<EntityComponent> EntityFactory::createComponent(std::shared_ptr<
 	auto component = iter->second();
 	if (!component->initialize(data))
 	{
+		logWarning("failed to create entity component " + name, "entity");
 		return nullptr;
 	}
 
