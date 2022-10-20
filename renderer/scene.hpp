@@ -50,6 +50,7 @@ public:
 
 	void registerEventSinks();
 	void onNewRenderComponent(std::shared_ptr<IEvent> event);
+	void onRemoveRenderComponent(std::shared_ptr<IEvent> event);
 
 private:
 	std::shared_ptr<SceneNode> _root {nullptr};

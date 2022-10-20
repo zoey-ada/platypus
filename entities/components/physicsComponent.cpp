@@ -3,6 +3,7 @@
 #include <platypus_proto/entity.hpp>
 
 #include <events/events/newPhysicsComponentEvent.hpp>
+#include <events/events/removePhysicsComponentEvent.hpp>
 #include <events/iEventManager.hpp>
 #include <physics/rigidBodyObject.hpp>
 #include <physics/shapes/iShape.hpp>
@@ -14,6 +15,9 @@
 
 PhysicsComponent::~PhysicsComponent()
 {
+	auto event = std::make_shared<RemovePhysicsComponentEvent>(this->_owner->getId());
+	ServiceProvider::getEventManager()->triggerEvent(event);
+
 	if (this->_physics_object != nullptr)
 	{
 		delete this->_physics_object;

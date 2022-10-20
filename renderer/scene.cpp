@@ -1,6 +1,7 @@
 #include "scene.hpp"
 
 #include <events/events/newRenderComponentEvent.hpp>
+#include <events/events/removeRenderComponentEvent.hpp>
 #include <events/iEventManager.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <serviceProvider.hpp>
@@ -128,12 +129,22 @@ const Mat4x4& Scene::getTopMatrix() const
 void Scene::registerEventSinks()
 {
 	registerEventSink("new-render-component-event", Scene::onNewRenderComponent);
+	registerEventSink("remove-render-component-event", Scene::onRemoveRenderComponent);
 }
 
 void Scene::onNewRenderComponent(std::shared_ptr<IEvent> event)
 {
 	auto render_event = std::dynamic_pointer_cast<NewRenderComponentEvent>(event);
 	if (!this->addChild(render_event->_entity_id, render_event->_scene_node))
+	{
+		// log error
+	}
+}
+
+void Scene::onRemoveRenderComponent(std::shared_ptr<IEvent> event)
+{
+	auto render_event = std::static_pointer_cast<RemoveRenderComponentEvent>(event);
+	if (!this->removeChild(render_event->_entity_id))
 	{
 		// log error
 	}

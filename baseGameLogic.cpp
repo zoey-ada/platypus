@@ -80,6 +80,19 @@ std::shared_ptr<Entity> BaseGameLogic::createEntity(const char* entity_resource)
 	return entity;
 }
 
+void BaseGameLogic::removeEntity(EntityId entity_id)
+{
+	auto iter = this->_entities.find(entity_id);
+
+	if (iter != this->_entities.end())
+	{
+		// because entity components have shared_ptrs to the entity object,
+		// the entity must be explicitly deinitialized before it can be destroyed
+		iter->second->deinitialize();
+		this->_entities.erase(entity_id);
+	}
+}
+
 void BaseGameLogic::changeState(const GameState new_state)
 {
 	// todo: stuffs

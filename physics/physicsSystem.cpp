@@ -91,6 +91,7 @@ void PhysicsSystem::resolveCollisions(std::vector<Collision*> collisions)
 void PhysicsSystem::registerEventSinks()
 {
 	registerEventSink("new-physics-component-event", PhysicsSystem::onNewPhysicsComponent);
+	registerEventSink("remove-physics-component-event", PhysicsSystem::onRemovePhysicsComponent);
 }
 
 void PhysicsSystem::onNewPhysicsComponent(std::shared_ptr<IEvent> event)

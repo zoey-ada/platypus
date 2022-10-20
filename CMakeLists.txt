@@ -112,6 +112,7 @@ set(events_events_src
 	events/events/newPhysicsComponentEvent.hpp
 	events/events/newRenderComponentEvent.hpp
 	events/events/removePhysicsComponentEvent.hpp
+	events/events/removeRenderComponentEvent.hpp
 )
 source_group(source\\events\\events FILES ${events_events_src})
 

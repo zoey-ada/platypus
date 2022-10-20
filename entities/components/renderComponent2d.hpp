@@ -13,7 +13,7 @@ class RenderComponent2d: public EntityComponent
 {
 public:
 	RenderComponent2d() = default;
-	virtual ~RenderComponent2d() = default;
+	virtual ~RenderComponent2d();
 
 	[[nodiscard]] bool initialize(const std::shared_ptr<Message>& data) override;
 	void postInitialize() override;
