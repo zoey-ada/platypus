@@ -135,7 +135,12 @@ PtTextMetrics TextRenderer::measureText(const char* message)
 
 		width += static_cast<uint32_t>(this->_face->glyph->metrics.horiAdvance / 64);
 		uint32_t baseline_height = (this->_face->glyph->metrics.horiBearingY / 64);
-		uint32_t descender_height = (this->_face->glyph->metrics.height / 64) - baseline_height;
+
+		uint32_t pixel_height = this->_face->glyph->metrics.height / 64;
+		uint32_t descender_height = 0;
+
+		if (baseline_height < pixel_height)
+			descender_height = pixel_height - baseline_height;
 
 		if (baseline_height > highest_ascender)
 			highest_ascender = baseline_height;
