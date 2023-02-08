@@ -33,6 +33,7 @@ public:
 	virtual void onUpdate(Milliseconds delta);
 
 	std::shared_ptr<Entity> createEntity(const char* entity_resource);
+	void removeEntity(EntityId entity_id);
 
 	virtual void changeState(const GameState new_state);
 	const GameState getState() const { return _state; }

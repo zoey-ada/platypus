@@ -50,16 +50,16 @@ void InputManager::deinitialize()
 
 void InputManager::readInput(const Milliseconds now)
 {
-	if (now - this->_last_read >= this->_wait_time)
+	// if (now - this->_last_read >= this->_wait_time)
+	// {
+	logDebug("reading input", "input");
+	for (auto& device : this->_input_devices)
 	{
-		logDebug("reading input", "input");
-		for (auto& device : this->_input_devices)
-		{
-			this->readInputFromDevice(device);
-		}
-
-		this->_last_read = now;
+		this->readInputFromDevice(device);
 	}
+
+	this->_last_read = now;
+	// }
 };
 
 void InputManager::readInputFromDevice(const std::shared_ptr<IInputDevice>& device)
@@ -90,6 +90,19 @@ void InputManager::processBinaryInput(const Input& input)
 			const auto command = iter->second;
 			auto action_type =
 				input.current_state.pressed ? InputActionType::Start : InputActionType::End;
+
+			auto event =
+				std::make_shared<InputEvent>(command.command_type(), action_type, command.entity());
+			this->_event_manager->triggerEvent(event);
+		}
+	}
+	else if (input.current_state.pressed)
+	{
+		auto iter = this->_configured_inputs.find(input.type);
+		if (iter != this->_configured_inputs.end())
+		{
+			const auto command = iter->second;
+			auto action_type = InputActionType::Update;
 
 			auto event =
 				std::make_shared<InputEvent>(command.command_type(), action_type, command.entity());

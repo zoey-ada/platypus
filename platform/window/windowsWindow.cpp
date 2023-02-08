@@ -88,6 +88,8 @@ int WindowsWindow::runLoop(UpdateFunction updateFunc, RenderFunction renderFunc,
 		{
 			auto now = clock->getCurrentTime();
 			auto delta = now - this->_prevTime;
+			if (delta == 0)
+				continue;
 
 			updateFunc(now, delta);
 			renderFunc(now, delta);

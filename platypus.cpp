@@ -4,6 +4,7 @@
 
 #include <events/eventManager.hpp>
 #include <input/inputManager.hpp>
+#include <physics/physicsSystem.hpp>
 #include <platform/iPlatform.hpp>
 #include <platform/platformFactory.hpp>
 #include <platform/utils.hpp>
@@ -65,6 +66,10 @@ bool Platypus::initialize()
 	this->_input_manager = std::make_shared<InputManager>();
 	this->_input_manager->initialize();
 
+	this->_physics = std::make_shared<PhysicsSystem>();
+	this->_physics->initialize();
+	ServiceProvider::registerPhysicsSystem(this->_physics);
+
 	return true;
 }
 
@@ -76,6 +81,7 @@ int Platypus::run()
 
 void Platypus::deinitialize()
 {
+	this->_physics->deinitialize();
 	this->_renderer->deinitialize();
 	this->_cache->flush();
 	ServiceProvider::unregisterAllServices();
@@ -84,6 +90,7 @@ void Platypus::deinitialize()
 UpdateFunction Platypus::getUpdateFunction() const
 {
 	return [this](Milliseconds now, Milliseconds delta) {
+		this->_physics->update(delta);
 		this->_input_manager->readInput(now);
 		this->_logic->onUpdate(delta);
 	};

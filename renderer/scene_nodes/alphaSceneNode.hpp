@@ -20,3 +20,9 @@ struct AlphaSceneNode
 
 	bool const operator!=(AlphaSceneNode const& right) { return !(*this == right); }
 };
+
+inline bool operator<(const std::shared_ptr<AlphaSceneNode>& a,
+	const std::shared_ptr<AlphaSceneNode>& b)
+{
+	return (*a) < (*b);
+}

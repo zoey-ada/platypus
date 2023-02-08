@@ -13,7 +13,7 @@ class RenderComponent3d: public EntityComponent
 {
 public:
 	RenderComponent3d() = default;
-	virtual ~RenderComponent3d() = default;
+	virtual ~RenderComponent3d();
 
 	[[nodiscard]] bool initialize(const std::shared_ptr<Message>& data) override;
 	void postInitialize() override;

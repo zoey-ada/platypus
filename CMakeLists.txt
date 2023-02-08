@@ -85,6 +85,8 @@ set(entities_components_srcs
 	entities/components/entityComponent.hpp
 	entities/components/movementComponent2d.hpp
 	entities/components/movementComponent2d.cpp
+	entities/components/physicsComponent.hpp
+	entities/components/physicsComponent.cpp
 	entities/components/renderComponent2d.hpp
 	entities/components/renderComponent2d.cpp
 	entities/components/renderComponent3d.hpp
@@ -104,7 +106,13 @@ set(events_srcs
 source_group(source\\events FILES ${events_srcs})
 
 set(events_events_src
+	events/events/iEvent.hpp
+	events/events/collisionEvent.hpp
+	events/events/inputEvent.hpp
+	events/events/newPhysicsComponentEvent.hpp
 	events/events/newRenderComponentEvent.hpp
+	events/events/removePhysicsComponentEvent.hpp
+	events/events/removeRenderComponentEvent.hpp
 )
 source_group(source\\events\\events FILES ${events_events_src})
 
@@ -140,6 +148,30 @@ set(libraries_srcs
 	libraries/libzip_include.hpp
 )
 source_group(source\\libraries FILES ${libraries_srcs})
+
+set(physics_srcs
+	physics/iPhysicsSystem.hpp
+	physics/physicsSystem.hpp
+	physics/physicsSystem.cpp
+	physics/rigidBodyObject.hpp
+	physics/rigidBodyObject.cpp
+	physics/utils.hpp
+	physics/utils.cpp
+)
+source_group(source\\physics FILES ${physics_srcs})
+
+set(physics_shapes_srcs
+	physics/shapes/circleShape.hpp
+	physics/shapes/circleShape.cpp
+	physics/shapes/collisions.hpp
+	physics/shapes/collisions.cpp
+	physics/shapes/iShape.hpp
+	physics/shapes/rectangleShape.hpp
+	physics/shapes/rectangleShape.cpp
+	physics/shapes/shapeFactory.hpp
+	physics/shapes/shapeFactory.cpp
+)
+source_group(source\\physics\\shapes FILES ${physics_shapes_srcs})
 
 set(renderer_srcs
 	renderer/color.hpp
@@ -321,6 +353,8 @@ set(all_srcs
 	${input_devices_srcs}
 	${input_devices_raw_input_srcs}
 	${libraries_srcs}
+	${physics_srcs}
+	${physics_shapes_srcs}
 	${renderer_srcs}
 	${scene_node_srcs}
 	${directx_srcs}

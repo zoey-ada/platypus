@@ -4,6 +4,8 @@
 #include <vector>
 
 #include <Windows.h>
+#undef min
+#undef max
 
 #include <input/devices/raw_input/iRawInputDevice.hpp>
 #include <utilities/time/utils.hpp>

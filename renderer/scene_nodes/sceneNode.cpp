@@ -111,11 +111,23 @@ bool SceneNode::addChild(const std::shared_ptr<ISceneNode>& child)
 	return true;
 }
 
-bool SceneNode::removeChild(const EntityId /*id*/)
+bool SceneNode::removeChild(const EntityId id)
 {
 	for (auto iter = this->_children.begin(); iter != this->_children.end(); ++iter)
 	{
 		// find and remove node
+		if ((*iter)->properties()->entityId() == id)
+		{
+			this->_children.erase(iter);
+			return true;
+		}
+		else
+		{
+			if ((*iter)->removeChild(id))
+			{
+				return true;
+			}
+		}
 	}
 
 	return false;

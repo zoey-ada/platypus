@@ -3,6 +3,8 @@
 #include <string>
 
 #include <Windows.h>
+#undef min
+#undef max
 
 #include "iPlatform.hpp"
 

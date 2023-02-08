@@ -4,7 +4,10 @@
 
 #include <events/events/inputEvent.hpp>
 #include <events/iEventManager.hpp>
+#include <physics/rigidBodyObject.hpp>
 #include <serviceProvider.hpp>
+
+#include "physicsComponent.hpp"
 
 bool MovementComponent2d::initialize(const std::shared_ptr<Message>& data)
 {
@@ -16,90 +19,8 @@ bool MovementComponent2d::initialize(const std::shared_ptr<Message>& data)
 void MovementComponent2d::postInitialize()
 {}
 
-void MovementComponent2d::update(const Milliseconds delta)
-{
-	float delta_factor = delta / 16.6667f;
-
-	if (this->_is_moving_x || this->_velocity_x != 0.0f)
-	{
-		if (this->_is_moving_x)
-		{
-			this->_velocity_x += this->_movement_data->acceleration_x() * delta_factor;
-		}
-		else
-		{
-			this->_velocity_x += this->_movement_data->deceleration_x() * delta_factor;
-		}
-
-		if (this->_velocity_x != 0)
-		{
-			if (this->_is_moving_x)
-			{
-				if (this->_movement_data->acceleration_x() > 0)
-				{
-					this->_velocity_x =
-						std::min(this->_velocity_x, this->_movement_data->max_velocity_x());
-				}
-				else
-				{
-					this->_velocity_x =
-						std::max(this->_velocity_x, -this->_movement_data->max_velocity_x());
-				}
-			}
-			else
-			{
-				if (this->_movement_data->acceleration_x() > 0)
-				{
-					this->_velocity_x = std::min(this->_velocity_x, 0.0f);
-				}
-				else
-				{
-					this->_velocity_x = std::max(this->_velocity_x, 0.0f);
-				}
-			}
-		}
-	}
-
-	if (this->_is_moving_y || this->_velocity_y != 0.0f)
-	{
-		if (this->_is_moving_y)
-		{
-			this->_velocity_y += this->_movement_data->acceleration_y() * delta_factor;
-		}
-		else
-		{
-			this->_velocity_y += this->_movement_data->deceleration_y() * delta_factor;
-		}
-
-		if (this->_velocity_y != 0)
-		{
-			if (this->_is_moving_y)
-			{
-				if (this->_movement_data->acceleration_y() > 0)
-				{
-					this->_velocity_y =
-						std::min(this->_velocity_y, this->_movement_data->max_velocity_y());
-				}
-				else
-				{
-					this->_velocity_y =
-						std::max(this->_velocity_y, -this->_movement_data->max_velocity_y());
-				}
-			}
-			else
-			{
-				if (this->_movement_data->acceleration_y() > 0)
-				{
-					this->_velocity_y = std::min(this->_velocity_y, 0.0f);
-				}
-				else
-				{
-					this->_velocity_y = std::max(this->_velocity_y, 0.0f);
-				}
-			}
-		}
-	}
-}
+void MovementComponent2d::update(const Milliseconds /*delta*/)
+{}
 
 Vec2 MovementComponent2d::getAcceleration() const
 {
@@ -177,62 +98,50 @@ void MovementComponent2d::onInput(std::shared_ptr<IEvent> event)
 
 	if (input_event->_command_name.compare("move-up") == 0)
 	{
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			this->_movement_data->set_acceleration_y(abs(this->_movement_data->acceleration_y()));
-			this->_movement_data->set_deceleration_y(abs(this->_movement_data->deceleration_y()));
-			this->_is_moving_y = true;
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			this->_movement_data->set_acceleration_y(-abs(this->_movement_data->acceleration_y()));
-			this->_movement_data->set_deceleration_y(-abs(this->_movement_data->deceleration_y()));
-			this->_is_moving_y = false;
+			auto force = Vec3(0.0f, this->_movement_data->acceleration_y(), 0.0f);
+
+			auto physics_component =
+				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-down") == 0)
 	{
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			this->_movement_data->set_acceleration_y(-abs(this->_movement_data->acceleration_y()));
-			this->_movement_data->set_deceleration_y(-abs(this->_movement_data->deceleration_y()));
-			this->_is_moving_y = true;
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			this->_movement_data->set_acceleration_y(abs(this->_movement_data->acceleration_y()));
-			this->_movement_data->set_deceleration_y(abs(this->_movement_data->deceleration_y()));
-			this->_is_moving_y = false;
+			auto force = Vec3(0.0f, -this->_movement_data->acceleration_y(), 0.0f);
+
+			auto physics_component =
+				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-left") == 0)
 	{
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			this->_movement_data->set_acceleration_x(-abs(this->_movement_data->acceleration_x()));
-			this->_movement_data->set_deceleration_x(-abs(this->_movement_data->deceleration_x()));
-			this->_is_moving_x = true;
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			this->_movement_data->set_acceleration_x(abs(this->_movement_data->acceleration_x()));
-			this->_movement_data->set_deceleration_x(abs(this->_movement_data->deceleration_x()));
-			this->_is_moving_x = false;
+			auto force = Vec3(-this->_movement_data->acceleration_x(), 0.0f, 0.0f);
+
+			auto physics_component =
+				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 	else if (input_event->_command_name.compare("move-right") == 0)
 	{
-		if (input_event->_action == InputActionType::Start)
+		if (input_event->_action == InputActionType::Start ||
+			input_event->_action == InputActionType::Update)
 		{
-			this->_movement_data->set_acceleration_x(abs(this->_movement_data->acceleration_x()));
-			this->_movement_data->set_deceleration_x(abs(this->_movement_data->deceleration_x()));
-			this->_is_moving_x = true;
-		}
-		else if (input_event->_action == InputActionType::End)
-		{
-			this->_movement_data->set_acceleration_x(-abs(this->_movement_data->acceleration_x()));
-			this->_movement_data->set_deceleration_x(-abs(this->_movement_data->deceleration_x()));
-			this->_is_moving_x = false;
+			auto force = Vec3(this->_movement_data->acceleration_x(), 0.0f, 0.0f);
+
+			auto physics_component =
+				this->_owner->getComponent<PhysicsComponent>("physics_component").lock();
+			physics_component->getPhysicsObject()->applyForce(force);
 		}
 	}
 }

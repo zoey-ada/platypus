@@ -11,6 +11,7 @@ class BaseGameLogic;
 class IClock;
 class IEventManager;
 class InputManager;
+class IPhysicsSystem;
 class IPlatform;
 class IRenderer;
 class ResourceCache;
@@ -43,6 +44,7 @@ private:
 	std::shared_ptr<BaseGameLogic> _logic {nullptr};
 	std::shared_ptr<InputManager> _input_manager {nullptr};
 	std::shared_ptr<IEventManager> _event_manager {nullptr};
+	std::shared_ptr<IPhysicsSystem> _physics {nullptr};
 
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
 	[[nodiscard]] RenderFunction getRenderFunction() const;

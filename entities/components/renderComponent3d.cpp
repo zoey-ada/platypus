@@ -3,11 +3,18 @@
 #include <platypus_proto/entity.hpp>
 
 #include <events/events/newRenderComponentEvent.hpp>
+#include <events/events/removeRenderComponentEvent.hpp>
 #include <events/iEventManager.hpp>
 #include <renderer/scene_nodes/meshNode.hpp>
 #include <serviceProvider.hpp>
 
 #include "transformComponent3d.hpp"
+
+RenderComponent3d::~RenderComponent3d()
+{
+	auto event = std::make_shared<RemoveRenderComponentEvent>(this->_owner->getId());
+	ServiceProvider::getEventManager()->triggerEvent(event);
+}
 
 bool RenderComponent3d::initialize(const std::shared_ptr<Message>& data)
 {

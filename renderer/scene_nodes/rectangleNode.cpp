@@ -27,6 +27,9 @@ bool RectangleNode::initialize(const std::shared_ptr<Scene>& scene)
 			scene->renderer()->loadPixelShader(this->_pixel_shader_path, this->_texture_path);
 	}
 
+	if (!this->_texture_path.empty())
+		this->properties()->material().setAlpha(0.9999f);
+
 	if (!SceneNode::initialize(scene) || !this->_pixel_shader->initialize(scene) ||
 		!this->_vertex_shader->initialize(scene))
 	{
