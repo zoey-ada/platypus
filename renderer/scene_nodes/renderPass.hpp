@@ -6,6 +6,7 @@ enum class RenderPass
 	Static = First,
 	Entity,
 	Sky,
+	UserInterface,
 	NotRendered,
 	Last
 };

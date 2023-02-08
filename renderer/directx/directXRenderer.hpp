@@ -53,6 +53,8 @@ public:
 	PtIndexBuffer createIndexBuffer(const uint32_t* indices, const uint64_t index_count) override;
 	void destroyIndexBuffer(PtIndexBuffer buffer) override;
 
+	PtTextMetrics measureText(const char* message, const char* font_family,
+		const uint16_t point_size) override;
 	std::shared_ptr<TextureResource> rasterizeText(const char* message, const char* font_family,
 		const uint16_t point_size) override;
 
@@ -86,4 +88,5 @@ private:
 	std::weak_ptr<ResourceCache> _cache;
 	std::shared_ptr<DirectXObjectCreator> _creator;
 	std::shared_ptr<DxShaderManager> _shader_manager;
+	std::shared_ptr<TextRenderer> _text_renderer;
 };

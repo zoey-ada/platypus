@@ -13,7 +13,7 @@
 TextNode::TextNode(PtTextNodeDesc* text_node_desc)
 	: SceneNode(text_node_desc->base_node_data),
 	  _pixel_shader_path(text_node_desc->pixel_shader_path),
-	  _vertex_shader_path(text_node_desc->vetex_shader_path),
+	  _vertex_shader_path(text_node_desc->vertex_shader_path),
 	  _message(text_node_desc->message)
 {
 	this->properties()->material().setAlpha(0.9999f);
@@ -37,19 +37,7 @@ bool TextNode::initialize(const std::shared_ptr<Scene>& scene)
 	}
 
 	auto cache = scene->cache();
-
-	if (!cache->exists(ResourceType::Mesh, this->_message))
-	{
-		auto texture = scene->renderer()->rasterizeText(this->_message.c_str(), "hack.ttf", 48);
-		// "umeboshi_.ttf", 48);
-
-		if (!cache->addResource(texture))
-		{
-			// error
-		}
-	}
-
-	this->_pixel_shader->setTexture(this->_message);
+	this->generateTexture(cache, scene->renderer());
 
 	// force the sprite to reload
 	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1_u_flipped"))
@@ -68,6 +56,11 @@ bool TextNode::initialize(const std::shared_ptr<Scene>& scene)
 
 bool TextNode::render(const std::shared_ptr<Scene>& scene)
 {
+	if (this->_texture_is_out_of_date)
+	{
+		this->generateTexture(scene->cache(), scene->renderer());
+	}
+
 	if (!this->_pixel_shader->setupRender(scene, this->shared_from_this()) ||
 		!this->_vertex_shader->setupRender(scene, this->shared_from_this()))
 	{
@@ -75,7 +68,31 @@ bool TextNode::render(const std::shared_ptr<Scene>& scene)
 	}
 
 	// get the mesh
-	auto mesh_resource = scene->cache()->getMesh("rectangle_1x1");
+	auto mesh_resource = scene->cache()->getMesh("rectangle_1x1_u_flipped");
 	scene->renderer()->drawMesh(mesh_resource);
 	return true;
+}
+
+void TextNode::setText(const char* new_text)
+{
+	this->_message = new_text;
+	this->_texture_is_out_of_date = true;
+}
+
+void TextNode::generateTexture(const std::shared_ptr<ResourceCache>& cache,
+	const std::shared_ptr<IRenderer>& renderer)
+{
+	if (!cache->exists(ResourceType::Texture, this->_message))
+	{
+		auto texture = renderer->rasterizeText(this->_message.c_str(), "hack.ttf", 48);
+		// "umeboshi_.ttf", 48);
+
+		if (!cache->addResource(texture))
+		{
+			// error
+		}
+	}
+
+	this->_pixel_shader->setTexture(this->_message);
+	this->_texture_is_out_of_date = false;
 }
