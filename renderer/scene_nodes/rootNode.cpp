@@ -56,6 +56,8 @@ bool RootNode::renderChildren(const std::shared_ptr<Scene>& scene)
 		case static_cast<int>(RenderPass::Static):
 			[[fallthrough]];
 		case static_cast<int>(RenderPass::Entity):
+			[[fallthrough]];
+		case static_cast<int>(RenderPass::UserInterface):
 			success = success ? this->_children[pass]->renderChildren(scene) : false;
 			break;
 

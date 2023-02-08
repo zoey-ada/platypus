@@ -189,9 +189,31 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(std::byte* texture_da
 ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
-	auto texture =
-		this->_texture_loader->createTextTexture(message, font_family, point_size, this->_renderer);
+	auto text_metrics = this->_renderer->measureText(message, font_family, point_size);
+	auto pixel_buffer = this->_renderer->_text_renderer->rasterizeText(message, &text_metrics);
 
+	D3D11_TEXTURE2D_DESC desc;
+	desc.Width = static_cast<UINT>(text_metrics.size.width);
+	desc.Height = static_cast<UINT>(text_metrics.size.height);
+	desc.MipLevels = 1;
+	desc.ArraySize = 1;
+	desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	desc.SampleDesc.Count = 1;
+	desc.SampleDesc.Quality = 0;
+	desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_SHADER_RESOURCE;
+	desc.CPUAccessFlags = 0;
+	desc.MiscFlags = 0;
+
+	uint64_t stride = text_metrics.size.width * 4;
+	uint64_t image_data_size = stride * text_metrics.size.height;
+
+	D3D11_SUBRESOURCE_DATA image_data;
+	image_data.pSysMem = pixel_buffer;
+	image_data.SysMemPitch = static_cast<UINT>(stride);
+	image_data.SysMemSlicePitch = static_cast<UINT>(image_data_size);
+
+	auto texture = this->newTexture(desc, image_data);
 	return texture;
 }
 

@@ -9,6 +9,7 @@
 #include "graphics.hpp"
 #include "iShaderManager.hpp"
 #include "ptAddressOverscanMode.hpp"
+#include "textRenderer.hpp"
 
 class IPixelShader;
 class IRendererState;
@@ -62,6 +63,8 @@ public:
 		const uint64_t index_count) = 0;
 	virtual void destroyIndexBuffer(PtIndexBuffer buffer) = 0;
 
+	virtual PtTextMetrics measureText(const char* message, const char* font_family,
+		const uint16_t point_size) = 0;
 	virtual std::shared_ptr<TextureResource> rasterizeText(const char* message,
 		const char* font_family, const uint16_t point_size) = 0;
 

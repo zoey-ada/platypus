@@ -14,7 +14,6 @@ using EventId = uint64_t;
 const EventId InvalidEventId = 0;
 
 using EventDelegate = std::function<void(std::shared_ptr<IEvent>)>;
-// void (Scene::*)(std::shared_ptr<IEvent> event
 using std::placeholders::_1;
 template<class T>
 EventDelegate fromMemberFunc(void (T::*member_func)(std::shared_ptr<IEvent>), T* obj)

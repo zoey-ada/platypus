@@ -133,6 +133,13 @@ bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
 		return false;
 	}
 
+	this->_text_renderer = std::make_shared<TextRenderer>();
+	if (!this->_text_renderer->initialize())
+	{
+		// error
+		return false;
+	}
+
 	return true;
 }
 
@@ -292,6 +299,18 @@ PtIndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
 void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer)
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font_family,
+	const uint16_t point_size)
+{
+	if (!this->_text_renderer->loadFont(font_family) ||
+		!this->_text_renderer->setFontSize(point_size))
+	{
+		return {message, {0, 0}, 0, 0};
+	}
+
+	return this->_text_renderer->measureText(message);
 }
 
 std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* message,

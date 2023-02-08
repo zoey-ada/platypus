@@ -283,6 +283,14 @@ set(scene_node_srcs
 )
 source_group(source\\scene_nodes FILES ${scene_node_srcs})
 
+set(ui_srcs
+	ui/dynamicText.hpp
+	ui/dynamicText.cpp
+	ui/staticText.hpp
+	ui/staticText.cpp
+)
+source_group(source\\ui FILES ${ui_srcs})
+
 set(utilities_srcs
 	utilities/encoding.hpp
 	utilities/encoding.cpp
@@ -362,6 +370,7 @@ set(all_srcs
 	${resource_cache_loaders_srcs}
 	${resource_cache_resources_srcs}
 	${resource_cache_stores_srcs}
+	${ui_srcs}
 	${utilities_srcs}
 	${utilities_time_srcs}
 	${utilities_common_srcs}

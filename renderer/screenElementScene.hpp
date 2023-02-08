@@ -21,7 +21,7 @@ public:
 		return Scene::onRender();
 	}
 	void onDeviceLost() override {}
-	[[nodiscard]] int zOrder() const override { return 0; }
+	[[nodiscard]] int zOrder() const override { return 50; }
 	void setZOrder(const int /*zOrder*/) override {}
 	[[nodiscard]] bool isVisible() const override { return true; }
 	void setVisibility(bool const /*visible*/) override {}
