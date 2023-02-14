@@ -17,6 +17,7 @@ class PixelShaderResource;
 class VertexShaderResource;
 class TextureResource;
 class MeshResource;
+class AudioResource;
 
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
@@ -38,6 +39,7 @@ public:
 	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path);
 	std::shared_ptr<TextureResource> getTexture(const std::string& path);
 	std::shared_ptr<MeshResource> getMesh(const std::string& path);
+	std::shared_ptr<AudioResource> getAudio(const std::string& path);
 
 	bool exists(const ResourceType& type, const std::string& path) const;
 	bool addResource(const std::shared_ptr<Resource>& resource);

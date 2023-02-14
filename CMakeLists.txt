@@ -228,6 +228,8 @@ set(resource_cache_srcs
 source_group(source\\resource_cache FILES ${resource_cache_srcs})
 
 set(resource_cache_loaders_srcs
+	resource_cache/loaders/audioLoader.hpp
+	resource_cache/loaders/audioLoader.cpp
 	resource_cache/loaders/meshLoader.hpp
 	resource_cache/loaders/meshLoader.cpp
 	resource_cache/loaders/pixelShaderLoader.hpp
@@ -241,6 +243,8 @@ set(resource_cache_loaders_srcs
 source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
 
 set(resource_cache_resources_srcs
+	resource_cache/resources/audioResource.hpp
+	resource_cache/resources/audioResource.cpp
 	resource_cache/resources/meshResource.hpp
 	resource_cache/resources/meshResource.cpp
 	resource_cache/resources/pixelShaderResource.hpp

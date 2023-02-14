@@ -5,6 +5,7 @@
 enum class ResourceType
 {
 	General,
+	Audio,
 	Mesh,
 	PixelShader,
 	Texture,

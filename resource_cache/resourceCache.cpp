@@ -3,11 +3,13 @@
 #include <renderer/iRenderer.hpp>
 #include <utilities/logging/logger.hpp>
 
+#include "loaders/audioLoader.hpp"
 #include "loaders/iResourceLoader.hpp"
 #include "loaders/meshLoader.hpp"
 #include "loaders/pixelShaderLoader.hpp"
 #include "loaders/textureLoader.hpp"
 #include "loaders/vertexShaderLoader.hpp"
+#include "resources/audioResource.hpp"
 #include "resources/meshResource.hpp"
 #include "resources/pixelShaderResource.hpp"
 #include "resources/resource.hpp"
@@ -47,6 +49,7 @@ bool ResourceCache::initialize(const std::shared_ptr<IRenderer>& renderer)
 	this->registerLoader(std::make_shared<PixelShaderLoader>(cache, renderer));
 	this->registerLoader(std::make_shared<TextureLoader>(cache, renderer));
 	this->registerLoader(std::make_shared<MeshLoader>(cache, renderer));
+	this->registerLoader(std::make_shared<AudioLoader>(cache));
 
 	return true;
 }
@@ -97,6 +100,11 @@ std::shared_ptr<TextureResource> ResourceCache::getTexture(const std::string& pa
 std::shared_ptr<MeshResource> ResourceCache::getMesh(const std::string& path)
 {
 	return std::dynamic_pointer_cast<MeshResource>(this->getResource(ResourceType::Mesh, path));
+}
+
+std::shared_ptr<AudioResource> ResourceCache::getAudio(const std::string& path)
+{
+	return std::dynamic_pointer_cast<AudioResource>(this->getResource(ResourceType::Audio, path));
 }
 
 bool ResourceCache::exists(const ResourceType& type, const std::string& path) const
