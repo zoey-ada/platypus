@@ -1,10 +1,12 @@
 #include "coreAudioSystem.hpp"
 
-#include <audioclient.h>
+#include <list>
+
 #include <mmdeviceapi.h>
-#include <mmeapi.h>
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/audioResource.hpp>
+
+#include "wasapiChannel.hpp"
 
 CoreAudioSystem::CoreAudioSystem()
 {}
@@ -12,14 +14,8 @@ CoreAudioSystem::CoreAudioSystem()
 CoreAudioSystem::~CoreAudioSystem()
 {}
 
-// REFERENCE_TIME time units per second and per millisecond
-#define REFTIMES_PER_SEC 10000000
-#define REFTIMES_PER_MILLISEC 10000
-
 const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
-const IID IID_IAudioClient = __uuidof(IAudioClient);
-const IID IID_IAudioRenderClient = __uuidof(IAudioRenderClient);
 
 bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_cache)
 {
@@ -40,22 +36,11 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 		return false;
 	}
 
-	IMMDevice* device = nullptr;
-	hr = device_enumerator->GetDefaultAudioEndpoint(EDataFlow::eRender, ERole::eConsole, &device);
+	hr = device_enumerator->GetDefaultAudioEndpoint(EDataFlow::eRender, ERole::eConsole,
+		&this->_output_device);
 
 	device_enumerator->Release();
 	device_enumerator = nullptr;
-
-	if (FAILED(hr))
-	{
-		// log error
-		return false;
-	}
-
-	device->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void**)&this->_output_device);
-
-	device->Release();
-	device = nullptr;
 
 	if (FAILED(hr))
 	{
@@ -68,17 +53,25 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 
 void CoreAudioSystem::deinitialize()
 {
-	if (this->_output_render_device != nullptr)
-		this->_output_render_device->Release();
-	this->_output_render_device = nullptr;
-
 	if (this->_output_device != nullptr)
 		this->_output_device->Release();
 	this->_output_device = nullptr;
 }
 
-void CoreAudioSystem::update(const Milliseconds /*delta*/)
-{}
+void CoreAudioSystem::update(const Milliseconds delta)
+{
+	std::list<ChannelId> finished_channels;
+
+	for (auto [id, channel] : this->_channels)
+	{
+		channel->update(delta);
+		if (!channel->isPlaying())
+			finished_channels.push_back(id);
+	}
+
+	for (auto id : finished_channels)
+		this->_channels.erase(id);
+}
 
 void CoreAudioSystem::loadSound()
 {}
@@ -90,132 +83,41 @@ ChannelId CoreAudioSystem::playSound(const char* sound_name, bool /*loop*/, int3
 {
 	auto audio_resource = this->_resource_cache->getAudio(sound_name);
 
-	WAVEFORMATEX format;
-	format.wFormatTag = WAVE_FORMAT_PCM;
-	format.cbSize = 0;
-	format.nChannels = audio_resource->channels();
-	format.wBitsPerSample = audio_resource->bits_per_sample();
-	format.nSamplesPerSec = audio_resource->sample_rate();
-	format.nBlockAlign = format.nChannels * format.wBitsPerSample / 8;
-	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nBlockAlign;
-
-	WAVEFORMATEX closest_format;
-	WAVEFORMATEX* closest_format_ptr = &closest_format;
-
-	if (FAILED(this->_output_device->IsFormatSupported(AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_SHARED,
-			&format, &closest_format_ptr)))
+	auto channel = std::make_shared<WasapiChannel>();
+	if (!channel->initialize(this->_output_device, audio_resource))
 	{
-		// log error (unsupported format)
 		return InvalidChannelId;
 	}
 
-	REFERENCE_TIME requested_duration = REFTIMES_PER_SEC;
-	auto hr = this->_output_device->Initialize(AUDCLNT_SHAREMODE::AUDCLNT_SHAREMODE_SHARED, 0,
-		requested_duration, 0, &format, nullptr);
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
+	this->_channels[this->getNextChannelId()] = channel;
+	channel->play();
 
-	hr = this->_output_device->GetBufferSize(&this->_output_buffer_frame_count);
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	hr = this->_output_device->GetService(IID_IAudioRenderClient,
-		(void**)&this->_output_render_device);
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	BYTE* data = nullptr;
-	hr = this->_output_render_device->GetBuffer(this->_output_buffer_frame_count, &data);
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	auto data_length = this->_output_buffer_frame_count * format.nBlockAlign;
-	if (audio_resource->audio_data_size() < data_length)
-		data_length = audio_resource->audio_data_size();
-
-	// load the initial data into the shared buffer
-	std::memcpy(data, audio_resource->audio_data(), data_length);
-	uint32_t audio_offset = data_length;
-
-	DWORD flags = 0;
-	hr = this->_output_render_device->ReleaseBuffer(this->_output_buffer_frame_count, flags);
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	REFERENCE_TIME actual_duration = (REFERENCE_TIME)((double)REFTIMES_PER_SEC *
-		this->_output_buffer_frame_count / format.nSamplesPerSec);
-
-	hr = this->_output_device->Start();
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	while (audio_offset < audio_resource->audio_data_size())
-	{
-		Sleep((DWORD)(actual_duration / REFTIMES_PER_MILLISEC / 2));
-
-		uint32_t number_frames_padding = 0;
-		hr = this->_output_device->GetCurrentPadding(&number_frames_padding);
-
-		uint32_t number_frames_available = this->_output_buffer_frame_count - number_frames_padding;
-
-		hr = this->_output_render_device->GetBuffer(number_frames_available, &data);
-
-		uint32_t number_frames_written = 0;
-
-		// load the next (number_frames_available) of data
-		if (audio_offset < audio_resource->audio_data_size())
-		{
-			data_length = number_frames_available * format.nBlockAlign;
-			if (audio_resource->audio_data_size() - audio_offset < data_length)
-				data_length = audio_resource->audio_data_size() - audio_offset;
-
-			number_frames_written = data_length / format.nBlockAlign;
-
-			std::memcpy(data, audio_resource->audio_data() + audio_offset, data_length);
-			audio_offset += data_length;
-		}
-
-		hr = this->_output_render_device->ReleaseBuffer(number_frames_written, flags);
-	}
-
-	// wait for sound to end
-	Sleep((DWORD)(actual_duration / REFTIMES_PER_MILLISEC / 2));
-
-	hr = this->_output_device->Stop();
-	if (FAILED(hr))
-	{
-		// log error
-		return InvalidChannelId;
-	}
-
-	return InvalidChannelId;
+	return this->_last_channel_id;
 }
 
-void CoreAudioSystem::stopSound(ChannelId /*id*/)
-{}
-
-bool CoreAudioSystem::isSoundPlaying(ChannelId /*id*/)
+void CoreAudioSystem::stopSound(ChannelId id)
 {
+	if (this->_channels.contains(id))
+	{
+		this->_channels[id]->stop();
+		this->_channels.erase(id);
+	}
+}
+
+bool CoreAudioSystem::isSoundPlaying(ChannelId id)
+{
+	if (this->_channels.contains(id))
+		this->_channels[id]->isPlaying();
+
 	return false;
 }
 
 void CoreAudioSystem::stopAllSounds()
-{}
+{
+	for (auto [id, channel] : this->_channels)
+	{
+		channel->stop();
+	}
+
+	this->_channels.clear();
+}

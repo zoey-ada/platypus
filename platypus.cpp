@@ -98,6 +98,7 @@ UpdateFunction Platypus::getUpdateFunction() const
 		this->_physics->update(delta);
 		this->_input_manager->readInput(now);
 		this->_logic->onUpdate(delta);
+		this->_audio->update(delta);
 	};
 }
 

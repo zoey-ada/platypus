@@ -5,8 +5,8 @@
 #include "../iAudioSystem.hpp"
 
 class Channel;
-struct IAudioClient;
-struct IAudioRenderClient;
+class WasapiChannel;
+struct IMMDevice;
 
 class CoreAudioSystem: public IAudioSystem
 {
@@ -29,9 +29,15 @@ public:
 	void stopAllSounds() override;
 
 private:
-	IAudioClient* _output_device {nullptr};
-	IAudioRenderClient* _output_render_device {nullptr};
-	std::map<ChannelId, Channel*> _channels;
+	IMMDevice* _output_device {nullptr};
+	std::map<ChannelId, std::shared_ptr<WasapiChannel>> _channels;
 	std::shared_ptr<ResourceCache> _resource_cache {nullptr};
-	uint32_t _output_buffer_frame_count {0};
+
+	ChannelId _last_channel_id {InvalidChannelId};
+
+	inline ChannelId getNextChannelId()
+	{
+		++this->_last_channel_id;
+		return this->_last_channel_id;
+	}
 };

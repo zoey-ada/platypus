@@ -81,6 +81,8 @@ source_group(source\\audio FILES ${audio_srcs})
 set(audio_core_audio_srcs
 	audio/core_audio/coreAudioSystem.hpp
 	audio/core_audio/coreAudioSystem.cpp
+	audio/core_audio/wasapiChannel.hpp
+	audio/core_audio/wasapiChannel.cpp
 )
 source_group(source\\audio\\core_audio FILES ${audio_core_audio_srcs})
 
