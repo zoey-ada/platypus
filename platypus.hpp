@@ -8,6 +8,7 @@
 #include <platform/window/iWindow.hpp>
 
 class BaseGameLogic;
+class IAudioSystem;
 class IClock;
 class IEventManager;
 class InputManager;
@@ -45,6 +46,7 @@ private:
 	std::shared_ptr<InputManager> _input_manager {nullptr};
 	std::shared_ptr<IEventManager> _event_manager {nullptr};
 	std::shared_ptr<IPhysicsSystem> _physics {nullptr};
+	std::shared_ptr<IAudioSystem> _audio {nullptr};
 
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
 	[[nodiscard]] RenderFunction getRenderFunction() const;

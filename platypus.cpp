@@ -2,6 +2,7 @@
 
 #include <platypus_proto/util.hpp>
 
+#include <audio/core_audio/coreAudioSystem.hpp>
 #include <events/eventManager.hpp>
 #include <input/inputManager.hpp>
 #include <physics/physicsSystem.hpp>
@@ -70,6 +71,9 @@ bool Platypus::initialize()
 	this->_physics->initialize();
 	ServiceProvider::registerPhysicsSystem(this->_physics);
 
+	this->_audio = std::make_shared<CoreAudioSystem>();
+	this->_audio->initialize(this->_cache);
+
 	return true;
 }
 
@@ -81,6 +85,7 @@ int Platypus::run()
 
 void Platypus::deinitialize()
 {
+	this->_audio->deinitialize();
 	this->_physics->deinitialize();
 	this->_renderer->deinitialize();
 	this->_cache->flush();

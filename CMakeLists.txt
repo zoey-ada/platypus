@@ -73,6 +73,17 @@ set(platform_window_srcs
 )
 source_group(source\\platform\\window FILES ${platform_window_srcs})
 
+set(audio_srcs
+	audio/iAudioSystem.hpp
+)
+source_group(source\\audio FILES ${audio_srcs})
+
+set(audio_core_audio_srcs
+	audio/core_audio/coreAudioSystem.hpp
+	audio/core_audio/coreAudioSystem.cpp
+)
+source_group(source\\audio\\core_audio FILES ${audio_core_audio_srcs})
+
 set(entities_srcs
 	entities/entity.hpp
 	entities/entity.cpp
@@ -356,6 +367,8 @@ set(all_srcs
 	${platform_srcs}
 	${platform_filesys_srcs}
 	${platform_window_srcs}
+	${audio_srcs}
+	${audio_core_audio_srcs}
 	${entities_srcs}
 	${entities_components_srcs}
 	${events_srcs}
