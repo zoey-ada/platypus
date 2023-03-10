@@ -275,6 +275,8 @@ source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_
 
 set(resource_cache_stores_srcs
 	resource_cache/stores/iResourceStore.hpp
+	resource_cache/stores/resourceStoreFactory.hpp
+	resource_cache/stores/resourceStoreFactory.cpp
 	resource_cache/stores/zipResourceStore.hpp
 	resource_cache/stores/zipResourceStore.cpp
 )

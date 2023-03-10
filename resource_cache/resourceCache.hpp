@@ -12,6 +12,8 @@
 class IRenderer;
 class IResourceStore;
 class IResourceLoader;
+class ILoggingSystem;
+
 class Resource;
 class PixelShaderResource;
 class VertexShaderResource;
@@ -27,10 +29,12 @@ using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
 class ResourceCache: public std::enable_shared_from_this<ResourceCache>
 {
 public:
-	explicit ResourceCache(const platypus::ResourceCacheSettings& settings);
+	explicit ResourceCache(const uint32_t cache_size_in_mb,
+		const std::shared_ptr<ILoggingSystem>& logging);
+
 	virtual ~ResourceCache();
 
-	bool initialize(const std::shared_ptr<IRenderer>& renderer);
+	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores);
 
 	void registerLoader(const std::shared_ptr<IResourceLoader>& loader);
 
@@ -70,8 +74,8 @@ private:
 	std::map<ResourceType, ResourceMap> _resources;
 	ResourceLoaderMap _resource_loaders;
 	ResourceStoreMap _stores;
+	std::shared_ptr<ILoggingSystem> _logging {nullptr};
 
 	uint64_t _cache_size;
-	uint64_t _allocated;
-	std::list<std::string> _store_locations;
+	uint64_t _allocated {0};
 };

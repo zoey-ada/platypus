@@ -109,7 +109,7 @@ uint64_t ZipResourceStore::getResourceCount() const
 {
 	if (this->_zip_archive == nullptr)
 	{
-		logWarning("tried to use store " + this->getStoreIdentifier() + " without opening it",
+		logWarning("tried to use store " + this->identifier() + " without opening it",
 			"resource_cache");
 		return 0;
 	}
@@ -121,7 +121,7 @@ int64_t ZipResourceStore::getResourceIndex(const std::string& name) const
 {
 	if (this->_zip_archive == nullptr)
 	{
-		logWarning("tried to use store " + this->getStoreIdentifier() + " without opening it",
+		logWarning("tried to use store " + this->identifier() + " without opening it",
 			"resource_cache");
 		return -1;
 	}
@@ -133,11 +133,9 @@ int64_t ZipResourceStore::getResourceIndex(const std::string& name) const
 	{
 		int error = zip_error_code_zip(zip_get_error(this->_zip_archive));
 		if (error == ZIP_ER_NOENT)
-			logError(this->getStoreIdentifier() + " does not contain file " + name,
-				"resource_cache");
+			logError(this->identifier() + " does not contain file " + name, "resource_cache");
 		else if (error == ZIP_ER_INVAL || error == ZIP_ER_MEMORY)
-			logError("failed to get " + name + " from " + this->getStoreIdentifier(),
-				"resource_cache");
+			logError("failed to get " + name + " from " + this->identifier(), "resource_cache");
 
 		return -1;
 	}
@@ -165,9 +163,4 @@ std::string ZipResourceStore::getResourceName(const int64_t index) const
 	delete stats;
 	stats = nullptr;
 	return name;
-}
-
-std::string ZipResourceStore::getStoreIdentifier() const
-{
-	return this->_path;
 }

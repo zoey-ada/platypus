@@ -24,12 +24,18 @@ public:
 
 	[[nodiscard]] virtual ResourceType type() const { return ResourceType::General; }
 
-	[[nodiscard]] inline const char* id() const { return _resource_id; }
-	[[nodiscard]] inline const char* store_id() const { return _store_id; }
+	[[nodiscard]] inline const char* id() const { return _resource_id.c_str(); }
+	[[nodiscard]] inline const char* store_id() const { return _store_id.c_str(); }
 	[[nodiscard]] inline uint64_t size() const { return _size; }
 
 protected:
-	const char* _resource_id {""};
-	const char* _store_id {""};
+	std::string _resource_id;
+	std::string _store_id;
 	uint64_t _size {0};
+
+	Resource(const PtResourceData& resource_data)
+		: _resource_id(resource_data.resource_id),
+		  _store_id(resource_data.store_id),
+		  _size(resource_data.size)
+	{}
 };

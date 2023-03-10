@@ -30,6 +30,8 @@ protected:
 	int run();
 	void deinitialize();
 
+	void registerResourceLoaders();
+
 	virtual std::shared_ptr<BaseGameLogic> createLogicAndView() = 0;
 
 	void LoadSettings();
@@ -52,4 +54,6 @@ private:
 
 	[[nodiscard]] UpdateFunction getUpdateFunction() const;
 	[[nodiscard]] RenderFunction getRenderFunction() const;
+
+	bool createCache();
 };
