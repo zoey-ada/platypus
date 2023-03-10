@@ -1,4 +1,4 @@
-#include "MeshResource.hpp"
+#include "meshResource.hpp"
 
 #include <renderer/iRenderer.hpp>
 #include <serviceProvider.hpp>

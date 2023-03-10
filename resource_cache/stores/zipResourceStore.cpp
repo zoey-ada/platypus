@@ -80,7 +80,7 @@ bool ZipResourceStore::getResource(const std::string& name, uint8_t* buffer)
 	}
 
 	auto size = this->getResourceSize(name);
-	if (size == -1)
+	if (size == (uint64_t)-1)
 	{
 		// error
 		return false;

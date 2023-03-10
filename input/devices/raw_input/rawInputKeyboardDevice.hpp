@@ -20,7 +20,7 @@ public:
 	std::map<InputType, Input>& readState() override;
 	void updateState() override;
 
-	void onRawInputEvent(RAWINPUT* input);
+	void onRawInputEvent(RAWINPUT* input) override;
 
 private:
 	HWND _hwnd {nullptr};

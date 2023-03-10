@@ -11,10 +11,10 @@
 RigidBodyObject::RigidBodyObject(std::shared_ptr<Entity> entity, Vec3 max_velocity, Vec3 friction,
 	float mass, float restitution, bool is_solid)
 	: _entity(entity),
-	  _max_linear_velocity(max_velocity),
-	  _friction(friction),
 	  _mass(mass),
 	  _restitution(restitution),
+	  _max_linear_velocity(max_velocity),
+	  _friction(friction),
 	  _is_solid(is_solid)
 {
 	this->setMass(mass);

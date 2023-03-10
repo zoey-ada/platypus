@@ -31,8 +31,8 @@ struct PtGlyphMetrics
 
 	PtGlyphMetrics(PtTextMetrics* text_metrics, FT_GlyphSlot glyph)
 		: height_from_baseline(glyph->metrics.horiBearingY / 64),
-		  advance(glyph->metrics.horiAdvance / 64),
-		  glyph_size(PtExtent {glyph->bitmap.rows, static_cast<uint32_t>(glyph->bitmap.pitch)})
+		  glyph_size(PtExtent {glyph->bitmap.rows, static_cast<uint32_t>(glyph->bitmap.pitch)}),
+		  advance(glyph->metrics.horiAdvance / 64)
 	{
 		this->descender_height = (glyph->metrics.height / 64) - this->height_from_baseline;
 		this->padding_top = text_metrics->max_ascender - this->height_from_baseline;

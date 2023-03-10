@@ -40,7 +40,7 @@ void EventManager::triggerEvent(const std::shared_ptr<IEvent>& event)
 	auto delegate_list = this->_event_delegates.find(event->getType());
 	if (delegate_list != this->_event_delegates.end())
 	{
-		for (const auto delegate : delegate_list->second)
+		for (const auto& delegate : delegate_list->second)
 		{
 			delegate.second(event);
 		}

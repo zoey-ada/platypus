@@ -35,7 +35,7 @@ private:
 	EventDelegateMap _event_delegates;
 	std::list<EventQueue> _queues;
 	int _number_of_queues {2};
-	int _active_queue {0};
+	// int _active_queue {0};
 	int _last_delegate_id {InvalidDelegateId};
 	int _last_event_id {InvalidEventId};
 };

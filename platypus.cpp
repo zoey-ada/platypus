@@ -24,7 +24,7 @@ Platypus::Platypus(const char* appName)
 {}
 
 Platypus::Platypus(const char* appName, std::shared_ptr<IClock> clock)
-	: _platform(PlatformFactory::getPlatform(appName)), _clock(clock)
+	: _clock(clock), _platform(PlatformFactory::getPlatform(appName))
 {}
 
 bool Platypus::initialize()
@@ -73,6 +73,7 @@ bool Platypus::initialize()
 
 	this->_audio = std::make_shared<CoreAudioSystem>();
 	this->_audio->initialize(this->_cache);
+	ServiceProvider::registerAudioSystem(this->_audio);
 
 	return true;
 }

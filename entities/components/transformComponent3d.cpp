@@ -87,7 +87,7 @@ void TransformComponent3d::registerEventSinks()
 	registerEventSink("input-event", TransformComponent3d::onRotateY);
 }
 
-void TransformComponent3d::onRotateY(std::shared_ptr<IEvent> event)
+void TransformComponent3d::onRotateY(std::shared_ptr<IEvent> /*event*/)
 {
 	this->_transform_data->set_rotation_y((float)(this->_transform_data->rotation_y() + 0.196349));
 	this->updateTransform();

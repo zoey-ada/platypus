@@ -225,6 +225,9 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		break;
 	}
+	case PtPrimitiveType::Invalid:
+		// error log
+		return;
 	}
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }

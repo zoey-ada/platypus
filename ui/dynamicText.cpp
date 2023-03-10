@@ -4,7 +4,7 @@
 #include <events/events/dataChangeEvent.hpp>
 #include <events/iEventManager.hpp>
 #include <renderer/iRenderer.hpp>
-#include <renderer/scene_nodes/TextNode.hpp>
+#include <renderer/scene_nodes/textNode.hpp>
 #include <serviceProvider.hpp>
 
 DynamicText::DynamicText(const char* data_field_name, const Vec2& position, EntityId entity_id)
