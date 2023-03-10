@@ -34,7 +34,7 @@ private:
 	std::shared_ptr<AudioResource> _resource {nullptr};
 	uint32_t _buffer_frame_count {0};
 	uint8_t _frame_size {0};
-	WAVEFORMATEX _format {0};
+	WAVEFORMATEX _format;
 
 	uint32_t _audio_offset {0};
 	bool _is_playing {false};

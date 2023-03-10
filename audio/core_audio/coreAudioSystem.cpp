@@ -5,6 +5,7 @@
 #include <mmdeviceapi.h>
 #include <resource_cache/resourceCache.hpp>
 #include <resource_cache/resources/audioResource.hpp>
+#include <utilities/logging/logger.hpp>
 
 #include "wasapiChannel.hpp"
 
@@ -53,6 +54,8 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 
 void CoreAudioSystem::deinitialize()
 {
+	this->stopAllSounds();
+
 	if (this->_output_device != nullptr)
 		this->_output_device->Release();
 	this->_output_device = nullptr;
@@ -81,6 +84,7 @@ void CoreAudioSystem::unloadSound()
 
 ChannelId CoreAudioSystem::playSound(const char* sound_name, bool /*loop*/, int32_t /*volume*/)
 {
+	logVerbose("begin playSound");
 	auto audio_resource = this->_resource_cache->getAudio(sound_name);
 
 	auto channel = std::make_shared<WasapiChannel>();
@@ -92,6 +96,7 @@ ChannelId CoreAudioSystem::playSound(const char* sound_name, bool /*loop*/, int3
 	this->_channels[this->getNextChannelId()] = channel;
 	channel->play();
 
+	logVerbose("end playSound");
 	return this->_last_channel_id;
 }
 
