@@ -49,6 +49,9 @@ bool DirectXPixelShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 	this->deinitialize();
 
 	auto resource = this->_resource_cache.lock()->getPixelShader(this->_path);
+	if (resource == nullptr)
+		return false;
+
 	this->_pixel_shader = reinterpret_cast<ID3D11PixelShader*>(resource->getShader());
 
 	if (this->_pixel_shader == nullptr)
