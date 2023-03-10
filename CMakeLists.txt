@@ -441,4 +441,18 @@ if(WIN32)
 	)
 endif()
 
+if(WITH_COVERAGE)
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_compile_options(platypus
+			PRIVATE
+				-fprofile-instr-generate -fcoverage-mapping
+		)
+	elseif(CMAKE_CSS_COMPILER_ID STREQUAL "MSVC")
+		target_compile_options(platypus
+			PRIVATE
+				/fsanitize-coverage=inline-8bit-counters
+		)
+	endif()
+endif()
+
 add_subdirectory(tests)
