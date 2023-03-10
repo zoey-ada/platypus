@@ -9,6 +9,7 @@ class IWindow;
 class IRenderer;
 class IPhysicsSystem;
 class IAudioSystem;
+class ILoggingSystem;
 
 #define registrableService(service_type)                                         \
                                                                                  \
@@ -39,6 +40,7 @@ class ServiceProvider
 	registrableService(Renderer);
 	registrableService(PhysicsSystem);
 	registrableService(AudioSystem);
+	registrableService(LoggingSystem);
 
 public:
 	inline static void unregisterAllServices()
@@ -48,5 +50,6 @@ public:
 		ServiceProvider::_EventManager.reset();
 		ServiceProvider::_Renderer.reset();
 		ServiceProvider::_AudioSystem.reset();
+		ServiceProvider::_LoggingSystem.reset();
 	}
 };

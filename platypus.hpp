@@ -11,6 +11,7 @@ class BaseGameLogic;
 class IAudioSystem;
 class IClock;
 class IEventManager;
+class ILoggingSystem;
 class InputManager;
 class IPhysicsSystem;
 class IPlatform;
@@ -40,6 +41,7 @@ protected:
 
 private:
 	std::shared_ptr<IClock> _clock {nullptr};
+	std::shared_ptr<ILoggingSystem> _logging {nullptr};
 	std::shared_ptr<IPlatform> _platform {nullptr};
 	std::shared_ptr<IWindow> _window {nullptr};
 	std::shared_ptr<BaseGameLogic> _logic {nullptr};

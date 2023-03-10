@@ -339,7 +339,10 @@ set(utilities_logging_srcs
 	utilities/logging/consoleLogger.cpp
 	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
+	utilities/logging/iLoggingSystem.hpp
 	utilities/logging/iLogger.hpp
+	utilities/logging/loggingSystem.hpp
+	utilities/logging/loggingSystem.cpp
 	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
 	utilities/logging/verbosityDecorator.hpp

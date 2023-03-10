@@ -13,6 +13,7 @@
 #include <renderer/rendererFactory.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <utilities/logging/logger.hpp>
+#include <utilities/logging/loggingSystem.hpp>
 #include <utilities/time/systemClock.hpp>
 #include <views/iView.hpp>
 
@@ -31,7 +32,11 @@ bool Platypus::initialize()
 {
 	this->LoadSettings();
 
+	// TODO: remove
 	configureLogger(this->_settings.loggers(), this->_clock);
+
+	this->_logging = std::make_shared<LoggingSystem>(this->_settings.loggers(), this->_clock);
+	ServiceProvider::registerLoggingSystem(this->_logging);
 
 	if (this->_platform == nullptr || !this->_platform->initialize())
 	{

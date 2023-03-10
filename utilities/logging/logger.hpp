@@ -7,7 +7,7 @@
 
 #include <platypus_proto/settings.hpp>
 
-#include "../time/SystemClock.hpp"
+#include "../time/systemClock.hpp"
 #include "consoleLogger.hpp"
 #include "fileLogger.hpp"
 #include "verbosityDecorator.hpp"
