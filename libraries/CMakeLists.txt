@@ -1,72 +1,31 @@
-#-------------------------------------------------------------------------------
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../cmake;)
+set(BUILD_SHARED_LIBS off)
+
+# -------------------------------------------------------------------------------
 # zlib
-#-------------------------------------------------------------------------------
+# -------------------------------------------------------------------------------
 add_subdirectory(zlib)
-# _p__ignore_warnings(zlib)
+
+_p__ignore_warnings(zlib)
+_p__link_static(zlib)
+
 _p__ignore_warnings(zlibstatic)
 _p__link_static(zlibstatic)
-# set_target_properties(zlib
-# 	PROPERTIES
-# 	FOLDER libraries
-# )
-set_target_properties(zlibstatic
-	PROPERTIES
-	FOLDER libraries
+
+set_target_properties(zlib PROPERTIES FOLDER libraries/zlib)
+set_target_properties(zlibstatic PROPERTIES FOLDER libraries/zlib)
+set_target_properties(example PROPERTIES FOLDER libraries/zlib)
+set_target_properties(minigzip PROPERTIES FOLDER libraries/zlib)
+
+set_target_properties(example PROPERTIES
+	EXCLUDE_FROM_ALL true
+	EXCLUDE_FROM_DEFAULT_BUILD true
 )
 
-set(ZLIB_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/zlib)
-# add_subdirectory(${ZLIB_DIRECTORY})
-
-# Explicitly set the ZLIB_BUILD_DIRECTORY for libpng (?)
-# get_directory_property(ZLIB_BUILD_DIRECTORY DIRECTORY ${ZLIB_DIRECTORY} DEFINITION CMAKE_CURRENT_BINARY_DIR)
-
-# option(PNG_LINK_ZLIB_STATIC "Use a static zlib library for libpng builds" ON)
-
-# get_directory_property(zlib DIRECTORY ${ZLIB_DIRECTORY} DEFINITION zlib)
-get_directory_property(zlibstatic DIRECTORY ${ZLIB_DIRECTORY} DEFINITION zlibstatic)
-
-# if (PNG_LINK_ZLIB_STATIC)
-	add_library(ZLIB::ZLIB ALIAS zlibstatic)
-	set(ZLIB_LIBRARY zlibstatic)
-	set(ZLIB_LIBRARIES zlibstatic)
-# else()
-# 	add_library(ZLIB::ZLIB ALIAS zlib)
-# 	set(ZLIB_LIBRARY zlib)
-# endif()
-
-set(ZLIB_INCLUDE_DIR
-	${ZLIB_DIRECTORY}
-	${CMAKE_CURRENT_BINARY_DIR}/zlib/
+set_target_properties(minigzip PROPERTIES
+	EXCLUDE_FROM_ALL true
+	EXCLUDE_FROM_DEFAULT_BUILD true
 )
-
-# target_include_directories(zlibstatic
-# 	INTERFACE
-# 		$<BUILD_INTERFACE:
-# 			C:/Users/zoey
-# 			${CMAKE_CURRENT_SOURCE_DIR}/zlib
-# 			${CMAKE_CURRENT_BINARY_DIR}/zlib
-# 		>
-# 		$<INSTALL_INTERFACE:/include/zlib>  # <prefix>/include/mylib
-# )
-
-set(ZLIB_FOUND true)
-
-
-install(TARGETS zlibstatic
-	EXPORT zlibstatic
-	RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-	ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-	LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
-install(TARGETS zlib
-	EXPORT zlib
-	RUNTIME DESTINATION "${INSTALL_BIN_DIR}"
-	ARCHIVE DESTINATION "${INSTALL_LIB_DIR}"
-	LIBRARY DESTINATION "${INSTALL_LIB_DIR}" )
-# EXPORT(TARGETS zlibstatic "${TARGETS_EXPORT_NAME}" FILE )
-
-#  ZLIB_FOUND - system has ZLIB
-#  ZLIB_INCLUDE_DIRS - the ZLIB include directories
-#  ZLIB_LIBRARIES - link these to use ZLIB
 
 #-------------------------------------------------------------------------------
 # assimp
@@ -78,7 +37,7 @@ set(ASSIMP_DOUBLE_PRECISION off) # Set to ON to enable double precision processi
 set(ASSIMP_OPT_BUILD_PACKAGES off) # Set to ON to generate CPack configuration files and packaging targets
 set(ASSIMP_ANDROID_JNIIOSYSTEM off) # Android JNI IOSystem support is active
 set(ASSIMP_NO_EXPORT on) # Disable Assimp's export functionality.
-set(ASSIMP_BUILD_ZLIB on) # Build your own zlib
+# set(ASSIMP_BUILD_ZLIB on) # Build your own zlib		This setting seems needs to be off for some reason for the built zlib to be found!!
 set(ASSIMP_BUILD_ASSIMP_TOOLS off) # If the supplementary tools for Assimp are built in addition to the library.
 set(ASSIMP_BUILD_SAMPLES off) # If the official samples are built as well (needs Glut).
 set(ASSIMP_BUILD_TESTS off) # If the test suite for Assimp is built in addition to the library.
@@ -99,33 +58,13 @@ add_subdirectory(assimp)
 _p__ignore_warnings(assimp)
 _p__link_static(assimp)
 
-set_target_properties(assimp PROPERTIES
-	FOLDER libraries/assimp
+set_target_properties(assimp PROPERTIES FOLDER libraries/assimp)
+set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES FOLDER libraries/assimp)
+
+set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES
+	EXCLUDE_FROM_ALL true
+	EXCLUDE_FROM_DEFAULT_BUILD true
 )
-
-# set_target_properties(uninstall PROPERTIES
-# 	FOLDER libraries/assimp
-# )
-# set_target_properties(UpdateAssimpLibsDebugSymbolsAndDLLs PROPERTIES
-# 	FOLDER libraries/assimp
-# )
-# set_target_properties(zlibstatic PROPERTIES
-# 	FOLDER libraries/assimp
-# )
-
-#-------------------------------------------------------------------------------
-# assimp/zlib
-#-------------------------------------------------------------------------------
-# set(ZLIB_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/assimp/contrib/zlib)
-# get_directory_property(zlibstatic DIRECTORY ${ZLIB_DIRECTORY} DEFINITION zlibstatic)
-
-# add_library(ZLIB::ZLIB ALIAS zlibstatic)
-# set(ZLIB_LIBRARY zlibstatic)
-
-# set(ZLIB_INCLUDE_DIR
-# 	${ZLIB_DIRECTORY}
-# 	${CMAKE_CURRENT_BINARY_DIR}/assimp/contrib/zlib/
-# )
 
 #-------------------------------------------------------------------------------
 # catch
@@ -149,10 +88,7 @@ add_subdirectory(freetype)
 _p__ignore_warnings(freetype)
 _p__link_static(freetype)
 
-set_target_properties(freetype
-	PROPERTIES
-	FOLDER libraries
-)
+set_target_properties(freetype PROPERTIES FOLDER libraries/freetype)
 
 target_include_directories(freetype
 	PRIVATE
@@ -186,17 +122,26 @@ add_subdirectory(libzip)
 _p__ignore_warnings(zip)
 _p__link_static(zip)
 
-set_target_properties(zip
-	PROPERTIES
-	FOLDER libraries
-)
-
 target_include_directories(zip
 	PUBLIC
 		${CMAKE_CURRENT_BINARY_DIR}/libzip
 	PRIVATE
 		${CMAKE_CURRENT_SOURCE_DIR}/zlib
 		${CMAKE_CURRENT_BINARY_DIR}/zlib
+)
+
+set_target_properties(zip PROPERTIES FOLDER libraries/libzip)
+set_target_properties(dist PROPERTIES FOLDER libraries/libzip)
+set_target_properties(distcheck PROPERTIES FOLDER libraries/libzip)
+
+set_target_properties(dist PROPERTIES
+	EXCLUDE_FROM_ALL true
+	EXCLUDE_FROM_DEFAULT_BUILD true
+)
+
+set_target_properties(distcheck PROPERTIES
+	EXCLUDE_FROM_ALL true
+	EXCLUDE_FROM_DEFAULT_BUILD true
 )
 
 #-------------------------------------------------------------------------------
