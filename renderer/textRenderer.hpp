@@ -6,15 +6,7 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-#include <utilities/common/ptExtent.hpp>
-
-struct PtTextMetrics
-{
-	const char* message;
-	PtExtent size;
-	uint32_t max_ascender;
-	uint32_t max_descender;
-};
+#include <renderer/graphics.hpp>
 
 struct PtGlyphMetrics
 {

@@ -8,6 +8,8 @@
 class IShaderManager
 {
 public:
+	virtual ~IShaderManager() = default;
+
 	virtual void destroyComputeShader(PtComputeShader shader) const = 0;
 	[[nodiscard]] virtual PtComputeShader createComputeShader(std::byte* shader_data,
 		const uint64_t data_size) const = 0;

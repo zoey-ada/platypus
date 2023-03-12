@@ -8,12 +8,13 @@
 #include "iResourceLoader.hpp"
 
 class IRenderer;
+class IResourceCache;
 struct PtFontDesc;
 
 class TextureLoader: public IResourceLoader
 {
 public:
-	explicit TextureLoader(std::shared_ptr<ResourceCache> cache,
+	explicit TextureLoader(std::shared_ptr<IResourceCache> cache,
 		const std::shared_ptr<IRenderer>& renderer);
 	virtual ~TextureLoader() = default;
 
@@ -30,6 +31,6 @@ protected:
 	uint8_t* allocate(unsigned int size) override;
 
 private:
-	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
 };

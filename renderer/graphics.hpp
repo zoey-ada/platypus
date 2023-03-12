@@ -2,6 +2,7 @@
 
 #include <vector>
 
+#include <utilities/common/ptExtent.hpp>
 #include <utilities/math/mathTypes.hpp>
 
 class _PtVertexBuffer;
@@ -16,6 +17,7 @@ class _PtGeometryShader;
 class _PtHullShader;
 class _PtPixelShader;
 class _PtVertexShader;
+
 using PtComputeShader = _PtComputeShader*;
 using PtDomainShader = _PtDomainShader*;
 using PtGeometryShader = _PtGeometryShader*;
@@ -48,6 +50,14 @@ struct PtInputLayoutDesc
 	const char* name;
 	uint32_t index;
 	PtInputFormat format;
+};
+
+struct PtTextMetrics
+{
+	const char* message;
+	PtExtent size;
+	uint32_t max_ascender;
+	uint32_t max_descender;
 };
 
 namespace graphics

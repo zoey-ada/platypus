@@ -105,10 +105,10 @@ void Platypus::deinitialize()
 void Platypus::registerResourceLoaders()
 {
 	this->_cache->registerLoader(
-		std::make_shared<VertexShaderLoader>(this->_cache, this->_renderer));
+		std::make_shared<VertexShaderLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer));
+		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(std::make_shared<TextureLoader>(this->_cache, this->_renderer));
 	this->_cache->registerLoader(std::make_shared<MeshLoader>(this->_cache, this->_renderer));

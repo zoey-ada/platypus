@@ -5,12 +5,13 @@
 #include "iResourceLoader.hpp"
 
 class IRenderer;
+class IResourceCache;
 class MeshResource;
 
 class MeshLoader: public IResourceLoader
 {
 public:
-	explicit MeshLoader(std::shared_ptr<ResourceCache> cache,
+	explicit MeshLoader(std::shared_ptr<IResourceCache> cache,
 		const std::shared_ptr<IRenderer>& renderer);
 	virtual ~MeshLoader() = default;
 
@@ -24,6 +25,6 @@ protected:
 	uint8_t* allocate(unsigned int size) override;
 
 private:
-	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
 };

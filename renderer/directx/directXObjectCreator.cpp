@@ -8,6 +8,8 @@
 #include <utilities/safeDelete.hpp>
 
 #include "../graphics.hpp"
+#include "../iShaderManager.hpp"
+#include "../textRenderer.hpp"
 #include "directXRenderer.hpp"
 #include "directXShaderLoader.hpp"
 #include "wicTextureLoader.hpp"

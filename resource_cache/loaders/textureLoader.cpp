@@ -7,7 +7,7 @@
 #include "../resourceCache.hpp"
 #include "../resources/textureResource.hpp"
 
-TextureLoader::TextureLoader(std::shared_ptr<ResourceCache> cache,
+TextureLoader::TextureLoader(std::shared_ptr<IResourceCache> cache,
 	const std::shared_ptr<IRenderer>& renderer)
 	: _cache(std::move(cache)), _renderer(std::move(renderer))
 {}

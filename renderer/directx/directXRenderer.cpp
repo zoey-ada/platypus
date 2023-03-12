@@ -7,6 +7,7 @@
 #include <resource_cache/resources/resourceType.hpp>
 #include <utilities/common/safeRelease.hpp>
 
+#include "../textRenderer.hpp"
 #include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
 #include "directXVertexShader.hpp"

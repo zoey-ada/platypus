@@ -5,7 +5,7 @@
 #include "../resourceCache.hpp"
 #include "../resources/audioResource.hpp"
 
-AudioLoader::AudioLoader(std::shared_ptr<ResourceCache> cache): _cache(cache)
+AudioLoader::AudioLoader(std::shared_ptr<IResourceCache> cache): _cache(cache)
 {}
 
 struct RiffChunk

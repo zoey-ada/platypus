@@ -4,10 +4,12 @@
 
 #include "iResourceLoader.hpp"
 
+class IResourceCache;
+
 class AudioLoader: public IResourceLoader
 {
 public:
-	explicit AudioLoader(std::shared_ptr<ResourceCache> cache);
+	explicit AudioLoader(std::shared_ptr<IResourceCache> cache);
 	virtual ~AudioLoader() = default;
 
 	[[nodiscard]] inline ResourceType getType() override { return ResourceType::Audio; }
@@ -20,5 +22,5 @@ protected:
 	uint8_t* allocate(unsigned int size) override;
 
 private:
-	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IResourceCache> _cache;
 };

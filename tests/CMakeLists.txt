@@ -9,10 +9,19 @@ target_link_libraries(platypus-tests
 
 target_sources(platypus-tests
 	PRIVATE
+		renderer/mockRenderer.hpp
+		renderer/mockShaderManager.hpp
+
 		resource_cache/loaders/mockResourceLoader.hpp
+		resource_cache/loaders/pixelShaderLoaderTests.cpp
+		resource_cache/loaders/vertexShaderLoaderTests.cpp
+
 		resource_cache/resources/mockResource.hpp
+
 		resource_cache/stores/mockResourceStore.hpp
-		resource_cache/resourceCache.cpp
+
+		resource_cache/mockResourceCache.hpp
+		resource_cache/resourceCacheTests.cpp
 
 		utilities/logging/mockLoggingSystem.hpp
 		utilities/encoding.cpp

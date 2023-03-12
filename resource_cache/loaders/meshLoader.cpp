@@ -9,7 +9,7 @@
 #include "../resourceCache.hpp"
 #include "../resources/meshResource.hpp"
 
-MeshLoader::MeshLoader(std::shared_ptr<ResourceCache> cache,
+MeshLoader::MeshLoader(std::shared_ptr<IResourceCache> cache,
 	const std::shared_ptr<IRenderer>& renderer)
 	: _cache(std::move(cache)), _renderer(std::move(renderer))
 {}

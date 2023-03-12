@@ -1,8 +1,7 @@
-
+#include <catch2/catch.hpp>
 
 #include <platypus_proto/settings.hpp>
 
-#include <catch2/catch.hpp>
 #include <resource_cache/resourceCache.hpp>
 #include <tests/resource_cache/loaders/mockResourceLoader.hpp>
 #include <tests/resource_cache/resources/mockResource.hpp>
@@ -223,7 +222,7 @@ SCENARIO("resource cache correctly tells if resource is loaded", "[res_cache]")
 		{
 			WHEN("checking if the resource exists")
 			{
-				bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
+				const bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
 
 				THEN("the resource does not yet exist in the cache")
 				{
@@ -238,7 +237,7 @@ SCENARIO("resource cache correctly tells if resource is loaded", "[res_cache]")
 
 			WHEN("checking if the resource exists")
 			{
-				bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
+				const bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
 
 				THEN("the resource does exist in the cache")
 				{
@@ -248,7 +247,7 @@ SCENARIO("resource cache correctly tells if resource is loaded", "[res_cache]")
 
 			WHEN("checking if a different resource exists")
 			{
-				bool exists = cache.exists(ResourceType::General, "test.zip/file.txt");
+				const bool exists = cache.exists(ResourceType::General, "test.zip/file.txt");
 
 				THEN("the resource does not yet exist in the cache")
 				{
@@ -318,7 +317,7 @@ SCENARIO("resource cache can add a resource", "[res_cache]")
 
 			THEN("the resource does exist in the cache")
 			{
-				bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
+				const bool exists = cache.exists(ResourceType::General, "test.zip/res.txt");
 				REQUIRE(exists);
 			}
 		}

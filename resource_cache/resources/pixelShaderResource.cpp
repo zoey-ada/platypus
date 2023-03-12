@@ -1,6 +1,7 @@
 #include "pixelShaderResource.hpp"
 
 #include <renderer/iRenderer.hpp>
+#include <renderer/iShaderManager.hpp>
 #include <serviceProvider.hpp>
 
 PixelShaderResource::PixelShaderResource(PtPixelShaderData* resource_data)
