@@ -110,7 +110,9 @@ void Platypus::registerResourceLoaders()
 	this->_cache->registerLoader(
 		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer, this->_logging));
 
-	this->_cache->registerLoader(std::make_shared<TextureLoader>(this->_cache, this->_renderer));
+	this->_cache->registerLoader(
+		std::make_shared<TextureLoader>(this->_cache, this->_renderer, this->_logging));
+
 	this->_cache->registerLoader(std::make_shared<MeshLoader>(this->_cache, this->_renderer));
 	this->_cache->registerLoader(std::make_shared<AudioLoader>(this->_cache));
 }

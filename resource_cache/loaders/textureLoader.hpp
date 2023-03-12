@@ -2,20 +2,17 @@
 
 #include <memory>
 
-#include <ft2build.h>
-#include FT_FREETYPE_H
-
 #include "iResourceLoader.hpp"
 
+class ILoggingSystem;
 class IRenderer;
 class IResourceCache;
-struct PtFontDesc;
 
 class TextureLoader: public IResourceLoader
 {
 public:
 	explicit TextureLoader(std::shared_ptr<IResourceCache> cache,
-		const std::shared_ptr<IRenderer>& renderer);
+		std::shared_ptr<IRenderer> renderer, std::shared_ptr<ILoggingSystem> logging);
 	virtual ~TextureLoader() = default;
 
 	[[nodiscard]] inline ResourceType getType() override { return ResourceType::Texture; }
@@ -33,4 +30,5 @@ protected:
 private:
 	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
+	std::shared_ptr<ILoggingSystem> _logging;
 };

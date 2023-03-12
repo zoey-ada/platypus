@@ -2,27 +2,39 @@
 
 #include <renderer/iRenderer.hpp>
 #include <renderer/ptAddressOverscanMode.hpp>
-#include <utilities/logging/logger.hpp>
+#include <utilities/logging/iLoggingSystem.hpp>
 
 #include "../resourceCache.hpp"
 #include "../resources/textureResource.hpp"
 
 TextureLoader::TextureLoader(std::shared_ptr<IResourceCache> cache,
-	const std::shared_ptr<IRenderer>& renderer)
-	: _cache(std::move(cache)), _renderer(std::move(renderer))
+	std::shared_ptr<IRenderer> renderer, std::shared_ptr<ILoggingSystem> logging)
+	: _cache(std::move(cache)), _renderer(std::move(renderer)), _logging(std::move(logging))
 {}
 
 std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const char* store_id,
 	std::byte* resource_data, const uint64_t data_size)
 {
-	if (strlen(resource_id) == 0 || _cache == nullptr || _renderer == nullptr ||
-		resource_data == nullptr)
+	if (_cache == nullptr || _renderer == nullptr || resource_data == nullptr ||
+		strlen(resource_id) == 0)
 	{
+		this->_logging->warning("cache", "received invalid data for " + std::string(resource_id));
 		return nullptr;
 	}
 
-	auto texture = this->_renderer->createTexture(resource_data, data_size);
-	auto sampler_state = this->_renderer->createSamplerState(PtAddressOverscanMode::Wrap);
+	PtTexture texture = this->_renderer->createTexture(resource_data, data_size);
+	if (texture == nullptr)
+	{
+		this->_logging->warning("cache", "unable to load texture from " + std::string(resource_id));
+		return nullptr;
+	}
+
+	PtSamplerState sampler_state = this->_renderer->createSamplerState(PtAddressOverscanMode::Wrap);
+	if (sampler_state == nullptr)
+	{
+		this->_logging->warning("cache", "unable to load sampler from " + std::string(resource_id));
+		return nullptr;
+	}
 
 	PtTextureData texture_data {};
 	texture_data.resource_id = resource_id;
@@ -30,6 +42,7 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 	texture_data.size = data_size;
 	texture_data.texture = texture;
 	texture_data.sampler_state = sampler_state;
+	// TODO: dimensions?!?
 
 	return std::make_shared<TextureResource>(&texture_data);
 }

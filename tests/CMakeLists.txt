@@ -14,6 +14,7 @@ target_sources(platypus-tests
 
 		resource_cache/loaders/mockResourceLoader.hpp
 		resource_cache/loaders/pixelShaderLoaderTests.cpp
+		resource_cache/loaders/textureLoaderTests.cpp
 		resource_cache/loaders/vertexShaderLoaderTests.cpp
 
 		resource_cache/resources/mockResource.hpp
