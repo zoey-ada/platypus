@@ -12,6 +12,7 @@ target_sources(platypus-tests
 		renderer/mockRenderer.hpp
 		renderer/mockShaderManager.hpp
 
+		resource_cache/loaders/audioLoaderTests.cpp
 		resource_cache/loaders/mockResourceLoader.hpp
 		resource_cache/loaders/pixelShaderLoaderTests.cpp
 		resource_cache/loaders/textureLoaderTests.cpp

@@ -4,12 +4,14 @@
 
 #include "iResourceLoader.hpp"
 
+class ILoggingSystem;
 class IResourceCache;
 
 class AudioLoader: public IResourceLoader
 {
 public:
-	explicit AudioLoader(std::shared_ptr<IResourceCache> cache);
+	explicit AudioLoader(std::shared_ptr<IResourceCache> cache,
+		std::shared_ptr<ILoggingSystem> logging);
 	virtual ~AudioLoader() = default;
 
 	[[nodiscard]] inline ResourceType getType() override { return ResourceType::Audio; }
@@ -23,4 +25,5 @@ protected:
 
 private:
 	std::shared_ptr<IResourceCache> _cache;
+	std::shared_ptr<ILoggingSystem> _logging;
 };
