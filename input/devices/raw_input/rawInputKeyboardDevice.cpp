@@ -92,7 +92,7 @@ void RawInputKeyboardDevice::registerInputs(std::list<InputType> input_types)
 
 	for (const auto input_type : input_types)
 	{
-		Input input {input_type, hid_mappings.at(input_type).is_analog};
+		Input input {input_type, hid_mappings.at(input_type).is_analog, {false}, {false}};
 		this->_input_state[input_type] = input;
 	}
 }

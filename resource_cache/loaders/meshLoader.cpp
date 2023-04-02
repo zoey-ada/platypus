@@ -5,21 +5,23 @@
 
 #include <renderer/graphics.hpp>
 #include <renderer/iRenderer.hpp>
+#include <utilities/logging/iLoggingSystem.hpp>
 
 #include "../resourceCache.hpp"
 #include "../resources/meshResource.hpp"
 
-MeshLoader::MeshLoader(std::shared_ptr<ResourceCache> cache,
-	const std::shared_ptr<IRenderer>& renderer)
-	: _cache(std::move(cache)), _renderer(std::move(renderer))
+MeshLoader::MeshLoader(std::shared_ptr<IResourceCache> cache, std::shared_ptr<IRenderer> renderer,
+	std::shared_ptr<ILoggingSystem> logging)
+	: _cache(std::move(cache)), _renderer(std::move(renderer)), _logging(std::move(logging))
 {}
 
 std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* store_id,
 	std::byte* resource_data, const uint64_t data_size)
 {
-	if (strlen(resource_id) == 0 || _cache == nullptr || _renderer == nullptr ||
-		resource_data == nullptr)
+	if (_cache == nullptr || _renderer == nullptr || resource_data == nullptr ||
+		strlen(resource_id) == 0)
 	{
+		this->_logging->warning("cache", "received invalid data for " + std::string(resource_id));
 		return nullptr;
 	}
 
@@ -28,7 +30,7 @@ std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* 
 			static_cast<uint32_t>(data_size), 0, resource_id));
 	if (assimp_scene == nullptr)
 	{
-		// log
+		this->_logging->warning("cache", "unable to load scene from " + std::string(resource_id));
 		return nullptr;
 	}
 
@@ -73,7 +75,22 @@ std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* 
 	// handle materials
 
 	auto vertex_buffer = this->_renderer->createVertexBuffer(vertices.data(), vertices.size());
+	if (vertex_buffer == nullptr)
+	{
+		this->_logging->warning("cache",
+			"unable to load vertex buffer from " + std::string(resource_id));
+
+		return nullptr;
+	}
+
 	auto index_buffer = this->_renderer->createIndexBuffer(indices.data(), indices.size());
+	if (index_buffer == nullptr)
+	{
+		this->_logging->warning("cache",
+			"unable to load index buffer from " + std::string(resource_id));
+
+		return nullptr;
+	}
 
 	PtMeshResourceData mesh_data {};
 	mesh_data.resource_id = resource_id;

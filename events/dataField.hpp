@@ -18,8 +18,8 @@ public:
 		: _field_name(std::move(field_name)), _entity_id(std::move(entity_id))
 	{}
 	DataField(const char* field_name, FieldType field, EntityId entity_id = InvalidEntityId)
-		: _field_name(std::move(field_name)),
-		  _field(std::move(field)),
+		: _field(std::move(field)),
+		  _field_name(std::move(field_name)),
 		  _entity_id(std::move(entity_id))
 	{}
 

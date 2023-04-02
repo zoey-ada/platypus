@@ -36,7 +36,7 @@ public:
 	void removeEntity(EntityId entity_id);
 
 	virtual void changeState(const GameState new_state);
-	const GameState getState() const { return _state; }
+	GameState getState() const { return _state; }
 
 	[[nodiscard]] std::list<std::shared_ptr<IView>> views() const { return this->_views; }
 

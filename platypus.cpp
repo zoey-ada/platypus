@@ -11,8 +11,15 @@
 #include <platform/utils.hpp>
 #include <platform/window/iWindow.hpp>
 #include <renderer/rendererFactory.hpp>
+#include <resource_cache/loaders/audioLoader.hpp>
+#include <resource_cache/loaders/meshLoader.hpp>
+#include <resource_cache/loaders/pixelShaderLoader.hpp>
+#include <resource_cache/loaders/textureLoader.hpp>
+#include <resource_cache/loaders/vertexShaderLoader.hpp>
 #include <resource_cache/resourceCache.hpp>
+#include <resource_cache/stores/resourceStoreFactory.hpp>
 #include <utilities/logging/logger.hpp>
+#include <utilities/logging/loggingSystem.hpp>
 #include <utilities/time/systemClock.hpp>
 #include <views/iView.hpp>
 
@@ -24,14 +31,18 @@ Platypus::Platypus(const char* appName)
 {}
 
 Platypus::Platypus(const char* appName, std::shared_ptr<IClock> clock)
-	: _platform(PlatformFactory::getPlatform(appName)), _clock(clock)
+	: _clock(clock), _platform(PlatformFactory::getPlatform(appName))
 {}
 
 bool Platypus::initialize()
 {
 	this->LoadSettings();
 
+	// TODO: remove
 	configureLogger(this->_settings.loggers(), this->_clock);
+
+	this->_logging = std::make_shared<LoggingSystem>(this->_settings.loggers(), this->_clock);
+	ServiceProvider::registerLoggingSystem(this->_logging);
 
 	if (this->_platform == nullptr || !this->_platform->initialize())
 	{
@@ -48,9 +59,7 @@ bool Platypus::initialize()
 	this->_renderer =
 		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
 
-	this->_cache = std::make_shared<ResourceCache>(this->_settings.resource_cache_settings());
-	if (!this->_cache->initialize(this->_renderer))
-		return false;
+	assert(this->createCache());
 
 	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
 		return false;
@@ -73,6 +82,7 @@ bool Platypus::initialize()
 
 	this->_audio = std::make_shared<CoreAudioSystem>();
 	this->_audio->initialize(this->_cache);
+	ServiceProvider::registerAudioSystem(this->_audio);
 
 	return true;
 }
@@ -92,6 +102,23 @@ void Platypus::deinitialize()
 	ServiceProvider::unregisterAllServices();
 }
 
+void Platypus::registerResourceLoaders()
+{
+	this->_cache->registerLoader(
+		std::make_shared<VertexShaderLoader>(this->_cache, this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(
+		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(
+		std::make_shared<TextureLoader>(this->_cache, this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(
+		std::make_shared<MeshLoader>(this->_cache, this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(std::make_shared<AudioLoader>(this->_cache, this->_logging));
+}
+
 UpdateFunction Platypus::getUpdateFunction() const
 {
 	return [this](Milliseconds now, Milliseconds delta) {
@@ -108,6 +135,35 @@ RenderFunction Platypus::getRenderFunction() const
 		for (const auto& view : this->_logic->views())
 			view->onRender(now, delta);
 	};
+}
+
+bool Platypus::createCache()
+{
+	try
+	{
+		auto cache_settings = this->_settings.resource_cache_settings();
+		auto cache_size = cache_settings.cache_size_in_mb();
+
+		this->_cache = std::make_shared<ResourceCache>(cache_size, this->_logging);
+
+		std::list<std::shared_ptr<IResourceStore>> res_stores;
+		for (auto& res_store : cache_settings.resource_stores())
+		{
+			auto store = ResourceStoreFactory::createResourceStore(res_store);
+			res_stores.push_back(store);
+		}
+		if (!this->_cache->initialize(res_stores))
+			return false;
+
+		this->registerResourceLoaders();
+		return true;
+	}
+	catch (const std::exception& e)
+	{
+		this->_logging->error(
+			"exception occurred while trying to create resource cache: \n" + std::string(e.what()));
+		return false;
+	}
 }
 
 void Platypus::LoadSettings()

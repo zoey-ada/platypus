@@ -6,7 +6,6 @@
 
 class IResourceStore;
 class Resource;
-class ResourceCache;
 class ResourceHandle;
 
 class IResourceLoader

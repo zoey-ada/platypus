@@ -1,6 +1,7 @@
 #include "vertexShaderResource.hpp"
 
 #include <renderer/iRenderer.hpp>
+#include <renderer/iShaderManager.hpp>
 #include <serviceProvider.hpp>
 
 #include "../stores/iResourceStore.hpp"

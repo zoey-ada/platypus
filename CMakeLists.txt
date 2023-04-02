@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 project(
 	Platypus
@@ -275,6 +276,8 @@ source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_
 
 set(resource_cache_stores_srcs
 	resource_cache/stores/iResourceStore.hpp
+	resource_cache/stores/resourceStoreFactory.hpp
+	resource_cache/stores/resourceStoreFactory.cpp
 	resource_cache/stores/zipResourceStore.hpp
 	resource_cache/stores/zipResourceStore.cpp
 )
@@ -339,7 +342,10 @@ set(utilities_logging_srcs
 	utilities/logging/consoleLogger.cpp
 	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
+	utilities/logging/iLoggingSystem.hpp
 	utilities/logging/iLogger.hpp
+	utilities/logging/loggingSystem.hpp
+	utilities/logging/loggingSystem.cpp
 	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
 	utilities/logging/verbosityDecorator.hpp
@@ -434,6 +440,20 @@ if(WIN32)
 			d3dcompiler.lib
 			windowscodecs.lib
 	)
+endif()
+
+if(WITH_COVERAGE)
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_compile_options(platypus
+			PRIVATE
+				-fprofile-instr-generate -fcoverage-mapping
+		)
+	elseif(CMAKE_CSS_COMPILER_ID STREQUAL "MSVC")
+		target_compile_options(platypus
+			PRIVATE
+				/fsanitize-coverage=inline-8bit-counters
+		)
+	endif()
 endif()
 
 add_subdirectory(tests)

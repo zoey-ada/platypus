@@ -12,13 +12,13 @@ struct AlphaSceneNode
 	float screen_z;
 
 	// for the stl sort...
-	bool const operator<(AlphaSceneNode const& right) { return this->screen_z < right.screen_z; }
+	bool operator<(AlphaSceneNode const& right) const { return this->screen_z < right.screen_z; }
 
-	bool const operator>(AlphaSceneNode const& right) { return !(*this < right); }
+	bool operator>(AlphaSceneNode const& right) const { return !(*this < right); }
 
-	bool const operator==(AlphaSceneNode const& right) { return this->screen_z == right.screen_z; }
+	bool operator==(AlphaSceneNode const& right) const { return this->screen_z == right.screen_z; }
 
-	bool const operator!=(AlphaSceneNode const& right) { return !(*this == right); }
+	bool operator!=(AlphaSceneNode const& right) const { return !(*this == right); }
 };
 
 inline bool operator<(const std::shared_ptr<AlphaSceneNode>& a,

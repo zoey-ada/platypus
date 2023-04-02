@@ -14,6 +14,8 @@ struct ID3D11VertexShader;
 class DxShaderManager: public IShaderManager
 {
 public:
+	virtual ~DxShaderManager() = default;
+
 	[[nodiscard]] bool initialize(ID3D11Device* device);
 	void deinitialize() { this->_device = nullptr; }
 

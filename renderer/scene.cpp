@@ -16,7 +16,7 @@
 Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache)
 	: _root(std::make_shared<RootNode>()), _renderer(renderer), _cache(cache)
 {
-	this->_matrix_stack.push(std::move(Mat4x4()));
+	this->_matrix_stack.push(Mat4x4());
 	// hook up event manager
 }
 

@@ -2,11 +2,10 @@
 
 #include <cstring>
 
+#include <utilities/logging/iLoggingSystem.hpp>
+
 #include "../resourceCache.hpp"
 #include "../resources/audioResource.hpp"
-
-AudioLoader::AudioLoader(std::shared_ptr<ResourceCache> cache): _cache(cache)
-{}
 
 struct RiffChunk
 {
@@ -34,18 +33,24 @@ struct DataChunk
 	std::byte data;
 };
 
+AudioLoader::AudioLoader(std::shared_ptr<IResourceCache> cache,
+	std::shared_ptr<ILoggingSystem> logging)
+	: _cache(cache), _logging(std::move(logging))
+{}
+
 std::shared_ptr<Resource> AudioLoader::load(const char* resource_id, const char* store_id,
-	std::byte* resource_data, const uint64_t /*data_size*/)
+	std::byte* resource_data, const uint64_t data_size)
 {
-	if (strlen(resource_id) == 0 || _cache == nullptr || resource_data == nullptr)
+	if (_cache == nullptr || resource_data == nullptr || strlen(resource_id) == 0)
 	{
+		this->_logging->warning("cache", "received invalid data for " + std::string(resource_id));
 		return nullptr;
 	}
 
 	auto riff_chunk = reinterpret_cast<RiffChunk*>(resource_data);
 	if (riff_chunk->file_type != 'EVAW')
 	{
-		// log error
+		this->_logging->warning("cache", "unable to load audio from " + std::string(resource_id));
 		return nullptr;
 	}
 
@@ -60,6 +65,7 @@ std::shared_ptr<Resource> AudioLoader::load(const char* resource_id, const char*
 	audio_data.sample_rate = wave_chunk->sample_rate;
 	audio_data.resource_id = resource_id;
 	audio_data.store_id = store_id;
+	audio_data.size = data_size;
 
 	audio_data.audio_data = new std::byte[audio_data.audio_data_size];
 	std::memcpy(audio_data.audio_data, &data_chunk->data, audio_data.audio_data_size);

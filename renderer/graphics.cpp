@@ -27,7 +27,7 @@ std::vector<DrawableVertex> drawable(const Vertex* vertices, const uint64_t vert
 {
 	std::vector<DrawableVertex> drawable_verts(vertex_count);
 
-	for (int i = 0; i < vertex_count; ++i)
+	for (unsigned int i = 0; i < vertex_count; ++i)
 	{
 		drawable_verts[i] = drawable(vertices[i]);
 	}
