@@ -7,29 +7,35 @@
 
 #include <platypus_proto/settings.hpp>
 
+#include "iResourceCache.hpp"
 #include "resources/resourceType.hpp"
 
 class IRenderer;
 class IResourceStore;
 class IResourceLoader;
+class ILoggingSystem;
+
 class Resource;
 class PixelShaderResource;
 class VertexShaderResource;
 class TextureResource;
 class MeshResource;
+class AudioResource;
 
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
 using ResourceLoaderMap = std::map<ResourceType, std::shared_ptr<IResourceLoader>>;
 using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
 
-class ResourceCache: public std::enable_shared_from_this<ResourceCache>
+class ResourceCache: public IResourceCache, public std::enable_shared_from_this<ResourceCache>
 {
 public:
-	explicit ResourceCache(const platypus::ResourceCacheSettings& settings);
+	explicit ResourceCache(const uint32_t cache_size_in_mb,
+		const std::shared_ptr<ILoggingSystem>& logging);
+
 	virtual ~ResourceCache();
 
-	bool initialize(const std::shared_ptr<IRenderer>& renderer);
+	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores);
 
 	void registerLoader(const std::shared_ptr<IResourceLoader>& loader);
 
@@ -38,12 +44,13 @@ public:
 	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path);
 	std::shared_ptr<TextureResource> getTexture(const std::string& path);
 	std::shared_ptr<MeshResource> getMesh(const std::string& path);
+	std::shared_ptr<AudioResource> getAudio(const std::string& path);
 
 	bool exists(const ResourceType& type, const std::string& path) const;
 	bool addResource(const std::shared_ptr<Resource>& resource);
 
 	void flush();
-	uint8_t* allocate(const uint64_t size);
+	uint8_t* allocate(const uint64_t size) override;
 
 protected:
 	std::shared_ptr<IResourceStore> getStore(const std::string& store);
@@ -68,8 +75,8 @@ private:
 	std::map<ResourceType, ResourceMap> _resources;
 	ResourceLoaderMap _resource_loaders;
 	ResourceStoreMap _stores;
+	std::shared_ptr<ILoggingSystem> _logging {nullptr};
 
 	uint64_t _cache_size;
-	uint64_t _allocated;
-	std::list<std::string> _store_locations;
+	uint64_t _allocated {0};
 };

@@ -12,9 +12,9 @@
 
 TextNode::TextNode(PtTextNodeDesc* text_node_desc)
 	: SceneNode(text_node_desc->base_node_data),
+	  _message(text_node_desc->message),
 	  _pixel_shader_path(text_node_desc->pixel_shader_path),
-	  _vertex_shader_path(text_node_desc->vertex_shader_path),
-	  _message(text_node_desc->message)
+	  _vertex_shader_path(text_node_desc->vertex_shader_path)
 {
 	this->properties()->material().setAlpha(0.9999f);
 }

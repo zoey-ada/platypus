@@ -7,6 +7,7 @@
 #include <resource_cache/resources/resourceType.hpp>
 #include <utilities/common/safeRelease.hpp>
 
+#include "../textRenderer.hpp"
 #include "directXAlphaPass.hpp"
 #include "directXPixelShader.hpp"
 #include "directXVertexShader.hpp"
@@ -225,6 +226,9 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		break;
 	}
+	case PtPrimitiveType::Invalid:
+		// error log
+		return;
 	}
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }

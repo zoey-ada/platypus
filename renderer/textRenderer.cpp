@@ -130,7 +130,7 @@ PtTextMetrics TextRenderer::measureText(const char* message)
 		auto error = FT_Load_Char(this->_face, u32_message[i], FT_LOAD_RENDER);
 		if (FT_Err_Ok != error)
 		{
-			return {0, 0};
+			return {"", {0, 0}, 0, 0};
 		}
 
 		width += static_cast<uint32_t>(this->_face->glyph->metrics.horiAdvance / 64);

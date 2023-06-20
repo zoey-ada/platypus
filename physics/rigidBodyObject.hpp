@@ -91,7 +91,7 @@ private:
 	float _mass {0.0f};
 	float _inverse_mass {0.0f};
 	float _restitution {0.0f};
-	float _moment_of_inertia {0.0f};
+	// float _moment_of_inertia {0.0f};
 
 	Vec3 _max_linear_velocity {0.0f, 0.0f, 0.0f};
 	float _max_angular_velocity {0.0f};

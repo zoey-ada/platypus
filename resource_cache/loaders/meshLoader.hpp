@@ -4,14 +4,15 @@
 
 #include "iResourceLoader.hpp"
 
+class ILoggingSystem;
 class IRenderer;
-class MeshResource;
+class IResourceCache;
 
 class MeshLoader: public IResourceLoader
 {
 public:
-	explicit MeshLoader(std::shared_ptr<ResourceCache> cache,
-		const std::shared_ptr<IRenderer>& renderer);
+	explicit MeshLoader(std::shared_ptr<IResourceCache> cache, std::shared_ptr<IRenderer> renderer,
+		std::shared_ptr<ILoggingSystem> logging);
 	virtual ~MeshLoader() = default;
 
 	[[nodiscard]] inline ResourceType getType() override { return ResourceType::Mesh; }
@@ -24,6 +25,7 @@ protected:
 	uint8_t* allocate(unsigned int size) override;
 
 private:
-	std::shared_ptr<ResourceCache> _cache;
+	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
+	std::shared_ptr<ILoggingSystem> _logging;
 };

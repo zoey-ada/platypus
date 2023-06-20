@@ -11,7 +11,7 @@
 #include <serviceProvider.hpp>
 
 StaticText::StaticText(const Vec2& position, const char* text, EntityId entity_id)
-	: _position(Vec3(position.x, position.y, 50)), _text(text), _entity_id(entity_id)
+	: _text(text), _position(Vec3(position.x, position.y, 50)), _entity_id(entity_id)
 {
 	this->_transform_component = this->getTransformComponent();
 	this->_transform_component->setPosition(Vec3(position.x, position.y, 50));

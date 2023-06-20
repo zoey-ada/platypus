@@ -7,17 +7,17 @@
 #include "color.hpp"
 #include "commonMesh.hpp"
 #include "graphics.hpp"
-#include "iShaderManager.hpp"
 #include "ptAddressOverscanMode.hpp"
-#include "textRenderer.hpp"
 
 class IPixelShader;
 class IRendererState;
+class IShaderManager;
 class ITexture;
 class IVertexShader;
+
 class Mat4x4;
-class ResourceCache;
 class MeshResource;
+class ResourceCache;
 class TextureResource;
 
 class IRenderer

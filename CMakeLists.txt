@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.18)
+set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)
 
 project(
 	Platypus
@@ -72,6 +73,19 @@ set(platform_window_srcs
 	platform/window/windowsWindow.cpp
 )
 source_group(source\\platform\\window FILES ${platform_window_srcs})
+
+set(audio_srcs
+	audio/iAudioSystem.hpp
+)
+source_group(source\\audio FILES ${audio_srcs})
+
+set(audio_core_audio_srcs
+	audio/core_audio/coreAudioSystem.hpp
+	audio/core_audio/coreAudioSystem.cpp
+	audio/core_audio/wasapiChannel.hpp
+	audio/core_audio/wasapiChannel.cpp
+)
+source_group(source\\audio\\core_audio FILES ${audio_core_audio_srcs})
 
 set(entities_srcs
 	entities/entity.hpp
@@ -228,6 +242,8 @@ set(resource_cache_srcs
 source_group(source\\resource_cache FILES ${resource_cache_srcs})
 
 set(resource_cache_loaders_srcs
+	resource_cache/loaders/audioLoader.hpp
+	resource_cache/loaders/audioLoader.cpp
 	resource_cache/loaders/meshLoader.hpp
 	resource_cache/loaders/meshLoader.cpp
 	resource_cache/loaders/pixelShaderLoader.hpp
@@ -241,6 +257,8 @@ set(resource_cache_loaders_srcs
 source_group(source\\resource_cache\\loaders FILES ${resource_cache_loaders_srcs})
 
 set(resource_cache_resources_srcs
+	resource_cache/resources/audioResource.hpp
+	resource_cache/resources/audioResource.cpp
 	resource_cache/resources/meshResource.hpp
 	resource_cache/resources/meshResource.cpp
 	resource_cache/resources/pixelShaderResource.hpp
@@ -258,6 +276,8 @@ source_group(source\\resource_cache\\resources FILES ${resource_cache_resources_
 
 set(resource_cache_stores_srcs
 	resource_cache/stores/iResourceStore.hpp
+	resource_cache/stores/resourceStoreFactory.hpp
+	resource_cache/stores/resourceStoreFactory.cpp
 	resource_cache/stores/zipResourceStore.hpp
 	resource_cache/stores/zipResourceStore.cpp
 )
@@ -322,7 +342,10 @@ set(utilities_logging_srcs
 	utilities/logging/consoleLogger.cpp
 	utilities/logging/fileLogger.hpp
 	utilities/logging/fileLogger.cpp
+	utilities/logging/iLoggingSystem.hpp
 	utilities/logging/iLogger.hpp
+	utilities/logging/loggingSystem.hpp
+	utilities/logging/loggingSystem.cpp
 	utilities/logging/logger.hpp
 	utilities/logging/logger.cpp
 	utilities/logging/verbosityDecorator.hpp
@@ -352,6 +375,8 @@ set(all_srcs
 	${platform_srcs}
 	${platform_filesys_srcs}
 	${platform_window_srcs}
+	${audio_srcs}
+	${audio_core_audio_srcs}
 	${entities_srcs}
 	${entities_components_srcs}
 	${events_srcs}
@@ -415,6 +440,20 @@ if(WIN32)
 			d3dcompiler.lib
 			windowscodecs.lib
 	)
+endif()
+
+if(WITH_COVERAGE)
+	if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+		target_compile_options(platypus
+			PRIVATE
+				-fprofile-instr-generate -fcoverage-mapping
+		)
+	elseif(CMAKE_CSS_COMPILER_ID STREQUAL "MSVC")
+		target_compile_options(platypus
+			PRIVATE
+				/fsanitize-coverage=inline-8bit-counters
+		)
+	endif()
 endif()
 
 add_subdirectory(tests)

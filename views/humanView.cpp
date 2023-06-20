@@ -19,6 +19,11 @@ HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<Resour
 	auto scene = std::make_shared<ScreenElementScene>(renderer, cache);
 	this->_scene = scene;
 	bool success = this->_scene->initialize();
+	if (!success)
+	{
+		// error log
+	}
+
 	this->_screen_elements.push_back(scene);
 
 	// setup camera

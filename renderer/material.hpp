@@ -43,7 +43,7 @@ public:
 	inline const Color& getEmissive() const { return this->_emissive; }
 	inline void setEmissive(Color new_emissive) { this->_emissive = std::move(new_emissive); }
 
-	const bool& hasAlpha() const { return this->getAlpha() != 1.0f; }
+	bool hasAlpha() const { return this->getAlpha() != 1.0f; }
 	inline float getAlpha() const { return this->_diffuse.a(); }
 	inline void setAlpha(float new_alpha) { this->_diffuse.a(new_alpha); }
 

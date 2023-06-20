@@ -8,6 +8,8 @@
 #include <utilities/safeDelete.hpp>
 
 #include "../graphics.hpp"
+#include "../iShaderManager.hpp"
+#include "../textRenderer.hpp"
 #include "directXRenderer.hpp"
 #include "directXShaderLoader.hpp"
 #include "wicTextureLoader.hpp"
@@ -65,7 +67,7 @@ DXGI_FORMAT toDirectXFormat(const PtInputFormat format)
 
 	std::vector<D3D11_INPUT_ELEMENT_DESC> input_desc(element_count);
 
-	for (int i = 0; i < element_count; ++i)
+	for (unsigned int i = 0; i < element_count; ++i)
 	{
 		input_desc[i] = {layout_elements[i].name, layout_elements[i].index,
 			toDirectXFormat(layout_elements[i].format), 0, D3D11_APPEND_ALIGNED_ELEMENT,
