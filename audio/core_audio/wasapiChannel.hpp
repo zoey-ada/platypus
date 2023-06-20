@@ -2,6 +2,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <mutex>
 
 #include <Audioclient.h>
 #include <mmeapi.h>
@@ -18,15 +19,20 @@ public:
 	explicit WasapiChannel() = default;
 	virtual ~WasapiChannel();
 
-	void update(const Milliseconds delta);
-
 	bool initialize(IMMDevice* device, std::shared_ptr<AudioResource> resource);
+	void deinitialize();
 
-	void play();
-	void pause();
-	void stop();
+	void startUpdateLoop() { this->_should_run = true; }
+	void stopUpdateLoop() { this->_should_run = false; }
+	bool canCleanup() const { return this->_can_cleanup; }
 
-	inline bool isPlaying() const { return this->_is_playing; }
+	void update();
+
+	void play() { this->_play_requested = true; }
+	void pause() { this->_pause_requested = true; }
+	void stop() { this->_stop_requested = true; }
+
+	inline bool isPlaying() { return this->_is_playing; }
 
 private:
 	IAudioClient* _audio_client {nullptr};
@@ -38,6 +44,19 @@ private:
 
 	uint32_t _audio_offset {0};
 	bool _is_playing {false};
+	bool _should_run {false};
+	bool _can_cleanup {false};
+
+	bool _play_requested {false};
+	bool _stop_requested {false};
+	bool _pause_requested {false};
 
 	void parseFormat();
+
+	void performPlay();
+	void loadNextChunk();
+	void performStop();
+	void performPause();
+
+	std::string getErrorMessage(HRESULT hr);
 };

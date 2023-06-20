@@ -22,7 +22,7 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 {
 	if (resource_cache == nullptr)
 	{
-		// error
+		logError("did not receive resource cache", "audio");
 		return false;
 	}
 
@@ -33,7 +33,7 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 		IID_IMMDeviceEnumerator, (void**)&device_enumerator);
 	if (FAILED(hr))
 	{
-		// log error
+		logError("could not create audio device enumerator", hr, "audio");
 		return false;
 	}
 
@@ -45,8 +45,19 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 
 	if (FAILED(hr))
 	{
-		// log error
+		logError("could not get default audio endpoint", hr, "audio");
 		return false;
+	}
+
+	for (uint8_t channel_num = 0; channel_num < this->_number_of_channels; ++channel_num)
+	{
+		auto channel = std::make_shared<WasapiChannel>();
+		channel->startUpdateLoop();
+
+		this->_channels[channel_num] = channel;
+
+		auto update_thread = std::make_shared<std::thread>(&WasapiChannel::update, channel.get());
+		this->_threads[channel_num] = update_thread;
 	}
 
 	return true;
@@ -54,26 +65,56 @@ bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_
 
 void CoreAudioSystem::deinitialize()
 {
-	this->stopAllSounds();
+	for (auto& channel : this->_channels)
+	{
+		channel.second->stopUpdateLoop();
+	}
+
+	while (!this->_channels.empty())
+	{
+		std::list<ChannelId> finished_channels;
+
+		for (auto& channel : this->_channels)
+		{
+			if (channel.second->canCleanup())
+			{
+				finished_channels.push_back(channel.first);
+			}
+		}
+
+		for (auto id : finished_channels)
+		{
+			this->_threads[id]->join();
+			this->_threads.erase(id);
+			this->_channels.erase(id);
+		}
+	}
 
 	if (this->_output_device != nullptr)
 		this->_output_device->Release();
 	this->_output_device = nullptr;
 }
 
-void CoreAudioSystem::update(const Milliseconds delta)
+void CoreAudioSystem::update(const Milliseconds /*delta*/)
 {
-	std::list<ChannelId> finished_channels;
+	// std::list<ChannelId> finished_channels;
 
-	for (auto [id, channel] : this->_channels)
-	{
-		channel->update(delta);
-		if (!channel->isPlaying())
-			finished_channels.push_back(id);
-	}
+	// for (auto [id, channel] : this->_channels)
+	// {
+	// 	// channel->update(delta);
+	// 	if (!channel->isPlaying())
+	// 		channel->deinitialize();
 
-	for (auto id : finished_channels)
-		this->_channels.erase(id);
+	// 	else if (channel->canCleanup())
+	// 		finished_channels.push_back(id);
+	// }
+
+	// for (auto id : finished_channels)
+	// {
+	// 	this->_threads[id]->join();
+	// 	this->_threads.erase(id);
+	// 	this->_channels.erase(id);
+	// }
 }
 
 void CoreAudioSystem::loadSound()
@@ -84,19 +125,21 @@ void CoreAudioSystem::unloadSound()
 
 ChannelId CoreAudioSystem::playSound(const char* sound_name, bool /*loop*/, int32_t /*volume*/)
 {
-	logVerbose("begin playSound");
+	logVerbose("begin playSound", "audio");
 	auto audio_resource = this->_resource_cache->getAudio(sound_name);
 
-	auto channel = std::make_shared<WasapiChannel>();
+	const auto channel_id = this->getNextChannelId();
+
+	auto channel = this->_channels[channel_id];
 	if (!channel->initialize(this->_output_device, audio_resource))
 	{
+		assert(false);
 		return InvalidChannelId;
 	}
 
-	this->_channels[this->getNextChannelId()] = channel;
 	channel->play();
 
-	logVerbose("end playSound");
+	logVerbose("end playSound", "audio");
 	return this->_last_channel_id;
 }
 

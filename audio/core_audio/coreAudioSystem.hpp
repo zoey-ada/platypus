@@ -1,6 +1,7 @@
 #pragma once
 
 #include <map>
+#include <thread>
 
 #include "../iAudioSystem.hpp"
 
@@ -30,14 +31,17 @@ public:
 
 private:
 	IMMDevice* _output_device {nullptr};
-	std::map<ChannelId, std::shared_ptr<WasapiChannel>> _channels;
 	std::shared_ptr<ResourceCache> _resource_cache {nullptr};
+
+	uint8_t _number_of_channels {2};
+	std::map<ChannelId, std::shared_ptr<WasapiChannel>> _channels;
+	std::map<ChannelId, std::shared_ptr<std::thread>> _threads;
 
 	ChannelId _last_channel_id {InvalidChannelId};
 
 	inline ChannelId getNextChannelId()
 	{
 		++this->_last_channel_id;
-		return this->_last_channel_id;
+		return this->_last_channel_id % this->_number_of_channels;
 	}
 };
