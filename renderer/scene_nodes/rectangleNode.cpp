@@ -38,9 +38,9 @@ bool RectangleNode::initialize(const std::shared_ptr<Scene>& scene)
 
 	// force the sprite to reload
 	auto cache = scene->cache();
-	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1"))
+	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1_u_flipped"))
 	{
-		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle);
+		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle_uFlipped);
 		if (!cache->addResource(rect))
 		{
 			// log error about creating sprite resource
@@ -61,7 +61,7 @@ bool RectangleNode::render(const std::shared_ptr<Scene>& scene)
 	}
 
 	// get the mesh
-	auto mesh_resource = scene->cache()->getMesh("rectangle_1x1");
+	auto mesh_resource = scene->cache()->getMesh("rectangle_1x1_u_flipped");
 	scene->renderer()->drawMesh(mesh_resource);
 	return true;
 }
