@@ -66,8 +66,7 @@ bool Platypus::initialize()
 	// this->_renderer->enableDebugMode();
 	ServiceProvider::registerRenderer(this->_renderer);
 
-	this->_event_manager = std::make_shared<EventManager>(
-		this->_settings.general_settings().event_manager_queue_count());
+	this->_event_manager = std::make_shared<EventManager>(this->_logging);
 	ServiceProvider::registerEventManager(this->_event_manager);
 
 	// requires settings and renderer to be initialized
@@ -127,6 +126,7 @@ UpdateFunction Platypus::getUpdateFunction() const
 		this->_input_manager->readInput(now);
 		this->_logic->onUpdate(delta);
 		this->_audio->update(delta);
+		this->_event_manager->update(delta);
 	};
 }
 

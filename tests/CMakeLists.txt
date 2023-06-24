@@ -9,6 +9,9 @@ target_link_libraries(platypus-tests
 
 target_sources(platypus-tests
 	PRIVATE
+		events/mockEvent.hpp
+		events/eventManagerTests.cpp
+
 		renderer/mockRenderer.hpp
 		renderer/mockShaderManager.hpp
 
