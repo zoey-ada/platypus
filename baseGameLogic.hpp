@@ -12,7 +12,10 @@ class EntityFactory;
 enum class GameState
 {
 	Initializing,
+	LoadingMainMenu,
 	MainMenu,
+	LoadingPauseMenu,
+	PauseMenu,
 	Loading,
 	Running,
 };
