@@ -42,46 +42,42 @@ bool Platypus::initialize()
 	configureLogger(this->_settings.loggers(), this->_clock);
 
 	this->_logging = std::make_shared<LoggingSystem>(this->_settings.loggers(), this->_clock);
+	assert(this->_logging && this->_logging->initialize());
 	ServiceProvider::registerLoggingSystem(this->_logging);
 
-	if (this->_platform == nullptr || !this->_platform->initialize())
-	{
-		// log error
-		return false;
-	}
+	this->_event_manager = std::make_shared<EventManager>(this->_logging);
+	assert(this->_event_manager);
+	ServiceProvider::registerEventManager(this->_event_manager);
+
+	assert(this->_platform && this->_platform->initialize());
 	ServiceProvider::registerPlatform(this->_platform);
 
 	this->_window = this->_platform->createWindow(this->_settings.renderer_settings().resolution());
-	if (this->_window == nullptr)
-		return false;
+	assert(this->_window);
 	ServiceProvider::registerWindow(this->_window);
 
 	this->_renderer =
 		RendererFactory::createRenderer(this->_window.get(), this->_settings.renderer_settings());
-
+	assert(this->_renderer);
 	assert(this->createCache());
-
-	if (!this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache))
-		return false;
+	assert(this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache));
 	// this->_renderer->enableDebugMode();
 	ServiceProvider::registerRenderer(this->_renderer);
 
-	this->_event_manager = std::make_shared<EventManager>(this->_logging);
-	ServiceProvider::registerEventManager(this->_event_manager);
-
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();
+	assert(this->_logic);
 
 	this->_input_manager = std::make_shared<InputManager>();
-	this->_input_manager->initialize();
+	assert(this->_input_manager && this->_input_manager->initialize());
 	ServiceProvider::registerInputManager(this->_input_manager);
 
 	this->_physics = std::make_shared<PhysicsSystem>();
-	this->_physics->initialize();
+	assert(this->_physics && this->_physics->initialize());
 	ServiceProvider::registerPhysicsSystem(this->_physics);
 
 	this->_audio = std::make_shared<CoreAudioSystem>();
-	this->_audio->initialize(this->_cache);
+	assert(this->_audio && this->_audio->initialize(this->_cache));
 	ServiceProvider::registerAudioSystem(this->_audio);
 
 	return true;
@@ -99,6 +95,7 @@ void Platypus::deinitialize()
 	this->_physics->deinitialize();
 	this->_renderer->deinitialize();
 	this->_cache->flush();
+	this->_logging->deinitialize();
 	ServiceProvider::unregisterAllServices();
 }
 
