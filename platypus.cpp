@@ -75,6 +75,7 @@ bool Platypus::initialize()
 
 	this->_input_manager = std::make_shared<InputManager>();
 	this->_input_manager->initialize();
+	ServiceProvider::registerInputManager(this->_input_manager);
 
 	this->_physics = std::make_shared<PhysicsSystem>();
 	this->_physics->initialize();
