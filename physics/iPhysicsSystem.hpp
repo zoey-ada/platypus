@@ -1,6 +1,7 @@
 #pragma once
 
 #include <entities/entity.hpp>
+#include <utilities/common/iSystem.hpp>
 #include <utilities/math/mathTypes.hpp>
 #include <utilities/time/utils.hpp>
 
@@ -14,7 +15,7 @@ struct Object
 
 class RigidBodyObject;
 
-class IPhysicsSystem
+class IPhysicsSystem: public ISystem
 {
 public:
 	virtual ~IPhysicsSystem() = default;
@@ -23,6 +24,9 @@ public:
 	virtual void deinitialize() = 0;
 
 	virtual void update(const Milliseconds delta) = 0;
+
+	virtual void pause() = 0;
+	virtual void resume() = 0;
 
 	virtual void addRigidObject(RigidBodyObject* object) = 0;
 	virtual void removeRigidObject(const EntityId entity_id) = 0;

@@ -93,6 +93,9 @@ void LoggingSystem::attachLogger(const std::shared_ptr<VerbosityLogger>& logger)
 void LoggingSystem::forEachLogger(
 	std::function<void(const std::shared_ptr<VerbosityLogger>& l)> func) const
 {
+	if (this->_is_paused)
+		return;
+
 	for (const auto& l : this->_attachedLoggers)
 		func(l);
 }
