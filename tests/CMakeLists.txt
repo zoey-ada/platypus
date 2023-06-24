@@ -29,7 +29,12 @@ target_sources(platypus-tests
 		resource_cache/resourceCacheTests.cpp
 
 		utilities/logging/mockLoggingSystem.hpp
+		utilities/time/mockClock.hpp
 		utilities/encoding.cpp
+
+		mockEngine.hpp
+		mockGameLogic.hpp
+		platypusTests.cpp
 )
 
 target_include_directories(platypus-tests
