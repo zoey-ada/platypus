@@ -31,7 +31,7 @@ Platypus::Platypus(const char* appName)
 {}
 
 Platypus::Platypus(const char* appName, std::shared_ptr<IClock> clock)
-	: _clock(clock), _platform(PlatformFactory::getPlatform(appName))
+	: _clock(std::move(clock)), _platform(PlatformFactory::getPlatform(appName))
 {}
 
 bool Platypus::initialize()
@@ -147,7 +147,7 @@ bool Platypus::createCache()
 		this->_cache = std::make_shared<ResourceCache>(cache_size, this->_logging);
 
 		std::list<std::shared_ptr<IResourceStore>> res_stores;
-		for (auto& res_store : cache_settings.resource_stores())
+		for (const auto& res_store : cache_settings.resource_stores())
 		{
 			auto store = ResourceStoreFactory::createResourceStore(res_store);
 			res_stores.push_back(store);
