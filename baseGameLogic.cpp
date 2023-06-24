@@ -93,6 +93,18 @@ void BaseGameLogic::removeEntity(EntityId entity_id)
 	}
 }
 
+void BaseGameLogic::removeAllEntities()
+{
+	for (auto iter = this->_entities.begin(); iter != this->_entities.end();
+		 iter = this->_entities.begin())
+	{
+		// because entity components have shared_ptrs to the entity object,
+		// the entity must be explicitly deinitialized before it can be destroyed
+		iter->second->deinitialize();
+		this->_entities.erase(iter->first);
+	}
+}
+
 void BaseGameLogic::changeState(const GameState new_state)
 {
 	// todo: stuffs

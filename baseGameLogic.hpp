@@ -34,6 +34,7 @@ public:
 
 	std::shared_ptr<Entity> createEntity(const char* entity_resource);
 	void removeEntity(EntityId entity_id);
+	void removeAllEntities();
 
 	virtual void changeState(const GameState new_state);
 	GameState getState() const { return _state; }
