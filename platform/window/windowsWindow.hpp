@@ -12,6 +12,8 @@
 
 #include "iWindow.hpp"
 
+class IEvent;
+
 class WindowsWindow: public IWindow
 {
 public:
@@ -31,6 +33,9 @@ public:
 	[[nodiscard]] HINSTANCE hinstance() const { return this->_hinstance; }
 
 	void addRawInputDevice(std::shared_ptr<IRawInputDevice> input);
+
+	void registerEventSinks();
+	void onQuitGame(std::shared_ptr<IEvent> event);
 
 private:
 	HWND _hwnd;
