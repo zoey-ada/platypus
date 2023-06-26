@@ -11,6 +11,7 @@ class IPhysicsSystem;
 class IAudioSystem;
 class ILoggingSystem;
 class InputManager;
+class IEntityManager;
 
 class ServiceProvider
 {
@@ -83,6 +84,16 @@ public:
 		return ServiceProvider::_input_manager;
 	}
 
+	static void registerEntityManager(std::shared_ptr<IEntityManager> service)
+	{
+		ServiceProvider::_entity_manager = service;
+	}
+	static void unregisterEntityManager() { ServiceProvider::_entity_manager.reset(); }
+	static std::shared_ptr<IEntityManager> getEntityManager()
+	{
+		return ServiceProvider::_entity_manager;
+	}
+
 	inline static void unregisterAllServices()
 	{
 		ServiceProvider::unregisterPlatform();
@@ -93,6 +104,7 @@ public:
 		ServiceProvider::unregisterAudioSystem();
 		ServiceProvider::unregisterLoggingSystem();
 		ServiceProvider::unregisterInputManager();
+		ServiceProvider::unregisterEntityManager();
 	}
 
 private:
@@ -104,4 +116,5 @@ private:
 	inline static std::shared_ptr<IAudioSystem> _audio_system = nullptr;
 	inline static std::shared_ptr<ILoggingSystem> _logging_system = nullptr;
 	inline static std::shared_ptr<InputManager> _input_manager = nullptr;
+	inline static std::shared_ptr<IEntityManager> _entity_manager = nullptr;
 };
