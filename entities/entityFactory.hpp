@@ -31,11 +31,15 @@ public:
 	std::shared_ptr<Entity> createEntity(const std::string& entity_resource,
 		std::string tag = std::string());
 
+	void registerComponent(std::string name, EntityComponentCreator create_function);
+
 private:
 	EntityId _last_entity_id {InvalidEntityId};
 	EntityComponentCreatorMap _entity_component_creators {};
 
 	std::shared_ptr<EntityComponent> createComponent(std::shared_ptr<Message>& data);
+
+	void registerStandardComponents();
 
 	inline EntityId getNextEntityId()
 	{

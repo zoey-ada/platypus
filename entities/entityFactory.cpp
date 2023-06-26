@@ -17,12 +17,7 @@
 
 EntityFactory::EntityFactory()
 {
-	this->_entity_component_creators["MovementComponent_2d"] = createMovementComponent2d;
-	this->_entity_component_creators["PhysicsComponent"] = createPhysicsComponent;
-	this->_entity_component_creators["RenderComponent_2d"] = createRenderComponent2d;
-	this->_entity_component_creators["RenderComponent_3d"] = createRenderComponent3d;
-	this->_entity_component_creators["TransformComponent_2d"] = createTransformComponent2d;
-	this->_entity_component_creators["TransformComponent_3d"] = createTransformComponent3d;
+	this->registerStandardComponents();
 }
 
 std::shared_ptr<Entity> EntityFactory::createEntity(const std::string& entity_resource,
@@ -69,6 +64,11 @@ std::shared_ptr<Entity> EntityFactory::createEntity(const std::string& entity_re
 	return entity;
 }
 
+void EntityFactory::registerComponent(std::string name, EntityComponentCreator create_function)
+{
+	this->_entity_component_creators[name] = create_function;
+}
+
 std::shared_ptr<EntityComponent> EntityFactory::createComponent(std::shared_ptr<Message>& data)
 {
 	std::string name(data->GetDescriptor()->name());
@@ -87,4 +87,14 @@ std::shared_ptr<EntityComponent> EntityFactory::createComponent(std::shared_ptr<
 	}
 
 	return component;
+}
+
+void EntityFactory::registerStandardComponents()
+{
+	this->registerComponent("MovementComponent_2d", createMovementComponent2d);
+	this->registerComponent("PhysicsComponent", createPhysicsComponent);
+	this->registerComponent("RenderComponent_2d", createRenderComponent2d);
+	this->registerComponent("RenderComponent_3d", createRenderComponent3d);
+	this->registerComponent("TransformComponent_2d", createTransformComponent2d);
+	this->registerComponent("TransformComponent_3d", createTransformComponent3d);
 }
