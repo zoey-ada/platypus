@@ -67,6 +67,7 @@ bool Platypus::initialize()
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();
 	assert(this->_logic);
+	ServiceProvider::registerEntityManager(this->_logic);
 
 	this->_input_manager = std::make_shared<InputManager>();
 	assert(this->_input_manager && this->_input_manager->initialize());

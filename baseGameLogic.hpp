@@ -4,6 +4,7 @@
 #include <memory>
 
 #include <entities/entity.hpp>
+#include <entities/iEntityManager.hpp>
 #include <utilities/time/utils.hpp>
 
 class IView;
@@ -20,14 +21,14 @@ enum class GameState
 	Running,
 };
 
-class BaseGameLogic
+class BaseGameLogic: public IEntityManager
 {
 public:
 	BaseGameLogic() = default;
 	virtual ~BaseGameLogic() = default;
 
-	bool initialize();
-	void deinitialize();
+	virtual bool initialize();
+	virtual void deinitialize() {};
 
 	virtual void addView(const std::shared_ptr<IView>& view,
 		const EntityId entityId = InvalidEntityId);
@@ -36,8 +37,11 @@ public:
 	virtual void onUpdate(Milliseconds delta);
 
 	std::shared_ptr<Entity> createEntity(const char* entity_resource);
-	void removeEntity(EntityId entity_id);
+	void removeEntity(const EntityId id) override;
 	void removeAllEntities();
+
+	std::shared_ptr<Entity> getEntity(const EntityId id) const override;
+	std::shared_ptr<Entity> getEntity(const std::string& tag) const override;
 
 	virtual void changeState(const GameState new_state);
 	GameState getState() const { return _state; }
