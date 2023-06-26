@@ -1,5 +1,7 @@
 #include "entityFactory.hpp"
 
+#include <filesystem>
+
 #include <platypus_proto/util.hpp>
 
 #include <google/protobuf/message.h>
@@ -23,14 +25,18 @@ EntityFactory::EntityFactory()
 	this->_entity_component_creators["TransformComponent_3d"] = createTransformComponent3d;
 }
 
-std::shared_ptr<Entity> EntityFactory::createEntity(const char* entity_resource)
+std::shared_ptr<Entity> EntityFactory::createEntity(const std::string& entity_resource,
+	std::string tag)
 {
 	auto data = platypus::readProtoFile<platypus::Entity>(entity_resource);
 
-	auto entity = std::make_shared<Entity>(this->getNextEntityId());
+	if (tag.empty())
+		tag = std::filesystem::path(entity_resource).stem().string();
 
-	const auto reflection = data.GetReflection();
-	const auto desc = data.GetDescriptor();
+	auto entity = std::make_shared<Entity>(this->getNextEntityId(), tag);
+
+	const auto* reflection = data.GetReflection();
+	const auto* desc = data.GetDescriptor();
 
 	for (int i = 0; i < desc->field_count(); ++i)
 	{

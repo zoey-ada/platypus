@@ -28,7 +28,8 @@ public:
 	EntityFactory();
 	virtual ~EntityFactory() = default;
 
-	std::shared_ptr<Entity> createEntity(const char* entity_resource);
+	std::shared_ptr<Entity> createEntity(const std::string& entity_resource,
+		std::string tag = std::string());
 
 private:
 	EntityId _last_entity_id {InvalidEntityId};
