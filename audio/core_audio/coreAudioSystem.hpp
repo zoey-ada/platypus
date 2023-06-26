@@ -33,7 +33,7 @@ private:
 	IMMDevice* _output_device {nullptr};
 	std::shared_ptr<ResourceCache> _resource_cache {nullptr};
 
-	uint8_t _number_of_channels {2};
+	uint8_t _number_of_channels {3};
 	std::map<ChannelId, std::shared_ptr<WasapiChannel>> _channels;
 	std::map<ChannelId, std::shared_ptr<std::thread>> _threads;
 
