@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+#include <events/iEventManager.hpp>
+#include <serviceProvider.hpp>
 #include <utilities/encoding.hpp>
 #include <utilities/time/iClock.hpp>
 
@@ -68,6 +70,8 @@ bool WindowsWindow::initialize(const platypus::RectSize& dimensions)
 
 	ShowWindow(this->_hwnd, SW_NORMAL);
 	UpdateWindow(this->_hwnd);
+
+	this->registerEventSinks();
 
 	return true;
 }
@@ -166,6 +170,16 @@ LRESULT CALLBACK WindowsWindow::wndProc(HWND hwnd, UINT msg, WPARAM wparam, LPAR
 void WindowsWindow::addRawInputDevice(std::shared_ptr<IRawInputDevice> input)
 {
 	this->_raw_input_devices.push_back(input);
+}
+
+void WindowsWindow::registerEventSinks()
+{
+	registerEventSink("quit-game-event", WindowsWindow::onQuitGame);
+}
+
+void WindowsWindow::onQuitGame(std::shared_ptr<IEvent> /*event*/)
+{
+	PostQuitMessage(0);
 }
 
 void WindowsWindow::openConsole()

@@ -92,6 +92,7 @@ set(entities_srcs
 	entities/entity.cpp
 	entities/entityFactory.hpp
 	entities/entityFactory.cpp
+	entities/iEntityManager.hpp
 )
 source_group(source\\entities FILES ${entities_srcs})
 

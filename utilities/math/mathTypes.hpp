@@ -11,3 +11,7 @@ Mat4x4 matrixPerspectiveFovLH(const float& FovAngleY, const float& AspectRatio, 
 
 Mat4x4 matrixOrthographicOffCenterLH(const float& view_left, const float& view_right,
 	const float& view_bottom, const float& view_top, const float& near_z, const float& far_z);
+
+Vec2 abs(const Vec2& v);
+Vec3 abs(const Vec3& v);
+Vec4 abs(const Vec4& v);

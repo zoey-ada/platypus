@@ -24,7 +24,7 @@ void PhysicsSystem::deinitialize()
 void PhysicsSystem::update(const Milliseconds delta)
 {
 	// either we were debugging, or we are dropping some serious frames
-	if (delta > 500)
+	if (this->_is_paused || delta > 500)
 		return;
 
 	for (auto [id, object] : this->_objects)

@@ -17,6 +17,20 @@ public:
 	LoggingSystem(const LoggerSettingsList& settings, std::shared_ptr<IClock> clock);
 	virtual ~LoggingSystem() = default;
 
+	bool initialize() override
+	{  // TODO: have each logger initialize here
+		return true;
+	}
+	void deinitialize() override
+	{
+		// TODO: have each logger deinitialize here
+	}
+
+	void update(Milliseconds /*delta*/) override {}
+
+	void pause() override { this->_is_paused = true; }
+	void resume() override { this->_is_paused = false; }
+
 	void debug(const std::string_view& message) override;
 	void debug(const std::string_view& channel, const std::string_view& message) override;
 
@@ -36,6 +50,7 @@ private:
 	std::shared_ptr<IClock> _clock;
 	std::list<std::shared_ptr<VerbosityLogger>> _attachedLoggers;
 	LoggerSettingsList _settings;
+	bool _is_paused {false};
 
 	void attachLogger(const std::shared_ptr<VerbosityLogger>& logger);
 	void forEachLogger(std::function<void(const std::shared_ptr<VerbosityLogger>& l)> func) const;

@@ -6,7 +6,7 @@
 
 const EntityId InvalidEntityId = 0;
 
-Entity::Entity(EntityId id): _id(id)
+Entity::Entity(EntityId id, std::string tag): _id(id), _tag(std::move(tag))
 {}
 
 Entity::~Entity()

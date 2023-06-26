@@ -20,7 +20,7 @@ class Entity
 	friend class EntityFactory;
 
 public:
-	explicit Entity(EntityId id);
+	explicit Entity(EntityId id, std::string tag);
 	virtual ~Entity();
 
 	bool initialize(const platypus::Entity& data);
@@ -30,6 +30,7 @@ public:
 	void update(Milliseconds delta);
 
 	inline EntityId getId() const { return this->_id; }
+	inline std::string getTag() const { return this->_tag; }
 
 	template<class ComponentType>
 	std::weak_ptr<ComponentType> getComponent(std::string id)
@@ -45,6 +46,7 @@ public:
 private:
 	EntityId _id {InvalidEntityId};
 	EntityComponentMap _components {};
+	std::string _tag;
 
 	void addComponent(std::shared_ptr<EntityComponent> component);
 };

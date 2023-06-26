@@ -80,16 +80,49 @@ std::shared_ptr<Entity> BaseGameLogic::createEntity(const char* entity_resource)
 	return entity;
 }
 
-void BaseGameLogic::removeEntity(EntityId entity_id)
+std::shared_ptr<Entity> BaseGameLogic::getEntity(const EntityId id) const
 {
-	auto iter = this->_entities.find(entity_id);
+	auto iter = this->_entities.find(id);
+
+	if (iter != this->_entities.end())
+		return iter->second;
+
+	return nullptr;
+}
+
+std::shared_ptr<Entity> BaseGameLogic::getEntity(const std::string& tag) const
+{
+	for (const auto& entity : this->_entities)
+	{
+		if (entity.second->getTag() == tag)
+			return entity.second;
+	}
+
+	return nullptr;
+}
+
+void BaseGameLogic::removeEntity(const EntityId id)
+{
+	auto iter = this->_entities.find(id);
 
 	if (iter != this->_entities.end())
 	{
 		// because entity components have shared_ptrs to the entity object,
 		// the entity must be explicitly deinitialized before it can be destroyed
 		iter->second->deinitialize();
-		this->_entities.erase(entity_id);
+		this->_entities.erase(id);
+	}
+}
+
+void BaseGameLogic::removeAllEntities()
+{
+	for (auto iter = this->_entities.begin(); iter != this->_entities.end();
+		 iter = this->_entities.begin())
+	{
+		// because entity components have shared_ptrs to the entity object,
+		// the entity must be explicitly deinitialized before it can be destroyed
+		iter->second->deinitialize();
+		this->_entities.erase(iter->first);
 	}
 }
 
