@@ -1,5 +1,6 @@
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/../cmake;)
 set(BUILD_SHARED_LIBS off)
+set(BUILD_TESTING off)
 
 # -------------------------------------------------------------------------------
 # zlib
@@ -12,20 +13,20 @@ _p__link_static(zlib)
 _p__ignore_warnings(zlibstatic)
 _p__link_static(zlibstatic)
 
-set_target_properties(zlib PROPERTIES FOLDER libraries/zlib)
-set_target_properties(zlibstatic PROPERTIES FOLDER libraries/zlib)
-set_target_properties(example PROPERTIES FOLDER libraries/zlib)
-set_target_properties(minigzip PROPERTIES FOLDER libraries/zlib)
+# set_target_properties(zlib PROPERTIES FOLDER libraries/zlib)
+# set_target_properties(zlibstatic PROPERTIES FOLDER libraries/zlib)
+# set_target_properties(example PROPERTIES FOLDER libraries/zlib)
+# set_target_properties(minigzip PROPERTIES FOLDER libraries/zlib)
 
-set_target_properties(example PROPERTIES
-	EXCLUDE_FROM_ALL true
-	EXCLUDE_FROM_DEFAULT_BUILD true
-)
+# set_target_properties(example PROPERTIES
+# 	EXCLUDE_FROM_ALL true
+# 	EXCLUDE_FROM_DEFAULT_BUILD true
+# )
 
-set_target_properties(minigzip PROPERTIES
-	EXCLUDE_FROM_ALL true
-	EXCLUDE_FROM_DEFAULT_BUILD true
-)
+# set_target_properties(minigzip PROPERTIES
+# 	EXCLUDE_FROM_ALL true
+# 	EXCLUDE_FROM_DEFAULT_BUILD true
+# )
 
 #-------------------------------------------------------------------------------
 # assimp

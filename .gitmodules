@@ -4,16 +4,13 @@
 [submodule "libraries/platypus-proto"]
 	path = libraries/platypus-proto
 	url = git@github.com:zoey-ada/platypus-proto.git
-	branch = entity
+	branch = main
 [submodule "libraries/utf8-cpp"]
 	path = libraries/utf8-cpp
 	url = https://github.com/nemtrif/utfcpp.git
 [submodule "libraries/libzip"]
 	path = libraries/libzip
 	url = https://github.com/nih-at/libzip.git
-[submodule "libraries/zlib"]
-	path = libraries/zlib
-	url = https://github.com/madler/zlib.git
 [submodule "libraries/assimp"]
 	path = libraries/assimp
 	url = https://github.com/assimp/assimp.git
@@ -21,3 +18,6 @@
 	path = libraries/catch
 	url = https://github.com/catchorg/Catch2.git
 	branch = "v2.x"
+[submodule "libraries/zlib"]
+	path = libraries/zlib
+	url = http://github.com:zoey-ada/zlib.git
