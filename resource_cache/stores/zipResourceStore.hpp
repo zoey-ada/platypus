@@ -9,6 +9,9 @@
 
 using ZipContentsMap = std::map<std::string, int>;
 
+namespace platypus
+{
+
 class ZipResourceStore: public IResourceStore
 {
 public:
@@ -34,4 +37,6 @@ private:
 	std::string _identifier {};
 	std::string _path {};
 	zip_t* _zip_archive {nullptr};
+};
+
 };

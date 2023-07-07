@@ -2,6 +2,9 @@
 
 #include "zipResourceStore.hpp"
 
+namespace platypus
+{
+
 std::shared_ptr<IResourceStore> ResourceStoreFactory::createResourceStore(
 	const platypus::ResourceStoreSettings& settings)
 {
@@ -13,3 +16,5 @@ std::shared_ptr<IResourceStore> ResourceStoreFactory::createResourceStore(
 
 	return nullptr;
 }
+
+};

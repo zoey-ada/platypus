@@ -153,10 +153,10 @@ bool Platypus::createCache()
 
 		this->_cache = std::make_shared<ResourceCache>(cache_size, this->_logging);
 
-		std::list<std::shared_ptr<IResourceStore>> res_stores;
+		std::list<std::shared_ptr<platypus::IResourceStore>> res_stores;
 		for (const auto& res_store : cache_settings.resource_stores())
 		{
-			auto store = ResourceStoreFactory::createResourceStore(res_store);
+			auto store = platypus::ResourceStoreFactory::createResourceStore(res_store);
 			res_stores.push_back(store);
 		}
 		if (!this->_cache->initialize(res_stores))

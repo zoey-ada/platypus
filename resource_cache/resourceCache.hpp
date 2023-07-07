@@ -16,7 +16,7 @@ class ILoggingSystem;
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
 using ResourceLoaderMap = std::map<ResourceType, std::shared_ptr<platypus::IResourceLoader>>;
-using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
+using ResourceStoreMap = std::map<std::string, std::shared_ptr<platypus::IResourceStore>>;
 
 class ResourceCache: public IResourceCache, public std::enable_shared_from_this<ResourceCache>
 {
@@ -26,7 +26,8 @@ public:
 
 	virtual ~ResourceCache();
 
-	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores) override;
+	bool initialize(
+		const std::list<std::shared_ptr<platypus::IResourceStore>>& resource_stores) override;
 
 	void registerLoader(const std::shared_ptr<platypus::IResourceLoader>& loader) override;
 
@@ -47,7 +48,7 @@ public:
 	uint8_t* allocate(const uint64_t size) override;
 
 protected:
-	std::shared_ptr<IResourceStore> getStore(const std::string& store);
+	std::shared_ptr<platypus::IResourceStore> getStore(const std::string& store);
 	std::shared_ptr<platypus::IResourceLoader> getLoader(const ResourceType& type) const;
 
 	std::shared_ptr<Resource> tryShareResource(const ResourceType& type,
@@ -55,7 +56,7 @@ protected:
 
 	std::shared_ptr<Resource> loadResource(const ResourceType& type, const std::string& path);
 	std::byte* loadResourceData(const char* relative_filepath,
-		const std::shared_ptr<IResourceStore>& store);
+		const std::shared_ptr<platypus::IResourceStore>& store);
 
 	void updateResource(const std::shared_ptr<Resource>& resource);
 	void free(const std::shared_ptr<Resource>& source);

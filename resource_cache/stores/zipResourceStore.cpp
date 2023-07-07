@@ -2,6 +2,9 @@
 
 #include <utilities/logging/logger.hpp>
 
+namespace platypus
+{
+
 ZipResourceStore::~ZipResourceStore()
 {
 	if (this->_zip_archive != nullptr)
@@ -164,3 +167,5 @@ std::string ZipResourceStore::getResourceName(const int64_t index) const
 	stats = nullptr;
 	return name;
 }
+
+};

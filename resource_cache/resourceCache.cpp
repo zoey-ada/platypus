@@ -32,7 +32,8 @@ ResourceCache::~ResourceCache()
 	this->_logging->info("resource_cache", "resource cache destroyed");
 }
 
-bool ResourceCache::initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores)
+bool ResourceCache::initialize(
+	const std::list<std::shared_ptr<platypus::IResourceStore>>& resource_stores)
 {
 	for (auto& store : resource_stores)
 		this->_stores[store->identifier()] = store;
@@ -143,7 +144,7 @@ void ResourceCache::flush()
 		this->freeOneResource();
 }
 
-std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& identifier)
+std::shared_ptr<platypus::IResourceStore> ResourceCache::getStore(const std::string& identifier)
 {
 	this->_logging->debug("resource_cache", "searching for resource store " + identifier);
 
@@ -240,7 +241,7 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 }
 
 std::byte* ResourceCache::loadResourceData(const char* relative_filepath,
-	const std::shared_ptr<IResourceStore>& store)
+	const std::shared_ptr<platypus::IResourceStore>& store)
 {
 	auto size = store->getResourceSize(relative_filepath);
 	auto buffer = new (std::nothrow) std::byte[size];

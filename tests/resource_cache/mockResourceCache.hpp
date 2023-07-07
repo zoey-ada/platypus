@@ -7,7 +7,8 @@ class MockResourceCache: public IResourceCache
 public:
 	virtual ~MockResourceCache() = default;
 
-	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores) override
+	bool initialize(
+		const std::list<std::shared_ptr<platypus::IResourceStore>>& resource_stores) override
 	{
 		return true;
 	}
