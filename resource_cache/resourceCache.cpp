@@ -8,6 +8,7 @@
 #include "resources/audioResource.hpp"
 #include "resources/meshResource.hpp"
 #include "resources/pixelShaderResource.hpp"
+#include "resources/protobufResource.hpp"
 #include "resources/resource.hpp"
 #include "resources/resourceType.hpp"
 #include "resources/textureResource.hpp"
@@ -90,6 +91,12 @@ std::shared_ptr<MeshResource> ResourceCache::getMesh(const std::string& path)
 std::shared_ptr<AudioResource> ResourceCache::getAudio(const std::string& path)
 {
 	return std::dynamic_pointer_cast<AudioResource>(this->getResource(ResourceType::Audio, path));
+}
+
+std::shared_ptr<platypus::ProtobufResource> ResourceCache::getProtobuf(const std::string& path)
+{
+	return std::dynamic_pointer_cast<platypus::ProtobufResource>(
+		this->getResource(ResourceType::Protobuf, path));
 }
 
 bool ResourceCache::exists(const ResourceType& type, const std::string& path) const

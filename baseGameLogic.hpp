@@ -7,8 +7,9 @@
 #include <entities/iEntityManager.hpp>
 #include <utilities/time/utils.hpp>
 
-class IView;
 class EntityFactory;
+class IResourceCache;
+class IView;
 
 enum class GameState
 {
@@ -27,7 +28,7 @@ public:
 	BaseGameLogic() = default;
 	virtual ~BaseGameLogic() = default;
 
-	virtual bool initialize();
+	virtual bool initialize(std::shared_ptr<IResourceCache> cache);
 	virtual void deinitialize() {};
 
 	virtual void addView(const std::shared_ptr<IView>& view,

@@ -274,6 +274,7 @@ set(resource_cache_loaders_srcs
 	resource_cache/loaders/meshLoader.cpp
 	resource_cache/loaders/pixelShaderLoader.hpp
 	resource_cache/loaders/pixelShaderLoader.cpp
+	resource_cache/loaders/stringLoader.hpp
 	resource_cache/loaders/textureLoader.hpp
 	resource_cache/loaders/textureLoader.cpp
 	resource_cache/loaders/vertexShaderLoader.hpp
@@ -289,10 +290,12 @@ set(resource_cache_resources_srcs
 	resource_cache/resources/meshResource.cpp
 	resource_cache/resources/pixelShaderResource.hpp
 	resource_cache/resources/pixelShaderResource.cpp
+	resource_cache/resources/protobufResource.hpp
 	resource_cache/resources/resource.hpp
 	resource_cache/resources/resource.cpp
 	resource_cache/resources/resourceType.hpp
 	resource_cache/resources/resourceType.cpp
+	resource_cache/resources/stringResourceData.hpp
 	resource_cache/resources/textureResource.hpp
 	resource_cache/resources/textureResource.cpp
 	resource_cache/resources/vertexShaderResource.hpp

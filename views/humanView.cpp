@@ -6,11 +6,11 @@
 #include <renderer/scene_nodes/cameraNode.hpp>
 #include <renderer/scene_nodes/meshNode.hpp>
 #include <renderer/screenElementScene.hpp>
-#include <resource_cache/resourceCache.hpp>
+#include <resource_cache/iResourceCache.hpp>
 #include <utilities/logging/logger.hpp>
 #include <utilities/math/utils.hpp>
 
-HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache,
+HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IResourceCache> cache,
 	const platypus::Settings& settings)
 	: _last_draw(0), _frametime(-1), _renderer(renderer), _cache(cache)
 {

@@ -2,13 +2,14 @@
 
 #include <entities/components/transformComponent3d.hpp>
 #include <entities/entityFactory.hpp>
+#include <resource_cache/iResourceCache.hpp>
 #include <utilities/logging/logger.hpp>
 
 #include "views/iView.hpp"
 
-bool BaseGameLogic::initialize()
+bool BaseGameLogic::initialize(std::shared_ptr<IResourceCache> cache)
 {
-	this->_entity_factory = std::make_shared<EntityFactory>();
+	this->_entity_factory = std::make_shared<EntityFactory>(cache);
 	return true;
 }
 

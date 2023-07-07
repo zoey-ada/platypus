@@ -8,6 +8,7 @@ enum class ResourceType
 	Audio,
 	Mesh,
 	PixelShader,
+	Protobuf,
 	Texture,
 	VertexShader,
 	Unknown

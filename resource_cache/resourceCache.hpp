@@ -46,12 +46,13 @@ public:
 	std::shared_ptr<TextureResource> getTexture(const std::string& path) override;
 	std::shared_ptr<MeshResource> getMesh(const std::string& path) override;
 	std::shared_ptr<AudioResource> getAudio(const std::string& path) override;
+	std::shared_ptr<platypus::ProtobufResource> getProtobuf(const std::string& path) override;
 
 	bool exists(const ResourceType& type, const std::string& path) const override;
 	bool addResource(const std::shared_ptr<Resource>& resource) override;
 	void touchResource(const ResourceType& type, const std::string& resource_id) override;
 
-	void flush();
+	void flush() override;
 	uint8_t* allocate(const uint64_t size) override;
 
 protected:

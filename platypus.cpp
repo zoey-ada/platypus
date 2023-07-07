@@ -14,9 +14,11 @@
 #include <resource_cache/loaders/audioLoader.hpp>
 #include <resource_cache/loaders/meshLoader.hpp>
 #include <resource_cache/loaders/pixelShaderLoader.hpp>
+#include <resource_cache/loaders/stringLoader.hpp>
 #include <resource_cache/loaders/textureLoader.hpp>
 #include <resource_cache/loaders/vertexShaderLoader.hpp>
 #include <resource_cache/resourceCache.hpp>
+#include <resource_cache/resources/protobufResource.hpp>
 #include <resource_cache/stores/resourceStoreFactory.hpp>
 #include <utilities/logging/logger.hpp>
 #include <utilities/logging/loggingSystem.hpp>
@@ -116,6 +118,10 @@ void Platypus::registerResourceLoaders()
 		std::make_shared<MeshLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(std::make_shared<AudioLoader>(this->_cache, this->_logging));
+
+	this->_cache->registerLoader(
+		std::make_shared<platypus::StringLoader<platypus::ProtobufResource>>(this->_cache,
+			this->_logging, ResourceType::Protobuf));
 }
 
 UpdateFunction Platypus::getUpdateFunction() const
