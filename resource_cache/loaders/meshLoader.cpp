@@ -10,6 +10,9 @@
 #include "../resourceCache.hpp"
 #include "../resources/meshResource.hpp"
 
+namespace platypus
+{
+
 MeshLoader::MeshLoader(std::shared_ptr<IResourceCache> cache, std::shared_ptr<IRenderer> renderer,
 	std::shared_ptr<ILoggingSystem> logging)
 	: _cache(std::move(cache)), _renderer(std::move(renderer)), _logging(std::move(logging))
@@ -108,3 +111,5 @@ uint8_t* MeshLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
+
+};

@@ -12,7 +12,7 @@ public:
 		return true;
 	}
 
-	void registerLoader(const std::shared_ptr<IResourceLoader>& /*loader*/) override {}
+	void registerLoader(const std::shared_ptr<platypus::IResourceLoader>& /*loader*/) override {}
 
 	std::shared_ptr<Resource> getResource(const ResourceType& type,
 		const std::string& path) override

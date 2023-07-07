@@ -105,19 +105,20 @@ void Platypus::deinitialize()
 
 void Platypus::registerResourceLoaders()
 {
-	this->_cache->registerLoader(
-		std::make_shared<VertexShaderLoader>(this->_cache, this->_renderer, this->_logging));
+	this->_cache->registerLoader(std::make_shared<platypus::VertexShaderLoader>(this->_cache,
+		this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(std::make_shared<platypus::PixelShaderLoader>(this->_cache,
+		this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer, this->_logging));
+		std::make_shared<platypus::TextureLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<TextureLoader>(this->_cache, this->_renderer, this->_logging));
+		std::make_shared<platypus::MeshLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<MeshLoader>(this->_cache, this->_renderer, this->_logging));
-
-	this->_cache->registerLoader(std::make_shared<AudioLoader>(this->_cache, this->_logging));
+		std::make_shared<platypus::AudioLoader>(this->_cache, this->_logging));
 
 	this->_cache->registerLoader(
 		std::make_shared<platypus::StringLoader<platypus::ProtobufResource>>(this->_cache,

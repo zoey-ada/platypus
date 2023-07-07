@@ -7,6 +7,8 @@
 #include <tests/resource_cache/mockResourceCache.hpp>
 #include <tests/utilities/logging/mockLoggingSystem.hpp>
 
+using namespace platypus;
+
 SCENARIO("texture loader can load a texture", "[res_cache]")
 {
 	auto logging = std::make_shared<MockLoggingSystem>();

@@ -7,6 +7,9 @@
 #include "../resourceCache.hpp"
 #include "../resources/textureResource.hpp"
 
+namespace platypus
+{
+
 TextureLoader::TextureLoader(std::shared_ptr<IResourceCache> cache,
 	std::shared_ptr<IRenderer> renderer, std::shared_ptr<ILoggingSystem> logging)
 	: _cache(std::move(cache)), _renderer(std::move(renderer)), _logging(std::move(logging))
@@ -52,3 +55,5 @@ uint8_t* TextureLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
+
+};

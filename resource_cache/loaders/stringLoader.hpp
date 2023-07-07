@@ -49,4 +49,5 @@ private:
 	std::shared_ptr<ILoggingSystem> _logging;
 	ResourceType _resource_type {ResourceType::Unknown};
 };
+
 };

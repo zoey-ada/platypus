@@ -8,6 +8,9 @@ class ILoggingSystem;
 class IRenderer;
 class IResourceCache;
 
+namespace platypus
+{
+
 class PixelShaderLoader: public IResourceLoader
 {
 public:
@@ -31,4 +34,6 @@ private:
 	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
 	std::shared_ptr<ILoggingSystem> _logging;
+};
+
 };

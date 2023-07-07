@@ -6,7 +6,6 @@
 #include "resources/resourceType.hpp"
 
 class IResourceStore;
-class IResourceLoader;
 
 class Resource;
 class AudioResource;
@@ -17,6 +16,7 @@ class VertexShaderResource;
 
 namespace platypus
 {
+class IResourceLoader;
 class ProtobufResource;
 };
 
@@ -27,7 +27,7 @@ public:
 
 	virtual bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores) = 0;
 
-	virtual void registerLoader(const std::shared_ptr<IResourceLoader>& loader) = 0;
+	virtual void registerLoader(const std::shared_ptr<platypus::IResourceLoader>& loader) = 0;
 
 	virtual std::shared_ptr<Resource> getResource(const ResourceType& type,
 		const std::string& path) = 0;

@@ -2,7 +2,7 @@
 
 #include <resource_cache/loaders/iResourceLoader.hpp>
 
-class MockResourceLoader: public IResourceLoader
+class MockResourceLoader: public platypus::IResourceLoader
 {
 public:
 	virtual ~MockResourceLoader() = default;

@@ -40,7 +40,7 @@ bool ResourceCache::initialize(const std::list<std::shared_ptr<IResourceStore>>&
 	return true;
 }
 
-void ResourceCache::registerLoader(const std::shared_ptr<IResourceLoader>& loader)
+void ResourceCache::registerLoader(const std::shared_ptr<platypus::IResourceLoader>& loader)
 {
 	this->_resource_loaders[loader->getType()] = loader;
 }
@@ -164,7 +164,7 @@ std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& ident
 	return store;
 }
 
-std::shared_ptr<IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
+std::shared_ptr<platypus::IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
 {
 	this->_logging->debug("resource_cache", "searching for loader for " + std::to_string(type));
 

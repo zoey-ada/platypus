@@ -7,6 +7,9 @@
 #include "../resourceCache.hpp"
 #include "../resources/audioResource.hpp"
 
+namespace platypus
+{
+
 struct RiffChunk
 {
 	uint32_t riff_tag;
@@ -77,3 +80,5 @@ uint8_t* AudioLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
+
+};

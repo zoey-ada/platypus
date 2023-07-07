@@ -8,6 +8,9 @@ class IResourceStore;
 class Resource;
 class ResourceHandle;
 
+namespace platypus
+{
+
 class IResourceLoader
 {
 public:
@@ -20,4 +23,6 @@ public:
 
 protected:
 	virtual uint8_t* allocate(unsigned int size) = 0;
+};
+
 };

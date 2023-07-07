@@ -7,6 +7,9 @@
 class ILoggingSystem;
 class IResourceCache;
 
+namespace platypus
+{
+
 class AudioLoader: public IResourceLoader
 {
 public:
@@ -26,4 +29,6 @@ protected:
 private:
 	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<ILoggingSystem> _logging;
+};
+
 };

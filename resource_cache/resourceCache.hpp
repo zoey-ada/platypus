@@ -11,20 +11,11 @@
 #include "resources/resourceType.hpp"
 
 class IRenderer;
-class IResourceStore;
-class IResourceLoader;
 class ILoggingSystem;
-
-class Resource;
-class PixelShaderResource;
-class VertexShaderResource;
-class TextureResource;
-class MeshResource;
-class AudioResource;
 
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
-using ResourceLoaderMap = std::map<ResourceType, std::shared_ptr<IResourceLoader>>;
+using ResourceLoaderMap = std::map<ResourceType, std::shared_ptr<platypus::IResourceLoader>>;
 using ResourceStoreMap = std::map<std::string, std::shared_ptr<IResourceStore>>;
 
 class ResourceCache: public IResourceCache, public std::enable_shared_from_this<ResourceCache>
@@ -37,7 +28,7 @@ public:
 
 	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores) override;
 
-	void registerLoader(const std::shared_ptr<IResourceLoader>& loader) override;
+	void registerLoader(const std::shared_ptr<platypus::IResourceLoader>& loader) override;
 
 	std::shared_ptr<Resource> getResource(const ResourceType& type,
 		const std::string& path) override;
@@ -57,7 +48,7 @@ public:
 
 protected:
 	std::shared_ptr<IResourceStore> getStore(const std::string& store);
-	std::shared_ptr<IResourceLoader> getLoader(const ResourceType& type) const;
+	std::shared_ptr<platypus::IResourceLoader> getLoader(const ResourceType& type) const;
 
 	std::shared_ptr<Resource> tryShareResource(const ResourceType& type,
 		const std::string& path) const;
