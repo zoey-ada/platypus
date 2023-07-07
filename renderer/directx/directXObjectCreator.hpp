@@ -38,7 +38,7 @@ public:
 		const uint64_t index_count) const;
 
 	[[nodiscard]] ID3D11ShaderResourceView* newTexture(std::byte* texture_data,
-		const uint64_t data_size);
+		const uint64_t data_size, platypus::Extent& dimensions);
 	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const D3D11_TEXTURE2D_DESC& texture_desc,
 		const D3D11_SUBRESOURCE_DATA texture_data) const;
 	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const char* message, const char* font_family,

@@ -112,6 +112,22 @@ bool ResourceCache::addResource(const std::shared_ptr<Resource>& resource)
 	return true;
 }
 
+void ResourceCache::touchResource(const ResourceType& type, const std::string& resource_id)
+{
+	this->_logging->debug("resource_cache", "attempting to touch resource " + resource_id);
+	auto resource = this->tryShareResource(type, resource_id);
+
+	if (resource != nullptr)
+	{
+		this->_logging->debug("resource_cache", "resource was found in the cache");
+		this->updateResource(resource);
+	}
+	else
+	{
+		this->_logging->warning("resource_cache", "resource was not in the cache");
+	}
+}
+
 void ResourceCache::flush()
 {
 	this->_logging->info("resource_cache", "clearing all cached files");

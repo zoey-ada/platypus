@@ -99,6 +99,7 @@ std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* 
 	mesh_data.vertex_buffer = vertex_buffer;
 	mesh_data.index_buffer = index_buffer;
 	mesh_data.index_count = indices.size();
+	mesh_data.vertices = std::move(vertices);
 
 	return std::make_shared<MeshResource>(&mesh_data);
 }

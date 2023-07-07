@@ -9,7 +9,7 @@ struct PtTextureData: public PtResourceData
 {
 	PtTexture texture;
 	PtSamplerState sampler_state;
-	PtExtent dimensions;
+	platypus::Extent dimensions;
 };
 
 class TextureResource: public Resource
@@ -22,10 +22,10 @@ public:
 
 	[[nodiscard]] PtTexture getTexture() const { return this->_texture; }
 	[[nodiscard]] PtSamplerState getSamplerState() const { return this->_sampler_state; }
-	[[nodiscard]] PtExtent getDimensions() const { return this->_dimensions; }
+	[[nodiscard]] platypus::Extent getDimensions() const { return this->_dimensions; }
 
 private:
 	PtSamplerState _sampler_state {nullptr};
 	PtTexture _texture {nullptr};
-	PtExtent _dimensions {};
+	platypus::Extent _dimensions {};
 };

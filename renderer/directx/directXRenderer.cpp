@@ -2,6 +2,7 @@
 
 #include <array>
 
+#include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
@@ -9,6 +10,7 @@
 
 #include "../textRenderer.hpp"
 #include "directXAlphaPass.hpp"
+#include "directXMesh.hpp"
 #include "directXPixelShader.hpp"
 #include "directXVertexShader.hpp"
 #include "dxCommonMeshes.hpp"
@@ -27,7 +29,7 @@ DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 {}
 
 bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
-	const std::weak_ptr<ResourceCache>& cache)
+	const std::weak_ptr<IResourceCache>& cache)
 {
 	this->_cache = cache;
 
@@ -233,9 +235,15 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }
 
-std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type)
+std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type) const
 {
 	return ::createCommonMesh(mesh_type, this->shared_from_this());
+}
+
+std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type,
+	const std::string& resource_id) const
+{
+	return ::createCommonMesh(mesh_type, this->shared_from_this(), resource_id);
 }
 
 std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
@@ -252,55 +260,56 @@ void DirectXRenderer::setWorldTransform(const Mat4x4& /*world*/)
 {}
 
 PtInputLayout DirectXRenderer::createInputLayout(std::byte* shader_data, const uint64_t data_size,
-	PtInputLayoutDesc* layout_elements, const uint64_t element_count)
+	PtInputLayoutDesc* layout_elements, const uint64_t element_count) const
 {
 	return (PtInputLayout)this->_creator->newInputLayout(shader_data, data_size, layout_elements,
 		element_count);
 }
 
-void DirectXRenderer::destroyInputLayout(PtInputLayout layout)
+void DirectXRenderer::destroyInputLayout(PtInputLayout layout) const
 {
 	reinterpret_cast<ID3D11InputLayout*>(layout)->Release();
 }
 
-PtSamplerState DirectXRenderer::createSamplerState(const PtAddressOverscanMode overscan_mode)
+PtSamplerState DirectXRenderer::createSamplerState(const PtAddressOverscanMode overscan_mode) const
 {
 	return (PtSamplerState)this->_creator->newSamplerState(overscan_mode);
 }
 
-void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state)
+void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state) const
 {
 	reinterpret_cast<ID3D11SamplerState*>(sampler_state)->Release();
 }
 
-PtTexture DirectXRenderer::createTexture(std::byte* texture_data, const uint64_t data_size)
+PtTexture DirectXRenderer::createTexture(std::byte* texture_data, const uint64_t data_size,
+	platypus::Extent& dimensions) const
 {
-	return (PtTexture)this->_creator->newTexture(texture_data, data_size);
+	return (PtTexture)this->_creator->newTexture(texture_data, data_size, dimensions);
 }
 
-void DirectXRenderer::destroyTexture(PtTexture texture)
+void DirectXRenderer::destroyTexture(PtTexture texture) const
 {
 	reinterpret_cast<ID3D11ShaderResourceView*>(texture)->Release();
 }
 
 PtVertexBuffer DirectXRenderer::createVertexBuffer(const graphics::Vertex* vertices,
-	const uint64_t vertex_count)
+	const uint64_t vertex_count) const
 {
 	return (PtVertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
 }
 
-void DirectXRenderer::destroyVertexBuffer(PtVertexBuffer buffer)
+void DirectXRenderer::destroyVertexBuffer(PtVertexBuffer buffer) const
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }
 
 PtIndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
-	const uint64_t index_count)
+	const uint64_t index_count) const
 {
 	return (PtIndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
 }
 
-void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer)
+void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer) const
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }
@@ -339,17 +348,37 @@ std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* mess
 	return std::make_shared<TextureResource>(&texture_data);
 }
 
-std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path)
+std::unique_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path) const
 {
-	return std::make_shared<DirectXVertexShader>(this->shared_from_this(), this->_cache.lock(),
+	return std::make_unique<DirectXVertexShader>(this->shared_from_this(), this->_cache.lock(),
 		path);
 }
 
-std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
-	std::string texture)
+std::unique_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
+	std::string texture) const
 {
-	return std::make_shared<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(), path,
+	return std::make_unique<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(), path,
 		texture);
+}
+
+std::unique_ptr<IMesh> DirectXRenderer::loadMesh(const std::string& resource_id) const
+{
+	return std::make_unique<DirectXMesh>(this->_cache.lock(), resource_id);
+}
+
+std::unique_ptr<IMesh> DirectXRenderer::loadCommonMesh(const CommonMesh mesh_type,
+	const std::string& resource_id) const
+{
+	auto cache = this->_cache.lock();
+	if (cache == nullptr)
+	{
+		// error
+		return nullptr;
+	}
+
+	auto resource = this->createCommonMesh(mesh_type, resource_id);
+	cache->addResource(resource);
+	return std::make_unique<DirectXMesh>(cache, resource_id);
 }
 
 // std::shared_ptr<ITexture> DirectXRenderer::loadTexture(std::string path)

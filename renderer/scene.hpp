@@ -12,8 +12,8 @@ struct AlphaSceneNode;
 class CameraNode;
 class IEvent;
 class IRenderer;
+class IResourceCache;
 class ISceneNode;
-class ResourceCache;
 class SceneNode;
 
 using SceneEntityMap = std::map<EntityId, std::shared_ptr<ISceneNode>>;
@@ -21,7 +21,7 @@ using SceneEntityMap = std::map<EntityId, std::shared_ptr<ISceneNode>>;
 class Scene: public std::enable_shared_from_this<Scene>
 {
 public:
-	explicit Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache);
+	explicit Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IResourceCache> cache);
 	virtual ~Scene() = default;
 
 	[[nodiscard]] bool initialize();
@@ -46,7 +46,7 @@ public:
 	}
 
 	[[nodiscard]] std::shared_ptr<IRenderer> renderer() const { return this->_renderer; }
-	[[nodiscard]] std::shared_ptr<ResourceCache> cache() const { return this->_cache; }
+	[[nodiscard]] std::shared_ptr<IResourceCache> cache() const { return this->_cache; }
 
 	void registerEventSinks();
 	void onNewRenderComponent(std::shared_ptr<IEvent> event);
@@ -56,7 +56,7 @@ private:
 	std::shared_ptr<SceneNode> _root {nullptr};
 	std::shared_ptr<CameraNode> _camera {nullptr};
 	std::shared_ptr<IRenderer> _renderer {nullptr};
-	std::shared_ptr<ResourceCache> _cache {nullptr};
+	std::shared_ptr<IResourceCache> _cache {nullptr};
 
 	std::stack<Mat4x4> _matrix_stack {};
 	std::list<std::shared_ptr<AlphaSceneNode>> _alpha_scene_nodes;

@@ -1,5 +1,9 @@
 #pragma once
 
+#include <optional>
+
+#include <platypus_proto/entity.hpp>
+
 #include "entityComponent.hpp"
 
 namespace platypus
@@ -26,6 +30,12 @@ public:
 private:
 	std::shared_ptr<platypus::RenderComponent_2d> _render_data;
 	std::shared_ptr<SceneNode> _scene_node;
+
+	std::string _current_animation;
+	uint32_t _current_animation_frame = 0;
+
+	std::optional<platypus::SpriteAnimation> getAnimation(std::string action) const;
+	void updateAnimationFrame();
 };
 
 [[nodiscard]] std::shared_ptr<EntityComponent> createRenderComponent2d();

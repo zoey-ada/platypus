@@ -3,7 +3,7 @@
 #include <renderer/iPixelShader.hpp>
 #include <renderer/iRenderer.hpp>
 #include <renderer/iVertexShader.hpp>
-#include <resource_cache/resourceCache.hpp>
+#include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/textureResource.hpp>
 
@@ -79,7 +79,7 @@ void TextNode::setText(const char* new_text)
 	this->_texture_is_out_of_date = true;
 }
 
-void TextNode::generateTexture(const std::shared_ptr<ResourceCache>& cache,
+void TextNode::generateTexture(const std::shared_ptr<IResourceCache>& cache,
 	const std::shared_ptr<IRenderer>& renderer)
 {
 	if (!cache->exists(ResourceType::Texture, this->_message))

@@ -8,7 +8,7 @@ class ScreenElementScene: public IScreenElement, public Scene
 {
 public:
 	explicit ScreenElementScene(std::shared_ptr<IRenderer> renderer,
-		std::shared_ptr<ResourceCache> cache)
+		std::shared_ptr<IResourceCache> cache)
 		: Scene(renderer, cache)
 	{}
 	virtual ~ScreenElementScene() = default;

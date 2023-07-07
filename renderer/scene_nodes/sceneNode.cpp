@@ -35,6 +35,22 @@ bool SceneNode::initialize(const std::shared_ptr<Scene>& scene)
 	return success;
 }
 
+bool SceneNode::reinitialize(const std::shared_ptr<Scene>& scene)
+{
+	bool success = true;
+
+	for (auto child : this->_children)
+		success &= child->reinitialize(scene);
+
+	return success;
+}
+
+void SceneNode::deinitialize(const std::shared_ptr<Scene>& scene)
+{
+	for (auto child : this->_children)
+		child->deinitialize(scene);
+}
+
 bool SceneNode::onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta)
 {
 	bool success = true;

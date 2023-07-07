@@ -47,16 +47,18 @@ void WicTextureLoader::deinitialize()
 }
 
 ID3D11ShaderResourceView* WicTextureLoader::loadTexture(std::byte* image_data,
-	const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer)
+	const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer,
+	platypus::Extent& dimensions)
 {
 	IWICBitmapFrameDecode* wic_frame = this->createTextureFromWic(image_data, data_size);
-	if (wic_frame != nullptr)
+	if (wic_frame == nullptr)
 	{
-		auto texture = this->createWicTexture(wic_frame, renderer);
-		return texture;
+		// error
+		return nullptr;
 	}
 
-	return nullptr;
+	auto texture = this->createWicTexture(wic_frame, renderer, dimensions);
+	return texture;
 }
 
 IWICBitmapFrameDecode* WicTextureLoader::createTextureFromWic(std::byte* image_data,
@@ -89,7 +91,7 @@ IWICBitmapFrameDecode* WicTextureLoader::createTextureFromWic(std::byte* image_d
 }
 
 ID3D11ShaderResourceView* WicTextureLoader::createWicTexture(IWICBitmapFrameDecode* frame,
-	const std::shared_ptr<DirectXRenderer>& renderer)
+	const std::shared_ptr<DirectXRenderer>& renderer, platypus::Extent& dimensions)
 {
 	IWICBitmapSource* source = frame;
 
@@ -199,6 +201,9 @@ ID3D11ShaderResourceView* WicTextureLoader::createWicTexture(IWICBitmapFrameDeco
 	image_data.SysMemSlicePitch = image_data_size;
 
 	auto texture = renderer->create()->newTexture(desc, image_data);
+
+	dimensions.height = height;
+	dimensions.width = width;
 
 	// generate mipmaps with texture_view
 

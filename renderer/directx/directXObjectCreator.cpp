@@ -116,10 +116,13 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	const uint64_t vertex_count) const
 {
 	D3D11_BUFFER_DESC vertex_buffer_desc {};
-	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	// vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+	vertex_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+	vertex_buffer_desc.MiscFlags = 0;
 	vertex_buffer_desc.ByteWidth =
 		static_cast<UINT>(sizeof(graphics::DrawableVertex) * vertex_count);
-	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
 
 	D3D11_SUBRESOURCE_DATA vertex_data {};
 	auto drawable_verts = drawable(vertices, vertex_count);
@@ -182,9 +185,10 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const D3D11_TEXTURE2D
 }
 
 ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(std::byte* texture_data,
-	const uint64_t data_size)
+	const uint64_t data_size, platypus::Extent& dimensions)
 {
-	auto texture = this->_texture_loader->loadTexture(texture_data, data_size, this->_renderer);
+	auto texture =
+		this->_texture_loader->loadTexture(texture_data, data_size, this->_renderer, dimensions);
 	return texture;
 }
 
@@ -259,7 +263,8 @@ ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
 {
 	D3D11_SAMPLER_DESC sampler_desc;
 	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	// sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampler_desc.AddressU = toDxAddressMode(overscan_mode);
 	sampler_desc.AddressV = toDxAddressMode(overscan_mode);
 	sampler_desc.AddressW = toDxAddressMode(overscan_mode);

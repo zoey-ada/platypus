@@ -6,8 +6,8 @@
 
 class IPixelShader;
 class IRenderer;
+class IResourceCache;
 class IVertexShader;
-class ResourceCache;
 class Scene;
 
 struct PtTextNodeDesc
@@ -28,7 +28,7 @@ public:
 	bool render(const std::shared_ptr<Scene>& scene) override;
 
 	void setText(const char* new_text);
-	void generateTexture(const std::shared_ptr<ResourceCache>& cache,
+	void generateTexture(const std::shared_ptr<IResourceCache>& cache,
 		const std::shared_ptr<IRenderer>& renderer);
 
 private:

@@ -194,6 +194,7 @@ set(renderer_srcs
 	renderer/commonMesh.hpp
 	renderer/graphics.hpp
 	renderer/graphics.cpp
+	renderer/iMesh.hpp
 	renderer/iPixelShader.hpp
 	renderer/iRenderer.hpp
 	renderer/iRendererState.hpp
@@ -216,6 +217,8 @@ if(WIN32)
 	set(directx_srcs
 		renderer/directx/directXAlphaPass.hpp
 		renderer/directx/directXAlphaPass.cpp
+		renderer/directx/directXMesh.hpp
+		renderer/directx/directXMesh.cpp
 		renderer/directx/directXObjectCreator.hpp
 		renderer/directx/directXObjectCreator.cpp
 		renderer/directx/directXPixelShader.hpp
@@ -235,6 +238,28 @@ if(WIN32)
 	)
 	source_group(source\\renderer\\directx FILES ${directx_srcs})
 endif()
+
+set(scene_node_srcs
+	renderer/scene_nodes/alphaSceneNode.hpp
+	renderer/scene_nodes/cameraNode.hpp
+	renderer/scene_nodes/cameraNode.cpp
+	renderer/scene_nodes/iSceneNode.hpp
+	renderer/scene_nodes/meshNode.hpp
+	renderer/scene_nodes/meshNode.cpp
+	renderer/scene_nodes/renderPass.hpp
+	renderer/scene_nodes/rectangleNode.hpp
+	renderer/scene_nodes/rectangleNode.cpp
+	renderer/scene_nodes/rootNode.hpp
+	renderer/scene_nodes/rootNode.cpp
+	renderer/scene_nodes/sceneNode.hpp
+	renderer/scene_nodes/sceneNode.cpp
+	renderer/scene_nodes/spriteNode.hpp
+	renderer/scene_nodes/spriteNode.cpp
+	renderer/scene_nodes/textNode.hpp
+	renderer/scene_nodes/textNode.cpp
+	renderer/scene_nodes/sceneNodeProperties.hpp
+)
+source_group(source\\scene_nodes FILES ${scene_node_srcs})
 
 set(resource_cache_srcs
 	resource_cache/resourceCache.hpp
@@ -284,26 +309,6 @@ set(resource_cache_stores_srcs
 )
 source_group(source\\resource_cache\\stores FILES ${resource_cache_stores_srcs})
 
-set(scene_node_srcs
-	renderer/scene_nodes/alphaSceneNode.hpp
-	renderer/scene_nodes/cameraNode.hpp
-	renderer/scene_nodes/cameraNode.cpp
-	renderer/scene_nodes/iSceneNode.hpp
-	renderer/scene_nodes/meshNode.hpp
-	renderer/scene_nodes/meshNode.cpp
-	renderer/scene_nodes/renderPass.hpp
-	renderer/scene_nodes/rectangleNode.hpp
-	renderer/scene_nodes/rectangleNode.cpp
-	renderer/scene_nodes/rootNode.hpp
-	renderer/scene_nodes/rootNode.cpp
-	renderer/scene_nodes/sceneNode.hpp
-	renderer/scene_nodes/sceneNode.cpp
-	renderer/scene_nodes/textNode.hpp
-	renderer/scene_nodes/textNode.cpp
-	renderer/scene_nodes/sceneNodeProperties.hpp
-)
-source_group(source\\scene_nodes FILES ${scene_node_srcs})
-
 set(ui_srcs
 	ui/dynamicText.hpp
 	ui/dynamicText.cpp
@@ -316,6 +321,8 @@ set(utilities_srcs
 	utilities/encoding.hpp
 	utilities/encoding.cpp
 	utilities/safeDelete.hpp
+	utilities/uuid.hpp
+	utilities/uuid.cpp
 	utilities/wildcardMatch.hpp
 	utilities/wildcardMatch.cpp
 )

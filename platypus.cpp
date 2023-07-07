@@ -63,6 +63,7 @@ bool Platypus::initialize()
 	assert(this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache));
 	// this->_renderer->enableDebugMode();
 	ServiceProvider::registerRenderer(this->_renderer);
+	ServiceProvider::registerResourceCache(this->_cache);
 
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();

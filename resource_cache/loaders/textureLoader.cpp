@@ -22,7 +22,8 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 		return nullptr;
 	}
 
-	PtTexture texture = this->_renderer->createTexture(resource_data, data_size);
+	platypus::Extent dimensions;
+	PtTexture texture = this->_renderer->createTexture(resource_data, data_size, dimensions);
 	if (texture == nullptr)
 	{
 		this->_logging->warning("cache", "unable to load texture from " + std::string(resource_id));
@@ -42,7 +43,7 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 	texture_data.size = data_size;
 	texture_data.texture = texture;
 	texture_data.sampler_state = sampler_state;
-	// TODO: dimensions?!?
+	texture_data.dimensions = dimensions;
 
 	return std::make_shared<TextureResource>(&texture_data);
 }

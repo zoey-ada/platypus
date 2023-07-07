@@ -5,6 +5,8 @@
 
 #include <wincodec.h>
 
+#include <utilities/common/ptExtent.hpp>
+
 class DirectXRenderer;
 class TextureResource;
 
@@ -29,7 +31,8 @@ public:
 	void deinitialize();
 
 	[[nodiscard]] ID3D11ShaderResourceView* loadTexture(std::byte* image_data,
-		const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer);
+		const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer,
+		platypus::Extent& dimensions__out);
 
 	[[nodiscard]] ID3D11ShaderResourceView* createTextTexture(const char* message,
 		const char* font_family, const uint16_t point_size,
@@ -51,7 +54,7 @@ private:
 		const uint64_t image_data_size);
 
 	[[nodiscard]] ID3D11ShaderResourceView* createWicTexture(IWICBitmapFrameDecode* frame,
-		const std::shared_ptr<DirectXRenderer>& renderer);
+		const std::shared_ptr<DirectXRenderer>& renderer, platypus::Extent& dimensions);
 
 	[[nodiscard]] DXGI_FORMAT toDxgiFormat(WICPixelFormatGUID& pixel_format) const;
 	[[nodiscard]] uint64_t getBitsPerPixel(const WICPixelFormatGUID& pixel_format) const;

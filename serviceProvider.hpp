@@ -12,6 +12,7 @@ class IAudioSystem;
 class ILoggingSystem;
 class InputManager;
 class IEntityManager;
+class IResourceCache;
 
 class ServiceProvider
 {
@@ -94,6 +95,16 @@ public:
 		return ServiceProvider::_entity_manager;
 	}
 
+	static void registerResourceCache(std::shared_ptr<IResourceCache> service)
+	{
+		ServiceProvider::_resource_cache = service;
+	}
+	static void unregisterResourceCache() { ServiceProvider::_resource_cache.reset(); }
+	static std::shared_ptr<IResourceCache> getResourceCache()
+	{
+		return ServiceProvider::_resource_cache;
+	}
+
 	inline static void unregisterAllServices()
 	{
 		ServiceProvider::unregisterPlatform();
@@ -105,6 +116,7 @@ public:
 		ServiceProvider::unregisterLoggingSystem();
 		ServiceProvider::unregisterInputManager();
 		ServiceProvider::unregisterEntityManager();
+		ServiceProvider::unregisterResourceCache();
 	}
 
 private:
@@ -117,4 +129,5 @@ private:
 	inline static std::shared_ptr<ILoggingSystem> _logging_system = nullptr;
 	inline static std::shared_ptr<InputManager> _input_manager = nullptr;
 	inline static std::shared_ptr<IEntityManager> _entity_manager = nullptr;
+	inline static std::shared_ptr<IResourceCache> _resource_cache = nullptr;
 };

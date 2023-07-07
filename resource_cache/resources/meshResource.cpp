@@ -8,7 +8,8 @@ MeshResource::MeshResource(PtMeshResourceData* resource_data)
 	  _primative(resource_data->primative),
 	  _vertex_buffer(resource_data->vertex_buffer),
 	  _index_buffer(resource_data->index_buffer),
-	  _index_count(resource_data->index_count)
+	  _index_count(resource_data->index_count),
+	  _vertices(graphics::drawable(resource_data->vertices.data(), resource_data->index_count))
 {}
 
 MeshResource::~MeshResource()

@@ -4,7 +4,7 @@
 #include <d3d11.h>
 
 #include <exceptions/creationException.hpp>
-#include <resource_cache/resourceCache.hpp>
+#include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/pixelShaderResource.hpp>
 #include <resource_cache/resources/textureResource.hpp>
 #include <utilities/common/safeRelease.hpp>
@@ -24,14 +24,14 @@ struct ConstantBuffer_Material
 	bool _hasTexture;
 };
 
-DirectXPixelShader::DirectXPixelShader(std::shared_ptr<IRenderer> renderer,
-	std::shared_ptr<ResourceCache> cache, std::string path, std::string texture_path)
+DirectXPixelShader::DirectXPixelShader(std::shared_ptr<const IRenderer> renderer,
+	std::shared_ptr<IResourceCache> cache, std::string path, std::string texture_path)
 	: _path(std::move(path)), _texture_path(texture_path), _resource_cache(cache)
 {
 	if (this->_path.empty())
 		this->_path = "assets.zip/shaders/simple_pixel.cso";
 
-	_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
+	_renderer = std::dynamic_pointer_cast<const DirectXRenderer>(renderer);
 	if (_renderer == nullptr)
 		logWarning(
 			"attempting to create DirectX pixel shader when not using DirectX "
@@ -75,6 +75,11 @@ bool DirectXPixelShader::initialize(const std::shared_ptr<Scene>& /*scene*/)
 		return false;
 	}
 
+	if (!this->_texture_path.empty())
+	{
+		auto texture = this->_resource_cache.lock()->getTexture(this->_texture_path);
+	}
+
 	return true;
 }
 
@@ -104,6 +109,16 @@ bool DirectXPixelShader::setupRender(const std::shared_ptr<Scene>& /*scene*/,
 	this->setTexture(this->_texture_path);
 
 	return true;
+}
+
+std::shared_ptr<TextureResource> DirectXPixelShader::getTexture()
+{
+	if (!this->_texture_path.empty())
+	{
+		return this->_resource_cache.lock()->getTexture(this->_texture_path);
+	}
+
+	return nullptr;
 }
 
 bool DirectXPixelShader::setTexture(const std::string& texture_path)
