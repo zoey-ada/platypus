@@ -17,7 +17,8 @@
 #include "components/transformComponent2d.hpp"
 #include "components/transformComponent3d.hpp"
 
-EntityFactory::EntityFactory(std::shared_ptr<IResourceCache> cache): _cache(std::move(cache))
+EntityFactory::EntityFactory(std::shared_ptr<platypus::IResourceCache> cache)
+	: _cache(std::move(cache))
 {
 	this->registerStandardComponents();
 }

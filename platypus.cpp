@@ -151,7 +151,7 @@ bool Platypus::createCache()
 		auto cache_settings = this->_settings.resource_cache_settings();
 		auto cache_size = cache_settings.cache_size_in_mb();
 
-		this->_cache = std::make_shared<ResourceCache>(cache_size, this->_logging);
+		this->_cache = std::make_shared<platypus::ResourceCache>(cache_size, this->_logging);
 
 		std::list<std::shared_ptr<platypus::IResourceStore>> res_stores;
 		for (const auto& res_store : cache_settings.resource_stores())

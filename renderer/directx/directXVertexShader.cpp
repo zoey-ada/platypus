@@ -30,7 +30,7 @@ struct ConstantBuffer_Material
 };
 
 DirectXVertexShader::DirectXVertexShader(std::shared_ptr<const IRenderer> renderer,
-	std::weak_ptr<IResourceCache> cache, std::string path)
+	std::weak_ptr<platypus::IResourceCache> cache, std::string path)
 	: _path(std::move(path)), _resource_cache(cache)
 {
 	if (this->_path.empty())

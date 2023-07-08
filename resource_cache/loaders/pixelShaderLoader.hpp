@@ -6,10 +6,11 @@
 
 class ILoggingSystem;
 class IRenderer;
-class IResourceCache;
 
 namespace platypus
 {
+
+class IResourceCache;
 
 class PixelShaderLoader: public IResourceLoader
 {

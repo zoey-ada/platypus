@@ -79,7 +79,7 @@ void TextNode::setText(const char* new_text)
 	this->_texture_is_out_of_date = true;
 }
 
-void TextNode::generateTexture(const std::shared_ptr<IResourceCache>& cache,
+void TextNode::generateTexture(const std::shared_ptr<platypus::IResourceCache>& cache,
 	const std::shared_ptr<IRenderer>& renderer)
 {
 	if (!cache->exists(ResourceType::Texture, this->_message))

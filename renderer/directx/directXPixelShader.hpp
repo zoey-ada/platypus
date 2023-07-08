@@ -6,18 +6,22 @@
 
 #include "../iPixelShader.hpp"
 
-class DirectXRenderer;
-class IRenderer;
-class IResourceCache;
-
 struct ID3D11Buffer;
 struct ID3D11PixelShader;
+
+class DirectXRenderer;
+class IRenderer;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class DirectXPixelShader: public IPixelShader
 {
 public:
 	explicit DirectXPixelShader(std::shared_ptr<const IRenderer> renderer,
-		std::shared_ptr<IResourceCache> cache, std::string path,
+		std::shared_ptr<platypus::IResourceCache> cache, std::string path,
 		std::string texture_path = std::string());
 	virtual ~DirectXPixelShader();
 
@@ -37,7 +41,7 @@ private:
 
 	ID3D11PixelShader* _pixel_shader {nullptr};
 	std::shared_ptr<const DirectXRenderer> _renderer {nullptr};
-	std::weak_ptr<IResourceCache> _resource_cache;
+	std::weak_ptr<platypus::IResourceCache> _resource_cache;
 
 	ID3D11Buffer* _material {nullptr};
 };

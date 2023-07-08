@@ -13,7 +13,7 @@
 #include "scene_nodes/cameraNode.hpp"
 #include "scene_nodes/rootNode.hpp"
 
-Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IResourceCache> cache)
+Scene::Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<platypus::IResourceCache> cache)
 	: _root(std::make_shared<RootNode>()), _renderer(renderer), _cache(cache)
 {
 	this->_matrix_stack.push(Mat4x4());

@@ -15,6 +15,9 @@
 #include "resources/vertexShaderResource.hpp"
 #include "stores/iResourceStore.hpp"
 
+namespace platypus
+{
+
 const unsigned int bytes_in_kilobyte = 1024;
 const unsigned int bytes_in_megabyte = bytes_in_kilobyte * 1024;
 
@@ -337,3 +340,5 @@ void ResourceCache::memoryHasBeenFreed(const uint64_t size)
 	this->_logging->debug("resource_cache", std::to_string(size) + " bytes freed");
 	this->_allocated -= size;
 }
+
+};

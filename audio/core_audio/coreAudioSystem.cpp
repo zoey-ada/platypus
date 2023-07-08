@@ -18,7 +18,7 @@ CoreAudioSystem::~CoreAudioSystem()
 const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 
-bool CoreAudioSystem::initialize(const std::shared_ptr<IResourceCache>& resource_cache)
+bool CoreAudioSystem::initialize(const std::shared_ptr<platypus::IResourceCache>& resource_cache)
 {
 	if (resource_cache == nullptr)
 	{

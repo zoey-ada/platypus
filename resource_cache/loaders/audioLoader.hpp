@@ -5,10 +5,11 @@
 #include "iResourceLoader.hpp"
 
 class ILoggingSystem;
-class IResourceCache;
 
 namespace platypus
 {
+
+class IResourceCache;
 
 class AudioLoader: public IResourceLoader
 {

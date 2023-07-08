@@ -6,9 +6,13 @@
 
 class IPixelShader;
 class IRenderer;
-class IResourceCache;
 class IVertexShader;
 class Scene;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 struct PtTextNodeDesc
 {
@@ -28,7 +32,7 @@ public:
 	bool render(const std::shared_ptr<Scene>& scene) override;
 
 	void setText(const char* new_text);
-	void generateTexture(const std::shared_ptr<IResourceCache>& cache,
+	void generateTexture(const std::shared_ptr<platypus::IResourceCache>& cache,
 		const std::shared_ptr<IRenderer>& renderer);
 
 private:

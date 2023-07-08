@@ -7,7 +7,7 @@
 
 #include "views/iView.hpp"
 
-bool BaseGameLogic::initialize(std::shared_ptr<IResourceCache> cache)
+bool BaseGameLogic::initialize(std::shared_ptr<platypus::IResourceCache> cache)
 {
 	this->_entity_factory = std::make_shared<EntityFactory>(cache);
 	return true;

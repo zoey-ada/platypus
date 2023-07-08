@@ -10,14 +10,18 @@
 
 class CameraNode;
 class IRenderer;
-class IResourceCache;
 class Scene;
 using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class HumanView: public IView
 {
 public:
-	HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IResourceCache> cache,
+	HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<platypus::IResourceCache> cache,
 		const platypus::Settings& settings);
 	virtual ~HumanView();
 
@@ -33,7 +37,7 @@ private:
 	Milliseconds _last_draw;
 	Milliseconds _frametime;
 	std::shared_ptr<IRenderer> _renderer;
-	std::shared_ptr<IResourceCache> _cache;
+	std::shared_ptr<platypus::IResourceCache> _cache;
 	std::shared_ptr<Scene> _scene;
 	std::shared_ptr<CameraNode> _camera;
 	ScreenElementList _screen_elements;

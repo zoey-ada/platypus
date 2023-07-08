@@ -2,7 +2,7 @@
 
 #include <resource_cache/iResourceCache.hpp>
 
-class MockResourceCache: public IResourceCache
+class MockResourceCache: public platypus::IResourceCache
 {
 public:
 	virtual ~MockResourceCache() = default;

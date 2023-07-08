@@ -18,8 +18,12 @@ class IVertexShader;
 
 class Mat4x4;
 class MeshResource;
-class IResourceCache;
 class TextureResource;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class IRenderer
 {
@@ -27,7 +31,7 @@ public:
 	virtual ~IRenderer() = default;
 
 	virtual bool initialize(const platypus::RendererSettings& settings,
-		const std::weak_ptr<IResourceCache>& cache) = 0;
+		const std::weak_ptr<platypus::IResourceCache>& cache) = 0;
 	virtual void deinitialize() = 0;
 
 	virtual bool preRender() = 0;

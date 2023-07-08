@@ -3,10 +3,10 @@
 #include "../resources/stringResourceData.hpp"
 #include "iResourceLoader.hpp"
 
-class IResourceCache;
-
 namespace platypus
 {
+
+class IResourceCache;
 
 template<class T>
 class StringLoader: public IResourceLoader

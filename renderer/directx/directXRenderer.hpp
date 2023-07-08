@@ -6,8 +6,12 @@
 #include "directXObjectCreator.hpp"
 
 class DxShaderManager;
-class IResourceCache;
 class TextRenderer;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class DirectXRenderer: public IRenderer, public std::enable_shared_from_this<DirectXRenderer>
 {
@@ -19,7 +23,7 @@ public:
 	virtual ~DirectXRenderer() { DirectXRenderer::deinitialize(); }
 
 	bool initialize(const platypus::RendererSettings& settings,
-		const std::weak_ptr<IResourceCache>& cache) override;
+		const std::weak_ptr<platypus::IResourceCache>& cache) override;
 	void deinitialize() override;
 
 	bool preRender() override;
@@ -95,7 +99,7 @@ private:
 
 	Color _backgroundColor;
 
-	std::weak_ptr<IResourceCache> _cache;
+	std::weak_ptr<platypus::IResourceCache> _cache;
 	std::shared_ptr<DirectXObjectCreator> _creator;
 	std::shared_ptr<DxShaderManager> _shader_manager;
 	std::shared_ptr<TextRenderer> _text_renderer;

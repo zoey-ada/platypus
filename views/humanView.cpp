@@ -10,8 +10,8 @@
 #include <utilities/logging/logger.hpp>
 #include <utilities/math/utils.hpp>
 
-HumanView::HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<IResourceCache> cache,
-	const platypus::Settings& settings)
+HumanView::HumanView(std::shared_ptr<IRenderer> renderer,
+	std::shared_ptr<platypus::IResourceCache> cache, const platypus::Settings& settings)
 	: _last_draw(0), _frametime(-1), _renderer(renderer), _cache(cache)
 {
 	this->_frametime = frametimeFromFrameRate(settings.renderer_settings().frame_rate());

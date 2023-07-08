@@ -29,7 +29,7 @@ DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 {}
 
 bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
-	const std::weak_ptr<IResourceCache>& cache)
+	const std::weak_ptr<platypus::IResourceCache>& cache)
 {
 	this->_cache = cache;
 

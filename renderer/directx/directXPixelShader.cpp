@@ -25,7 +25,7 @@ struct ConstantBuffer_Material
 };
 
 DirectXPixelShader::DirectXPixelShader(std::shared_ptr<const IRenderer> renderer,
-	std::shared_ptr<IResourceCache> cache, std::string path, std::string texture_path)
+	std::shared_ptr<platypus::IResourceCache> cache, std::string path, std::string texture_path)
 	: _path(std::move(path)), _texture_path(texture_path), _resource_cache(cache)
 {
 	if (this->_path.empty())

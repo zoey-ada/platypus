@@ -4,13 +4,17 @@
 
 #include "../iMesh.hpp"
 
-class IResourceCache;
 class MeshResource;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class DirectXMesh: public IMesh
 {
 public:
-	DirectXMesh(std::shared_ptr<IResourceCache> cache, const std::string& resource_id);
+	DirectXMesh(std::shared_ptr<platypus::IResourceCache> cache, const std::string& resource_id);
 	virtual ~DirectXMesh() = default;
 
 	void render(const std::shared_ptr<IRenderer>& renderer) override;

@@ -13,12 +13,16 @@
 class IRenderer;
 class ILoggingSystem;
 
+namespace platypus
+{
+
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
 using ResourceLoaderMap = std::map<ResourceType, std::shared_ptr<platypus::IResourceLoader>>;
 using ResourceStoreMap = std::map<std::string, std::shared_ptr<platypus::IResourceStore>>;
 
-class ResourceCache: public IResourceCache, public std::enable_shared_from_this<ResourceCache>
+class ResourceCache: public platypus::IResourceCache,
+					 public std::enable_shared_from_this<ResourceCache>
 {
 public:
 	explicit ResourceCache(const uint32_t cache_size_in_mb,
@@ -74,4 +78,6 @@ private:
 
 	uint64_t _cache_size;
 	uint64_t _allocated {0};
+};
+
 };

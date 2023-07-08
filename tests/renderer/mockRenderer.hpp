@@ -2,13 +2,18 @@
 
 #include <renderer/iRenderer.hpp>
 
+namespace platypus
+{
+class IResourceCache;
+};
+
 class MockRenderer: public IRenderer
 {
 public:
 	virtual ~MockRenderer() = default;
 
 	bool initialize(const platypus::RendererSettings& settings,
-		const std::weak_ptr<IResourceCache>& cache) override
+		const std::weak_ptr<platypus::IResourceCache>& cache) override
 	{
 		return this->_can_initialize;
 	}

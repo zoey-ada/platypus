@@ -6,7 +6,8 @@
 
 #include "directXRenderer.hpp"
 
-DirectXMesh::DirectXMesh(std::shared_ptr<IResourceCache> cache, const std::string& resource_id)
+DirectXMesh::DirectXMesh(std::shared_ptr<platypus::IResourceCache> cache,
+	const std::string& resource_id)
 	: _mesh_resource_id(resource_id)
 {
 	if (cache == nullptr)
