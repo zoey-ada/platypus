@@ -111,7 +111,7 @@ bool DirectXPixelShader::setupRender(const std::shared_ptr<Scene>& /*scene*/,
 	return true;
 }
 
-std::shared_ptr<TextureResource> DirectXPixelShader::getTexture()
+std::shared_ptr<platypus::TextureResource> DirectXPixelShader::getTexture()
 {
 	if (!this->_texture_path.empty())
 	{

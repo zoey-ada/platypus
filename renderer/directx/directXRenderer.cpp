@@ -6,6 +6,7 @@
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
+#include <resource_cache/resources/textureResource.hpp>
 #include <utilities/common/safeRelease.hpp>
 
 #include "../textRenderer.hpp"
@@ -201,7 +202,7 @@ std::shared_ptr<IShaderManager> DirectXRenderer::shaderManager()
 	return this->_shader_manager;
 }
 
-void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
+void DirectXRenderer::drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh)
 {
 	// IA setup
 	unsigned int stride = sizeof(graphics::DrawableVertex);
@@ -235,13 +236,14 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }
 
-std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type) const
+std::shared_ptr<platypus::MeshResource> DirectXRenderer::createCommonMesh(
+	const CommonMesh mesh_type) const
 {
 	return ::createCommonMesh(mesh_type, this->shared_from_this());
 }
 
-std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type,
-	const std::string& resource_id) const
+std::shared_ptr<platypus::MeshResource> DirectXRenderer::createCommonMesh(
+	const CommonMesh mesh_type, const std::string& resource_id) const
 {
 	return ::createCommonMesh(mesh_type, this->shared_from_this(), resource_id);
 }
@@ -326,7 +328,7 @@ PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font
 	return this->_text_renderer->measureText(message);
 }
 
-std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* message,
+std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
 	auto texture = (PtTexture)this->_creator->newTexture(message, font_family, point_size);
@@ -338,14 +340,14 @@ std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* mess
 
 	auto sampler_state = this->createSamplerState(PtAddressOverscanMode::Clamp);
 
-	PtTextureData texture_data {};
+	platypus::PtTextureData texture_data {};
 	texture_data.resource_id = message;
 	texture_data.store_id = "internal";
 	texture_data.size = 0;
 	texture_data.texture = texture;
 	texture_data.sampler_state = sampler_state;
 
-	return std::make_shared<TextureResource>(&texture_data);
+	return std::make_shared<platypus::TextureResource>(&texture_data);
 }
 
 std::unique_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path) const

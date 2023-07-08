@@ -5,19 +5,19 @@
 
 #include "resources/resourceType.hpp"
 
-class Resource;
-class AudioResource;
-class MeshResource;
-class PixelShaderResource;
-class TextureResource;
-class VertexShaderResource;
-
 namespace platypus
 {
 
 class IResourceLoader;
 class IResourceStore;
 class ProtobufResource;
+
+class Resource;
+class AudioResource;
+class MeshResource;
+class PixelShaderResource;
+class TextureResource;
+class VertexShaderResource;
 
 class IResourceCache
 {

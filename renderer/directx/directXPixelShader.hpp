@@ -2,8 +2,7 @@
 
 #include <string>
 
-#include <resource_cache/resources/textureResource.hpp>
-
+#include "../graphics.hpp"
 #include "../iPixelShader.hpp"
 
 struct ID3D11Buffer;
@@ -15,6 +14,7 @@ class IRenderer;
 namespace platypus
 {
 class IResourceCache;
+class TextureResource;
 };
 
 class DirectXPixelShader: public IPixelShader
@@ -29,7 +29,7 @@ public:
 	bool setupRender(const std::shared_ptr<Scene>& scene,
 		const std::shared_ptr<SceneNode>& node) override;
 
-	std::shared_ptr<TextureResource> getTexture() override;
+	std::shared_ptr<platypus::TextureResource> getTexture() override;
 	bool setTexture(const std::string& texture_path) override;
 	bool setTexture(PtTexture texture, PtSamplerState sampler_state);
 

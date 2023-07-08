@@ -4,13 +4,11 @@
 
 #include "../resources/resourceType.hpp"
 
-class Resource;
-class ResourceHandle;
-
 namespace platypus
 {
 
 class IResourceStore;
+class Resource;
 
 class IResourceLoader
 {

@@ -3,6 +3,9 @@
 #include <renderer/iRenderer.hpp>
 #include <serviceProvider.hpp>
 
+namespace platypus
+{
+
 MeshResource::MeshResource(PtMeshResourceData* resource_data)
 	: Resource(resource_data),
 	  _primative(resource_data->primative),
@@ -26,3 +29,5 @@ MeshResource::~MeshResource()
 		this->_index_buffer = nullptr;
 	}
 }
+
+};

@@ -54,7 +54,7 @@ bool RectangleNode::reinitialize(const std::shared_ptr<Scene>& scene)
 
 	// force the sprite to reload
 	auto cache = scene->cache();
-	if (!cache->exists(ResourceType::Mesh, this->_mesh_resource_id))
+	if (!cache->exists(platypus::ResourceType::Mesh, this->_mesh_resource_id))
 	{
 		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle_uFlipped);
 		if (!cache->addResource(rect))

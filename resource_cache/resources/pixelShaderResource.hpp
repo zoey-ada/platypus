@@ -4,6 +4,9 @@
 
 #include "resource.hpp"
 
+namespace platypus
+{
+
 struct PtPixelShaderData: public PtResourceData
 {
 	PtPixelShader pixel_shader;
@@ -21,4 +24,6 @@ public:
 
 private:
 	PtPixelShader _shader {nullptr};
+};
+
 };

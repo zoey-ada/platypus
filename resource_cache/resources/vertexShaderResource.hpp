@@ -4,6 +4,9 @@
 
 #include "resource.hpp"
 
+namespace platypus
+{
+
 struct PtVertexShaderData: public PtResourceData
 {
 	PtVertexShader vertex_shader;
@@ -24,4 +27,6 @@ public:
 private:
 	PtVertexShader _shader {nullptr};
 	PtInputLayout _input_layout {nullptr};
+};
+
 };

@@ -6,6 +6,9 @@
 
 #include "resource.hpp"
 
+namespace platypus
+{
+
 struct PtMeshResourceData: public PtResourceData
 {
 	PtPrimitiveType primative;
@@ -38,4 +41,6 @@ private:
 	PtIndexBuffer _index_buffer {nullptr};
 	uint64_t _index_count {0};
 	std::vector<graphics::DrawableVertex> _vertices;
+};
+
 };

@@ -15,35 +15,46 @@ public:
 
 	void registerLoader(const std::shared_ptr<platypus::IResourceLoader>& /*loader*/) override {}
 
-	std::shared_ptr<Resource> getResource(const ResourceType& type,
+	std::shared_ptr<platypus::Resource> getResource(const platypus::ResourceType& type,
 		const std::string& path) override
 	{
 		return nullptr;
 	}
-	std::shared_ptr<PixelShaderResource> getPixelShader(const std::string& path) override
+	std::shared_ptr<platypus::PixelShaderResource> getPixelShader(const std::string& path) override
 	{
 		return nullptr;
 	}
-	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path) override
+	std::shared_ptr<platypus::VertexShaderResource> getVertexShader(
+		const std::string& path) override
 	{
 		return nullptr;
 	}
-	std::shared_ptr<TextureResource> getTexture(const std::string& path) override
+	std::shared_ptr<platypus::TextureResource> getTexture(const std::string& path) override
 	{
 		return nullptr;
 	}
-	std::shared_ptr<MeshResource> getMesh(const std::string& path) override { return nullptr; }
-	std::shared_ptr<AudioResource> getAudio(const std::string& path) override { return nullptr; }
+	std::shared_ptr<platypus::MeshResource> getMesh(const std::string& path) override
+	{
+		return nullptr;
+	}
+	std::shared_ptr<platypus::AudioResource> getAudio(const std::string& path) override
+	{
+		return nullptr;
+	}
 	std::shared_ptr<platypus::ProtobufResource> getProtobuf(const std::string& path) override
 	{
 		return nullptr;
 	}
 
-	bool exists(const ResourceType& type, const std::string& path) const override { return true; }
+	bool exists(const platypus::ResourceType& type, const std::string& path) const override
+	{
+		return true;
+	}
 
-	bool addResource(const std::shared_ptr<Resource>& resource) override { return false; }
+	bool addResource(const std::shared_ptr<platypus::Resource>& resource) override { return false; }
 
-	void touchResource(const ResourceType& type, const std::string& resource_id) override {}
+	void touchResource(const platypus::ResourceType& type, const std::string& resource_id) override
+	{}
 
 	void flush() override {}
 

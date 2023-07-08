@@ -122,7 +122,7 @@ void Platypus::registerResourceLoaders()
 
 	this->_cache->registerLoader(
 		std::make_shared<platypus::StringLoader<platypus::ProtobufResource>>(this->_cache,
-			this->_logging, ResourceType::Protobuf));
+			this->_logging, platypus::ResourceType::Protobuf));
 }
 
 UpdateFunction Platypus::getUpdateFunction() const

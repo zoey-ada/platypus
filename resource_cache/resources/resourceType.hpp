@@ -2,6 +2,9 @@
 
 #include <string>
 
+namespace platypus
+{
+
 enum class ResourceType
 {
 	General,
@@ -14,9 +17,11 @@ enum class ResourceType
 	Unknown
 };
 
+};
+
 namespace std
 {
 
-std::string to_string(const ResourceType type);
+std::string to_string(const platypus::ResourceType type);
 
 };

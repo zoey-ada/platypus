@@ -11,6 +11,8 @@ class TextRenderer;
 namespace platypus
 {
 class IResourceCache;
+class MeshResource;
+class TextureResource;
 };
 
 class DirectXRenderer: public IRenderer, public std::enable_shared_from_this<DirectXRenderer>
@@ -33,9 +35,10 @@ public:
 
 	std::shared_ptr<IShaderManager> shaderManager() override;
 
-	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
-	std::shared_ptr<MeshResource> createCommonMesh(const CommonMesh mesh_type) const override;
-	std::shared_ptr<MeshResource> createCommonMesh(const CommonMesh mesh_type,
+	void drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh) override;
+	std::shared_ptr<platypus::MeshResource> createCommonMesh(
+		const CommonMesh mesh_type) const override;
+	std::shared_ptr<platypus::MeshResource> createCommonMesh(const CommonMesh mesh_type,
 		const std::string& resource_id) const override;
 
 	std::shared_ptr<IRendererState> prepareAlphaPass() override;
@@ -65,8 +68,8 @@ public:
 
 	PtTextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override;
-	std::shared_ptr<TextureResource> rasterizeText(const char* message, const char* font_family,
-		const uint16_t point_size) override;
+	std::shared_ptr<platypus::TextureResource> rasterizeText(const char* message,
+		const char* font_family, const uint16_t point_size) override;
 
 	std::unique_ptr<IVertexShader> loadVertexShader(std::string path) const override;
 	std::unique_ptr<IPixelShader> loadPixelShader(std::string path,

@@ -17,12 +17,12 @@ class ITexture;
 class IVertexShader;
 
 class Mat4x4;
-class MeshResource;
-class TextureResource;
 
 namespace platypus
 {
 class IResourceCache;
+class MeshResource;
+class TextureResource;
 };
 
 class IRenderer
@@ -41,9 +41,10 @@ public:
 
 	virtual std::shared_ptr<IShaderManager> shaderManager() = 0;
 
-	virtual void drawMesh(const std::shared_ptr<MeshResource>& mesh) = 0;
-	virtual std::shared_ptr<MeshResource> createCommonMesh(const CommonMesh mesh_type) const = 0;
-	virtual std::shared_ptr<MeshResource> createCommonMesh(const CommonMesh mesh_type,
+	virtual void drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh) = 0;
+	virtual std::shared_ptr<platypus::MeshResource> createCommonMesh(
+		const CommonMesh mesh_type) const = 0;
+	virtual std::shared_ptr<platypus::MeshResource> createCommonMesh(const CommonMesh mesh_type,
 		const std::string& resource_id) const = 0;
 
 	virtual std::shared_ptr<IRendererState> prepareAlphaPass() = 0;
@@ -73,7 +74,7 @@ public:
 
 	virtual PtTextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) = 0;
-	virtual std::shared_ptr<TextureResource> rasterizeText(const char* message,
+	virtual std::shared_ptr<platypus::TextureResource> rasterizeText(const char* message,
 		const char* font_family, const uint16_t point_size) = 0;
 
 	virtual std::unique_ptr<IVertexShader> loadVertexShader(std::string path) const = 0;

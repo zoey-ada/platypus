@@ -3,6 +3,9 @@
 #include <renderer/iRenderer.hpp>
 #include <serviceProvider.hpp>
 
+namespace platypus
+{
+
 TextureResource::TextureResource(PtTextureData* resource_data)
 	: Resource(resource_data),
 	  _sampler_state(resource_data->sampler_state),
@@ -24,3 +27,5 @@ TextureResource::~TextureResource()
 		this->_texture = nullptr;
 	}
 }
+
+};

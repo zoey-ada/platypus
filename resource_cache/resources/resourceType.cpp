@@ -1,22 +1,22 @@
 #include "resourceType.hpp"
 
-std::string std::to_string(const ResourceType type)
+std::string std::to_string(const platypus::ResourceType type)
 {
 	switch (type)
 	{
-	case ResourceType::General:
+	case platypus::ResourceType::General:
 		return "general";
-	case ResourceType::Audio:
+	case platypus::ResourceType::Audio:
 		return "audio";
-	case ResourceType::Mesh:
+	case platypus::ResourceType::Mesh:
 		return "mesh";
-	case ResourceType::PixelShader:
+	case platypus::ResourceType::PixelShader:
 		return "pixel_shader";
-	case ResourceType::Protobuf:
+	case platypus::ResourceType::Protobuf:
 		return "protobuf";
-	case ResourceType::Texture:
+	case platypus::ResourceType::Texture:
 		return "texture";
-	case ResourceType::VertexShader:
+	case platypus::ResourceType::VertexShader:
 		return "vertex_shader";
 	default:
 		return "unknown";

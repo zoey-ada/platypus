@@ -9,6 +9,7 @@ class MeshResource;
 namespace platypus
 {
 class IResourceCache;
+class MeshResource;
 };
 
 class DirectXMesh: public IMesh
@@ -25,5 +26,5 @@ public:
 
 private:
 	std::string _mesh_resource_id;
-	std::weak_ptr<MeshResource> _mesh;
+	std::weak_ptr<platypus::MeshResource> _mesh;
 };

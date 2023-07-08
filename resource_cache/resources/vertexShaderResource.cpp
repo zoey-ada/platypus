@@ -6,6 +6,9 @@
 
 #include "../stores/iResourceStore.hpp"
 
+namespace platypus
+{
+
 VertexShaderResource::VertexShaderResource(PtVertexShaderData* resource_data)
 	: Resource(resource_data),
 	  _shader(resource_data->vertex_shader),
@@ -25,4 +28,6 @@ VertexShaderResource::~VertexShaderResource()
 		ServiceProvider::getRenderer()->destroyInputLayout(this->_input_layout);
 		this->_input_layout = nullptr;
 	}
+};
+
 };

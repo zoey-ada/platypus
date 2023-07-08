@@ -1,5 +1,8 @@
 #include "audioResource.hpp"
 
+namespace platypus
+{
+
 AudioResource::AudioResource(PtAudioData* resource_data)
 	: Resource(resource_data),
 	  _channels(resource_data->channels),
@@ -15,3 +18,5 @@ AudioResource::~AudioResource()
 		delete[] this->_audio_data;
 	this->_audio_data = nullptr;
 }
+
+};

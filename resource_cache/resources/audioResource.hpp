@@ -2,6 +2,9 @@
 
 #include "resource.hpp"
 
+namespace platypus
+{
+
 struct PtAudioData: public PtResourceData
 {
 	uint8_t channels;
@@ -31,4 +34,6 @@ private:
 	uint16_t _bits_per_sample;
 	std::byte* _audio_data {nullptr};
 	uint32_t _audio_data_size;
+};
+
 };

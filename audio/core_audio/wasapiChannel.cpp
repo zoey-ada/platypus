@@ -16,7 +16,7 @@ WasapiChannel::~WasapiChannel()
 	this->deinitialize();
 }
 
-bool WasapiChannel::initialize(IMMDevice* device, std::shared_ptr<AudioResource> resource)
+bool WasapiChannel::initialize(IMMDevice* device, std::shared_ptr<platypus::AudioResource> resource)
 {
 	this->deinitialize();
 	auto hr = device->Activate(IID_IAudioClient, CLSCTX_ALL, nullptr, (void**)&this->_audio_client);

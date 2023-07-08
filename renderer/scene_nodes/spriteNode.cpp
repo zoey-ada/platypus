@@ -65,7 +65,7 @@ bool SpriteNode::reinitialize(const std::shared_ptr<Scene>& scene)
 	}
 
 	// force the sprite to reload
-	scene->cache()->touchResource(ResourceType::Mesh, this->_mesh_resource_id);
+	scene->cache()->touchResource(platypus::ResourceType::Mesh, this->_mesh_resource_id);
 	this->calculateSpriteOffsets(this->_pixel_shader->getTexture()->getDimensions());
 	this->setSprite(this->_current_sprite);
 

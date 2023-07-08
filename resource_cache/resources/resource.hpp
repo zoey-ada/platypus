@@ -2,6 +2,9 @@
 
 #include "resourceType.hpp"
 
+namespace platypus
+{
+
 struct PtResourceData
 {
 	const char* resource_id;
@@ -38,4 +41,6 @@ protected:
 		  _store_id(resource_data.store_id),
 		  _size(resource_data.size)
 	{}
+};
+
 };

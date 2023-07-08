@@ -40,7 +40,7 @@ bool TextNode::initialize(const std::shared_ptr<Scene>& scene)
 	this->generateTexture(cache, scene->renderer());
 
 	// force the sprite to reload
-	if (!cache->exists(ResourceType::Mesh, "rectangle_1x1_u_flipped"))
+	if (!cache->exists(platypus::ResourceType::Mesh, "rectangle_1x1_u_flipped"))
 	{
 		auto rect = scene->renderer()->createCommonMesh(CommonMesh::Rectangle_uFlipped);
 		if (!cache->addResource(rect))
@@ -82,7 +82,7 @@ void TextNode::setText(const char* new_text)
 void TextNode::generateTexture(const std::shared_ptr<platypus::IResourceCache>& cache,
 	const std::shared_ptr<IRenderer>& renderer)
 {
-	if (!cache->exists(ResourceType::Texture, this->_message))
+	if (!cache->exists(platypus::ResourceType::Texture, this->_message))
 	{
 		auto texture = renderer->rasterizeText(this->_message.c_str(), "hack.ttf", 48);
 		// "umeboshi_.ttf", 48);

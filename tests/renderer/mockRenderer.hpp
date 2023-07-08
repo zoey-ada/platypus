@@ -2,10 +2,7 @@
 
 #include <renderer/iRenderer.hpp>
 
-namespace platypus
-{
-class IResourceCache;
-};
+using namespace platypus;
 
 class MockRenderer: public IRenderer
 {
