@@ -25,7 +25,7 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 		return nullptr;
 	}
 
-	platypus::Extent dimensions;
+	Extent dimensions;
 	PtTexture texture = this->_renderer->createTexture(resource_data, data_size, dimensions);
 	if (texture == nullptr)
 	{

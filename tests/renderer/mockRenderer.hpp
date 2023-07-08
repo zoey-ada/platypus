@@ -9,8 +9,8 @@ class MockRenderer: public IRenderer
 public:
 	virtual ~MockRenderer() = default;
 
-	bool initialize(const platypus::RendererSettings& settings,
-		const std::weak_ptr<platypus::IResourceCache>& cache) override
+	bool initialize(const RendererSettings& settings,
+		const std::weak_ptr<IResourceCache>& cache) override
 	{
 		return this->_can_initialize;
 	}
@@ -60,7 +60,7 @@ public:
 	void destroySamplerState(PtSamplerState sampler_state) const override {}
 
 	PtTexture createTexture(std::byte* shader_data, const uint64_t data_size,
-		platypus::Extent& /*dimensions__out*/) const override
+		Extent& /*dimensions__out*/) const override
 	{
 		return this->_texture;
 	}

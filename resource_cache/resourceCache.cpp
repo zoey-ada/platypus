@@ -35,8 +35,7 @@ ResourceCache::~ResourceCache()
 	this->_logging->info("resource_cache", "resource cache destroyed");
 }
 
-bool ResourceCache::initialize(
-	const std::list<std::shared_ptr<platypus::IResourceStore>>& resource_stores)
+bool ResourceCache::initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores)
 {
 	for (auto& store : resource_stores)
 		this->_stores[store->identifier()] = store;
@@ -44,7 +43,7 @@ bool ResourceCache::initialize(
 	return true;
 }
 
-void ResourceCache::registerLoader(const std::shared_ptr<platypus::IResourceLoader>& loader)
+void ResourceCache::registerLoader(const std::shared_ptr<IResourceLoader>& loader)
 {
 	this->_resource_loaders[loader->getType()] = loader;
 }
@@ -97,9 +96,9 @@ std::shared_ptr<AudioResource> ResourceCache::getAudio(const std::string& path)
 	return std::dynamic_pointer_cast<AudioResource>(this->getResource(ResourceType::Audio, path));
 }
 
-std::shared_ptr<platypus::ProtobufResource> ResourceCache::getProtobuf(const std::string& path)
+std::shared_ptr<ProtobufResource> ResourceCache::getProtobuf(const std::string& path)
 {
-	return std::dynamic_pointer_cast<platypus::ProtobufResource>(
+	return std::dynamic_pointer_cast<ProtobufResource>(
 		this->getResource(ResourceType::Protobuf, path));
 }
 
@@ -147,7 +146,7 @@ void ResourceCache::flush()
 		this->freeOneResource();
 }
 
-std::shared_ptr<platypus::IResourceStore> ResourceCache::getStore(const std::string& identifier)
+std::shared_ptr<IResourceStore> ResourceCache::getStore(const std::string& identifier)
 {
 	this->_logging->debug("resource_cache", "searching for resource store " + identifier);
 
@@ -168,7 +167,7 @@ std::shared_ptr<platypus::IResourceStore> ResourceCache::getStore(const std::str
 	return store;
 }
 
-std::shared_ptr<platypus::IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
+std::shared_ptr<IResourceLoader> ResourceCache::getLoader(const ResourceType& type) const
 {
 	this->_logging->debug("resource_cache", "searching for loader for " + std::to_string(type));
 
@@ -244,7 +243,7 @@ std::shared_ptr<Resource> ResourceCache::loadResource(const ResourceType& type,
 }
 
 std::byte* ResourceCache::loadResourceData(const char* relative_filepath,
-	const std::shared_ptr<platypus::IResourceStore>& store)
+	const std::shared_ptr<IResourceStore>& store)
 {
 	auto size = store->getResourceSize(relative_filepath);
 	auto buffer = new (std::nothrow) std::byte[size];

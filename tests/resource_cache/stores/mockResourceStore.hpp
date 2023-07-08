@@ -2,7 +2,9 @@
 
 #include <resource_cache/stores/iResourceStore.hpp>
 
-class MockResourceStore: public platypus::IResourceStore
+using namespace platypus;
+
+class MockResourceStore: public IResourceStore
 {
 public:
 	virtual ~MockResourceStore() = default;

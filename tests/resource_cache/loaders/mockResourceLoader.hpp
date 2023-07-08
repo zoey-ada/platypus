@@ -4,7 +4,7 @@
 
 using namespace platypus;
 
-class MockResourceLoader: public platypus::IResourceLoader
+class MockResourceLoader: public IResourceLoader
 {
 public:
 	virtual ~MockResourceLoader() = default;
