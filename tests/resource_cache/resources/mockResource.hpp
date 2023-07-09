@@ -7,7 +7,7 @@ using namespace platypus;
 class MockResource: public Resource
 {
 public:
-	MockResource(): Resource(PtResourceData {"", "", 0}) {}
+	MockResource(): Resource(ResourceData {"", "", 0}) {}
 
 	virtual ~MockResource() = default;
 

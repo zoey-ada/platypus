@@ -9,7 +9,7 @@
 namespace platypus
 {
 
-VertexShaderResource::VertexShaderResource(PtVertexShaderData* resource_data)
+VertexShaderResource::VertexShaderResource(VertexShaderData* resource_data)
 	: Resource(resource_data),
 	  _shader(resource_data->vertex_shader),
 	  _input_layout(resource_data->input_layout)

@@ -40,7 +40,7 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 		return nullptr;
 	}
 
-	PtTextureData texture_data {};
+	TextureData texture_data {};
 	texture_data.resource_id = resource_id;
 	texture_data.store_id = store_id;
 	texture_data.size = data_size;

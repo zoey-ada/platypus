@@ -59,7 +59,7 @@ std::shared_ptr<Resource> VertexShaderLoader::load(const char* resource_id, cons
 		return nullptr;
 	}
 
-	PtVertexShaderData shader_data {};
+	VertexShaderData shader_data {};
 	shader_data.resource_id = resource_id;
 	shader_data.store_id = store_id;
 	shader_data.vertex_shader = shader;

@@ -95,7 +95,7 @@ std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* 
 		return nullptr;
 	}
 
-	PtMeshResourceData mesh_data {};
+	MeshData mesh_data {};
 	mesh_data.resource_id = resource_id;
 	mesh_data.store_id = store_id;
 	mesh_data.primative = PtPrimitiveType::TriangleList;

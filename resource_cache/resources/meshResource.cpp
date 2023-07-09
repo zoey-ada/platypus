@@ -6,7 +6,7 @@
 namespace platypus
 {
 
-MeshResource::MeshResource(PtMeshResourceData* resource_data)
+MeshResource::MeshResource(MeshData* resource_data)
 	: Resource(resource_data),
 	  _primative(resource_data->primative),
 	  _vertex_buffer(resource_data->vertex_buffer),

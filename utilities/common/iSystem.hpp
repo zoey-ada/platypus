@@ -9,7 +9,7 @@ public:
 
 	virtual void deinitialize() = 0;
 
-	virtual void update(Milliseconds delta) = 0;
+	virtual void update(const Milliseconds delta) = 0;
 
 	virtual void pause() = 0;
 	virtual void resume() = 0;

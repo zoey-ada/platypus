@@ -340,7 +340,7 @@ std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const 
 
 	auto sampler_state = this->createSamplerState(PtAddressOverscanMode::Clamp);
 
-	platypus::PtTextureData texture_data {};
+	platypus::TextureData texture_data {};
 	texture_data.resource_id = message;
 	texture_data.store_id = "internal";
 	texture_data.size = 0;

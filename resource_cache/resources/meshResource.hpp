@@ -9,7 +9,7 @@
 namespace platypus
 {
 
-struct PtMeshResourceData: public PtResourceData
+struct MeshData: public ResourceData
 {
 	PtPrimitiveType primative;
 	PtVertexBuffer vertex_buffer;
@@ -21,7 +21,7 @@ struct PtMeshResourceData: public PtResourceData
 class MeshResource: public Resource
 {
 public:
-	explicit MeshResource(PtMeshResourceData* resource_data);
+	explicit MeshResource(MeshData* resource_data);
 	virtual ~MeshResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::Mesh; }

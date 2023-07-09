@@ -36,16 +36,19 @@ std::shared_ptr<platypus::MeshResource> createCommonMesh(const CommonMesh mesh_t
 std::shared_ptr<platypus::MeshResource> createRectangle_uFlipped(
 	const std::shared_ptr<const DirectXRenderer>& renderer, const std::string& resource_id)
 {
-	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
-		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
-		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)}};
+	std::vector<graphics::Vertex> vertices = {
+		{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
+		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
+		{Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
+		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},
+	};
 
 	std::vector<uint32_t> indices {0, 1, 2, 3};
 
 	auto vertex_buffer = renderer->createVertexBuffer(vertices.data(), vertices.size());
 	auto index_buffer = renderer->createIndexBuffer(indices.data(), indices.size());
 
-	platypus::PtMeshResourceData resource_data {};
+	platypus::MeshData resource_data {};
 	resource_data.resource_id = resource_id.c_str();
 	resource_data.store_id = "internal";
 	resource_data.size = 0;
@@ -61,16 +64,19 @@ std::shared_ptr<platypus::MeshResource> createRectangle_uFlipped(
 std::shared_ptr<platypus::MeshResource> createRectangle(
 	const std::shared_ptr<const DirectXRenderer>& renderer, const std::string& resource_id)
 {
-	std::vector<graphics::Vertex> vertices = {{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
-		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)}, {Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},
-		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)}};
+	std::vector<graphics::Vertex> vertices = {
+		{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
+		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
+		{Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},
+		{Vec3(1, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
+	};
 
 	std::vector<uint32_t> indices {0, 1, 2, 3};
 
 	auto vertex_buffer = renderer->createVertexBuffer(vertices.data(), vertices.size());
 	auto index_buffer = renderer->createIndexBuffer(indices.data(), indices.size());
 
-	platypus::PtMeshResourceData resource_data {};
+	platypus::MeshData resource_data {};
 	resource_data.resource_id = resource_id.c_str();
 	resource_data.store_id = "internal";
 	resource_data.size = 0;

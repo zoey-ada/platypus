@@ -292,7 +292,6 @@ set(resource_cache_resources_srcs
 	resource_cache/resources/pixelShaderResource.cpp
 	resource_cache/resources/protobufResource.hpp
 	resource_cache/resources/resource.hpp
-	resource_cache/resources/resource.cpp
 	resource_cache/resources/resourceType.hpp
 	resource_cache/resources/resourceType.cpp
 	resource_cache/resources/stringResourceData.hpp

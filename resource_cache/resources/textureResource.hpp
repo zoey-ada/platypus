@@ -8,7 +8,7 @@
 namespace platypus
 {
 
-struct PtTextureData: public PtResourceData
+struct TextureData: public ResourceData
 {
 	PtTexture texture;
 	PtSamplerState sampler_state;
@@ -18,7 +18,7 @@ struct PtTextureData: public PtResourceData
 class TextureResource: public Resource
 {
 public:
-	explicit TextureResource(PtTextureData* resource_data);
+	explicit TextureResource(TextureData* resource_data);
 	virtual ~TextureResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::Texture; }

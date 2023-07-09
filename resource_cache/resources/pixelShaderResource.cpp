@@ -7,7 +7,7 @@
 namespace platypus
 {
 
-PixelShaderResource::PixelShaderResource(PtPixelShaderData* resource_data)
+PixelShaderResource::PixelShaderResource(PixelShaderData* resource_data)
 	: Resource(resource_data), _shader(resource_data->pixel_shader)
 {}
 

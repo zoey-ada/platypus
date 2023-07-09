@@ -26,7 +26,7 @@ public:
 		// TODO: have each logger deinitialize here
 	}
 
-	void update(Milliseconds /*delta*/) override {}
+	void update(const Milliseconds /*delta*/) override {}
 
 	void pause() override { this->_is_paused = true; }
 	void resume() override { this->_is_paused = false; }

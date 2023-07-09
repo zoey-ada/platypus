@@ -3,7 +3,7 @@
 namespace platypus
 {
 
-AudioResource::AudioResource(PtAudioData* resource_data)
+AudioResource::AudioResource(AudioData* resource_data)
 	: Resource(resource_data),
 	  _channels(resource_data->channels),
 	  _sample_rate(resource_data->sample_rate),

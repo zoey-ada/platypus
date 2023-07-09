@@ -7,7 +7,7 @@
 namespace platypus
 {
 
-struct StringData: public PtResourceData
+struct StringData: public ResourceData
 {
 	std::string string_data;
 };

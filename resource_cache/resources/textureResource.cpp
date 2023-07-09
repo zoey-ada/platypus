@@ -6,7 +6,7 @@
 namespace platypus
 {
 
-TextureResource::TextureResource(PtTextureData* resource_data)
+TextureResource::TextureResource(TextureData* resource_data)
 	: Resource(resource_data),
 	  _sampler_state(resource_data->sampler_state),
 	  _texture(resource_data->texture),
