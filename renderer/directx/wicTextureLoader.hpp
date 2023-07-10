@@ -40,7 +40,7 @@ private:
 
 	IWICBitmapFrameDecode* getWicFrame(IWICStream* stream);
 	platypus::Extent getDimensions(IWICBitmapSource* source);
-	bool hasAlphaChannel(IWICBitmapSource* source);
+	bool hasAlphaChannel(const WICPixelFormatGUID& pixel_format);
 	WICPixelFormatGUID getPixelFormat(IWICBitmapSource* source);
 
 	IWICBitmapSource* convertTo32bitRgba(IWICBitmapSource* source);

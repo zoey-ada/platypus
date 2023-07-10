@@ -65,7 +65,6 @@ std::optional<platypus::graphics::Texture> WicTextureLoader::loadTexture(
 		return loaded_texture;
 	}
 
-	bool has_alpha = this->hasAlphaChannel(wic_frame);
 	auto dimensions = this->getDimensions(wic_frame);
 	if (dimensions.width == 0 || dimensions.height == 0)
 	{
@@ -86,6 +85,7 @@ std::optional<platypus::graphics::Texture> WicTextureLoader::loadTexture(
 		return loaded_texture;
 	}
 
+	bool has_alpha = this->hasAlphaChannel(pixel_format);
 	auto texture = this->createTextureFromWic(converted, renderer, dimensions);
 	safeRelease(&converted);
 	safeRelease(&wic_frame);
@@ -129,9 +129,25 @@ platypus::Extent WicTextureLoader::getDimensions(IWICBitmapSource* source)
 	return {height, width};
 }
 
-bool WicTextureLoader::hasAlphaChannel(IWICBitmapSource* /*source*/)
+bool WicTextureLoader::hasAlphaChannel(const WICPixelFormatGUID& pixel_format)
 {
-	return true;
+	// err on the side of caution and assume true if anything fails
+	IWICComponentInfo* component_info = nullptr;
+	auto hr = this->_wic_factory->CreateComponentInfo(pixel_format, &component_info);
+	if (FAILED(hr))
+		return true;
+
+	IWICPixelFormatInfo2* pixel_format_info = nullptr;
+	hr = component_info->QueryInterface(&pixel_format_info);
+	if (FAILED(hr) || pixel_format_info == nullptr)
+		return true;
+
+	BOOL has_alpha = FALSE;
+	hr = pixel_format_info->SupportsTransparency(&has_alpha);
+	if (FAILED(hr))
+		return true;
+
+	return has_alpha == TRUE;
 }
 
 WICPixelFormatGUID WicTextureLoader::getPixelFormat(IWICBitmapSource* source)
