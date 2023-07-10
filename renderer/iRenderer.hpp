@@ -75,7 +75,7 @@ public:
 		const uint64_t index_count) const = 0;
 	virtual void destroyIndexBuffer(PtIndexBuffer buffer) const = 0;
 
-	virtual PtTextMetrics measureText(const char* message, const char* font_family,
+	virtual platypus::TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) = 0;
 	virtual std::shared_ptr<platypus::TextureResource> rasterizeText(const char* message,
 		const char* font_family, const uint16_t point_size) = 0;

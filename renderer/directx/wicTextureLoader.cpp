@@ -10,6 +10,9 @@
 #include "../textRenderer.hpp"
 #include "directXRenderer.hpp"
 
+namespace platypus
+{
+
 // Public
 bool WicTextureLoader::initialize()
 
@@ -220,15 +223,6 @@ platypus::graphics::TextureResource WicTextureLoader::createTextureFromWic(IWICB
 	return reinterpret_cast<platypus::graphics::TextureResource>(texture);
 }
 
-// Public
-ID3D11ShaderResourceView* WicTextureLoader::createTextTexture(const char* message,
-	const char* font_family, const uint16_t point_size,
-	const std::shared_ptr<DirectXRenderer>& renderer)
-{
-	assert(this->_has_been_initialized);
-	return renderer->create()->newTexture(message, font_family, point_size);
-}
-
 IWICStream* WicTextureLoader::newWicStreamFromMemory(const platypus::Data& data) const
 {
 	IWICStream* stream = nullptr;
@@ -268,4 +262,6 @@ IWICBitmapDecoder* WicTextureLoader::newWicBitmapDecoder(IWICStream* stream) con
 	}
 
 	return decoder;
+}
+
 }

@@ -16,6 +16,9 @@ class ILoggingSystem;
 
 struct ID3D11ShaderResourceView;
 
+namespace platypus
+{
+
 class WicTextureLoader
 {
 public:
@@ -25,11 +28,8 @@ public:
 	bool initialize();
 	void deinitialize();
 
-	std::optional<platypus::graphics::Texture> loadTexture(const platypus::Data& image_data,
+	std::optional<graphics::Texture> loadTexture(const Data& image_data,
 		const std::shared_ptr<DirectXRenderer>& renderer);
-
-	ID3D11ShaderResourceView* createTextTexture(const char* message, const char* font_family,
-		const uint16_t point_size, const std::shared_ptr<DirectXRenderer>& renderer);
 
 private:
 	std::shared_ptr<ILoggingSystem> _log;
@@ -39,15 +39,17 @@ private:
 	IWICImagingFactory* _wic_factory {nullptr};
 
 	IWICBitmapFrameDecode* getWicFrame(IWICStream* stream);
-	platypus::Extent getDimensions(IWICBitmapSource* source);
+	Extent getDimensions(IWICBitmapSource* source);
 	bool hasAlphaChannel(const WICPixelFormatGUID& pixel_format);
 	WICPixelFormatGUID getPixelFormat(IWICBitmapSource* source);
 
 	IWICBitmapSource* convertTo32bitRgba(IWICBitmapSource* source);
 
-	platypus::graphics::TextureResource createTextureFromWic(IWICBitmapSource* source,
-		const std::shared_ptr<DirectXRenderer>& renderer, const platypus::Extent& dimensions);
+	graphics::TextureResource createTextureFromWic(IWICBitmapSource* source,
+		const std::shared_ptr<DirectXRenderer>& renderer, const Extent& dimensions);
 
-	IWICStream* newWicStreamFromMemory(const platypus::Data& image_data) const;
+	IWICStream* newWicStreamFromMemory(const Data& image_data) const;
 	IWICBitmapDecoder* newWicBitmapDecoder(IWICStream* stream) const;
 };
+
+}

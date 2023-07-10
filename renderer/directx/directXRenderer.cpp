@@ -316,7 +316,7 @@ void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer) const
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }
 
-PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font_family,
+platypus::TextMetrics DirectXRenderer::measureText(const char* message, const char* font_family,
 	const uint16_t point_size)
 {
 	if (!this->_text_renderer->loadFont(font_family) ||
@@ -331,8 +331,8 @@ PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font
 std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
-	auto texture = (PtTexture)this->_creator->newTexture(message, font_family, point_size);
-	if (texture == nullptr)
+	auto texture = this->_creator->newTexture(message, font_family, point_size);
+	if (!texture.has_value() || texture.value().texture_resource == nullptr)
 	{
 		// log error
 		return nullptr;
@@ -344,8 +344,10 @@ std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const 
 	texture_data.resource_id = message;
 	texture_data.store_id = "internal";
 	texture_data.size = 0;
-	texture_data.texture = reinterpret_cast<platypus::graphics::TextureResource>(texture);
+	texture_data.texture = texture.value().texture_resource;
 	texture_data.sampler_state = sampler_state;
+	texture_data.dimensions = texture.value().dimensions;
+	texture_data.has_alpha = texture.value().has_alpha;
 
 	return std::make_shared<platypus::TextureResource>(&texture_data);
 }

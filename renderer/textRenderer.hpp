@@ -21,7 +21,7 @@ struct PtGlyphMetrics
 	PtExtent total_size;
 	uint32_t advance;
 
-	PtGlyphMetrics(PtTextMetrics* text_metrics, FT_GlyphSlot glyph)
+	PtGlyphMetrics(platypus::TextMetrics* text_metrics, FT_GlyphSlot glyph)
 		: height_from_baseline(glyph->metrics.horiBearingY / 64),
 		  glyph_size(PtExtent {glyph->bitmap.rows, static_cast<uint32_t>(glyph->bitmap.pitch)}),
 		  advance(glyph->metrics.horiAdvance / 64)
@@ -49,13 +49,13 @@ public:
 
 	bool setFontSize(uint16_t point_size);
 
-	PtTextMetrics measureText(const char* message);
-	PtTextMetrics measureText(const char* message, const uint16_t point_size);
+	platypus::TextMetrics measureText(const char* message);
+	platypus::TextMetrics measureText(const char* message, const uint16_t point_size);
 
 	std::byte* rasterizeText(const char* message);
 	std::byte* rasterizeText(const char* message, const uint16_t point_size);
-	std::byte* rasterizeText(const char* message, PtTextMetrics* text_metrics);
-	std::byte* rasterizeText(const char* message, PtTextMetrics* text_metrics,
+	std::byte* rasterizeText(const char* message, platypus::TextMetrics* text_metrics);
+	std::byte* rasterizeText(const char* message, platypus::TextMetrics* text_metrics,
 		const uint16_t point_size);
 
 private:

@@ -52,16 +52,16 @@ struct PtInputLayoutDesc
 	PtInputFormat format;
 };
 
-struct PtTextMetrics
+namespace platypus
+{
+
+struct TextMetrics
 {
 	const char* message;
-	PtExtent size;
+	Extent size;
 	uint32_t max_ascender;
 	uint32_t max_descender;
 };
-
-namespace platypus
-{
 
 namespace graphics
 {

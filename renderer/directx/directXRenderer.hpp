@@ -66,7 +66,7 @@ public:
 		const uint64_t index_count) const override;
 	void destroyIndexBuffer(PtIndexBuffer buffer) const override;
 
-	PtTextMetrics measureText(const char* message, const char* font_family,
+	platypus::TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override;
 	std::shared_ptr<platypus::TextureResource> rasterizeText(const char* message,
 		const char* font_family, const uint16_t point_size) override;

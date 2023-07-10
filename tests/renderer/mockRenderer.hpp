@@ -84,7 +84,7 @@ public:
 
 	void destroyIndexBuffer(PtIndexBuffer buffer) const override {}
 
-	PtTextMetrics measureText(const char* message, const char* font_family,
+	TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override
 	{
 		return this->_text_metrics;
@@ -123,7 +123,7 @@ public:
 	platypus::graphics::TextureResource _texture;
 	PtVertexBuffer _vertex_buffer;
 	PtIndexBuffer _index_buffer;
-	PtTextMetrics _text_metrics;
+	TextMetrics _text_metrics;
 
 	std::shared_ptr<IShaderManager> _shader_manager;
 	std::shared_ptr<IRendererState> _render_state;

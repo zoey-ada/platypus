@@ -21,7 +21,7 @@ bool DirectXObjectCreator::initialize(const std::shared_ptr<DirectXRenderer>& re
 
 	this->_renderer = renderer;
 
-	this->_texture_loader = std::make_shared<WicTextureLoader>();
+	this->_texture_loader = std::make_shared<platypus::WicTextureLoader>();
 	return this->_texture_loader->initialize();
 }
 
@@ -191,9 +191,11 @@ std::optional<platypus::graphics::Texture> DirectXObjectCreator::newTexture(
 	return texture;
 }
 
-ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
+std::optional<platypus::graphics::Texture> DirectXObjectCreator::newTexture(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
+	std::optional<platypus::graphics::Texture> texture;
+
 	auto text_metrics = this->_renderer->measureText(message, font_family, point_size);
 	auto pixel_buffer = this->_renderer->_text_renderer->rasterizeText(message, &text_metrics);
 
@@ -218,7 +220,12 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
 	image_data.SysMemPitch = static_cast<UINT>(stride);
 	image_data.SysMemSlicePitch = static_cast<UINT>(image_data_size);
 
-	auto texture = this->newTexture(desc, image_data);
+	auto texture_resource =
+		reinterpret_cast<platypus::graphics::TextureResource>(this->newTexture(desc, image_data));
+
+	if (texture_resource != nullptr)
+		texture = {texture_resource, text_metrics.size, true};
+
 	return texture;
 }
 

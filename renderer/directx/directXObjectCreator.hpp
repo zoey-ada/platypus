@@ -11,17 +11,21 @@
 #include "../ptAddressOverscanMode.hpp"
 
 class DirectXRenderer;
-class WicTextureLoader;
 struct PtInputLayoutDesc;
 
 namespace platypus
 {
+
+class WicTextureLoader;
+
 namespace graphics
 {
+
 struct Texture;
 struct Vertex;
-};
-};
+
+}
+}
 
 class DirectXObjectCreator
 {
@@ -49,10 +53,10 @@ public:
 		const uint64_t index_count) const;
 
 	std::optional<platypus::graphics::Texture> newTexture(const platypus::Data& texture_data);
-	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const D3D11_TEXTURE2D_DESC& texture_desc,
+	ID3D11ShaderResourceView* newTexture(const D3D11_TEXTURE2D_DESC& texture_desc,
 		const D3D11_SUBRESOURCE_DATA texture_data) const;
-	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const char* message, const char* font_family,
-		const uint16_t point_size);
+	std::optional<platypus::graphics::Texture> newTexture(const char* message,
+		const char* font_family, const uint16_t point_size);
 
 	[[nodiscard]] ID3D11SamplerState* newSamplerState(const D3D11_SAMPLER_DESC& sampler_desc) const;
 	[[nodiscard]] ID3D11SamplerState* newSamplerState(
@@ -60,5 +64,5 @@ public:
 
 private:
 	std::shared_ptr<DirectXRenderer> _renderer {nullptr};
-	std::shared_ptr<WicTextureLoader> _texture_loader {nullptr};
+	std::shared_ptr<platypus::WicTextureLoader> _texture_loader {nullptr};
 };
