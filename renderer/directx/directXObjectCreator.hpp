@@ -8,7 +8,7 @@
 
 #include <utilities/common/data.hpp>
 
-#include "../ptAddressOverscanMode.hpp"
+#include "../texelOverscanMode.hpp"
 
 class DirectXRenderer;
 struct PtInputLayoutDesc;
@@ -60,7 +60,7 @@ public:
 
 	[[nodiscard]] ID3D11SamplerState* newSamplerState(const D3D11_SAMPLER_DESC& sampler_desc) const;
 	[[nodiscard]] ID3D11SamplerState* newSamplerState(
-		const PtAddressOverscanMode overscan_mode) const;
+		const platypus::TexelOverscanMode overscan_mode) const;
 
 private:
 	std::shared_ptr<DirectXRenderer> _renderer {nullptr};

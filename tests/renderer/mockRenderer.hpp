@@ -52,12 +52,12 @@ public:
 
 	void destroyInputLayout(PtInputLayout layout) const override {}
 
-	PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) const override
+	graphics::SamplerState createSamplerState(const TexelOverscanMode overscan_mode) const override
 	{
 		return this->_sampler_state;
 	}
 
-	void destroySamplerState(PtSamplerState sampler_state) const override {}
+	void destroySamplerState(graphics::SamplerState sampler_state) const override {}
 
 	std::optional<platypus::graphics::Texture> createTexture(
 		const platypus::Data& data) const override
@@ -66,7 +66,7 @@ public:
 		return texture = {this->_texture, {0, 0}, false};
 	}
 
-	void destroyTexture(platypus::graphics::TextureResource texture) const override {}
+	void destroyTexture(graphics::TextureResource texture) const override {}
 
 	PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
 		const uint64_t vertex_count) const override
@@ -119,8 +119,8 @@ public:
 	}
 
 	PtInputLayout _input_layout;
-	PtSamplerState _sampler_state;
-	platypus::graphics::TextureResource _texture;
+	graphics::SamplerState _sampler_state;
+	graphics::TextureResource _texture;
 	PtVertexBuffer _vertex_buffer;
 	PtIndexBuffer _index_buffer;
 	TextMetrics _text_metrics;

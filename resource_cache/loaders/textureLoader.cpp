@@ -1,7 +1,7 @@
 #include "textureLoader.hpp"
 
 #include <renderer/iRenderer.hpp>
-#include <renderer/ptAddressOverscanMode.hpp>
+#include <renderer/texelOverscanMode.hpp>
 #include <utilities/logging/iLoggingSystem.hpp>
 
 #include "../resourceCache.hpp"
@@ -33,7 +33,7 @@ std::shared_ptr<Resource> TextureLoader::load(const char* resource_id, const cha
 		return nullptr;
 	}
 
-	PtSamplerState sampler_state = this->_renderer->createSamplerState(PtAddressOverscanMode::Wrap);
+	auto sampler_state = this->_renderer->createSamplerState(TexelOverscanMode::Wrap);
 	if (sampler_state == nullptr)
 	{
 		this->_logging->warning("cache", "unable to load sampler from " + std::string(resource_id));

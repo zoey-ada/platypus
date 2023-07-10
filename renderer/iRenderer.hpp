@@ -10,7 +10,7 @@
 #include "color.hpp"
 #include "commonMesh.hpp"
 #include "graphics.hpp"
-#include "ptAddressOverscanMode.hpp"
+#include "texelOverscanMode.hpp"
 
 class IMesh;
 class IPixelShader;
@@ -60,8 +60,9 @@ public:
 		PtInputLayoutDesc* layout_elements, const uint64_t element_count) const = 0;
 	virtual void destroyInputLayout(PtInputLayout layout) const = 0;
 
-	virtual PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) const = 0;
-	virtual void destroySamplerState(PtSamplerState sampler_state) const = 0;
+	virtual platypus::graphics::SamplerState createSamplerState(
+		const platypus::TexelOverscanMode overscan_mode) const = 0;
+	virtual void destroySamplerState(platypus::graphics::SamplerState sampler_state) const = 0;
 
 	virtual std::optional<platypus::graphics::Texture> createTexture(
 		const platypus::Data& texture_data) const = 0;

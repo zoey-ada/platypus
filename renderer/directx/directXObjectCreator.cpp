@@ -246,26 +246,26 @@ ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
 	return sampler_state;
 }
 
-D3D11_TEXTURE_ADDRESS_MODE toDxAddressMode(const PtAddressOverscanMode overscan_mode)
+D3D11_TEXTURE_ADDRESS_MODE toDxAddressMode(const platypus::TexelOverscanMode overscan_mode)
 {
 	switch (overscan_mode)
 	{
-	case PtAddressOverscanMode::Border:
+	case platypus::TexelOverscanMode::Border:
 		return D3D11_TEXTURE_ADDRESS_BORDER;
-	case PtAddressOverscanMode::Mirror:
+	case platypus::TexelOverscanMode::Mirror:
 		return D3D11_TEXTURE_ADDRESS_MIRROR;
-	case PtAddressOverscanMode::MirrorOnce:
+	case platypus::TexelOverscanMode::MirrorOnce:
 		return D3D11_TEXTURE_ADDRESS_MIRROR_ONCE;
-	case PtAddressOverscanMode::Wrap:
+	case platypus::TexelOverscanMode::Wrap:
 		return D3D11_TEXTURE_ADDRESS_WRAP;
-	case PtAddressOverscanMode::Clamp:
+	case platypus::TexelOverscanMode::Clamp:
 	default:
 		return D3D11_TEXTURE_ADDRESS_CLAMP;
 	}
 }
 
 ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
-	const PtAddressOverscanMode overscan_mode) const
+	const platypus::TexelOverscanMode overscan_mode) const
 {
 	D3D11_SAMPLER_DESC sampler_desc;
 	ZeroMemory(&sampler_desc, sizeof(sampler_desc));

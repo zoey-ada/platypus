@@ -7,8 +7,6 @@
 
 class _PtVertexBuffer;
 class _PtIndexBuffer;
-class _PtSamplerState;
-class _PtTexture;
 class _PtInputLayout;
 
 class _PtComputeShader;
@@ -27,8 +25,6 @@ using PtVertexShader = _PtVertexShader*;
 
 using PtVertexBuffer = _PtVertexBuffer*;
 using PtIndexBuffer = _PtIndexBuffer*;
-using PtSamplerState = _PtSamplerState*;
-using PtTexture = _PtTexture*;
 using PtInputLayout = _PtInputLayout*;
 
 enum class PtPrimitiveType
@@ -68,6 +64,9 @@ namespace graphics
 
 class _TextureResource;
 using TextureResource = _TextureResource*;
+
+class _SamplerState;
+using SamplerState = _SamplerState*;
 
 struct Texture
 {

@@ -273,12 +273,14 @@ void DirectXRenderer::destroyInputLayout(PtInputLayout layout) const
 	reinterpret_cast<ID3D11InputLayout*>(layout)->Release();
 }
 
-PtSamplerState DirectXRenderer::createSamplerState(const PtAddressOverscanMode overscan_mode) const
+platypus::graphics::SamplerState DirectXRenderer::createSamplerState(
+	const platypus::TexelOverscanMode overscan_mode) const
 {
-	return (PtSamplerState)this->_creator->newSamplerState(overscan_mode);
+	return reinterpret_cast<platypus::graphics::SamplerState>(
+		this->_creator->newSamplerState(overscan_mode));
 }
 
-void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state) const
+void DirectXRenderer::destroySamplerState(platypus::graphics::SamplerState sampler_state) const
 {
 	reinterpret_cast<ID3D11SamplerState*>(sampler_state)->Release();
 }
@@ -338,7 +340,7 @@ std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const 
 		return nullptr;
 	}
 
-	auto sampler_state = this->createSamplerState(PtAddressOverscanMode::Clamp);
+	auto sampler_state = this->createSamplerState(platypus::TexelOverscanMode::Clamp);
 
 	platypus::TextureData texture_data {};
 	texture_data.resource_id = message;

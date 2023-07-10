@@ -51,8 +51,9 @@ public:
 		PtInputLayoutDesc* layout_elements, const uint64_t element_count) const override;
 	void destroyInputLayout(PtInputLayout layout) const override;
 
-	PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) const override;
-	void destroySamplerState(PtSamplerState sampler_state) const override;
+	platypus::graphics::SamplerState createSamplerState(
+		const platypus::TexelOverscanMode overscan_mode) const override;
+	void destroySamplerState(platypus::graphics::SamplerState sampler_state) const override;
 
 	std::optional<platypus::graphics::Texture> createTexture(
 		const platypus::Data& texture_data) const override;

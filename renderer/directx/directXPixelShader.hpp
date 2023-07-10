@@ -31,7 +31,8 @@ public:
 
 	std::shared_ptr<platypus::TextureResource> getTexture() override;
 	bool setTexture(const std::string& texture_path) override;
-	bool setTexture(platypus::graphics::TextureResource texture, PtSamplerState sampler_state);
+	bool setTexture(platypus::graphics::TextureResource texture,
+		platypus::graphics::SamplerState sampler_state);
 
 private:
 	void deinitialize();

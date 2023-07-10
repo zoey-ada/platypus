@@ -121,7 +121,7 @@ SCENARIO("texture loader can load a texture", "[res_cache]")
 			AND_GIVEN("a sampler state can be created")
 			{
 				std::string mock_sampler_state("sampler_state");
-				renderer->_sampler_state = (PtSamplerState)&mock_sampler_state;
+				renderer->_sampler_state = (platypus::graphics::SamplerState)&mock_sampler_state;
 
 				WHEN("a texture is loaded")
 				{
@@ -140,8 +140,8 @@ SCENARIO("texture loader can load a texture", "[res_cache]")
 						REQUIRE(texture_res != nullptr);
 						REQUIRE(texture_res->getTexture() ==
 							(platypus::graphics::TextureResource)&mock_texture);
-						REQUIRE(
-							texture_res->getSamplerState() == (PtSamplerState)&mock_sampler_state);
+						REQUIRE(texture_res->getSamplerState() ==
+							(platypus::graphics::SamplerState)&mock_sampler_state);
 					}
 				}
 			}

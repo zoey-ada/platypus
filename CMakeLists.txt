@@ -201,13 +201,13 @@ set(renderer_srcs
 	renderer/iShaderManager.hpp
 	renderer/iVertexShader.hpp
 	renderer/material.hpp
-	renderer/ptAddressOverscanMode.hpp
 	renderer/rendererFactory.hpp
 	renderer/rendererFactory.cpp
 	renderer/scene.hpp
 	renderer/scene.cpp
 	renderer/screenElementScene.hpp
 	renderer/screenElementScene.cpp
+	renderer/texelOverscanMode.hpp
 	renderer/textRenderer.hpp
 	renderer/textRenderer.cpp
 )

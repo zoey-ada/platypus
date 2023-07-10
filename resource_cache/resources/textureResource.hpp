@@ -11,7 +11,7 @@ namespace platypus
 struct TextureData: public ResourceData
 {
 	graphics::TextureResource texture;
-	PtSamplerState sampler_state;
+	graphics::SamplerState sampler_state;
 	Extent dimensions;
 	bool has_alpha;
 };
@@ -25,12 +25,12 @@ public:
 	ResourceType type() const override { return ResourceType::Texture; }
 
 	graphics::TextureResource getTexture() const { return this->_texture; }
-	PtSamplerState getSamplerState() const { return this->_sampler_state; }
+	graphics::SamplerState getSamplerState() const { return this->_sampler_state; }
 	Extent getDimensions() const { return this->_dimensions; }
 	bool hasAlpha() const { return this->_has_alpha; }
 
 private:
-	PtSamplerState _sampler_state {nullptr};
+	graphics::SamplerState _sampler_state {nullptr};
 	graphics::TextureResource _texture {nullptr};
 	Extent _dimensions;
 	bool _has_alpha;
