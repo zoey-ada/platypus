@@ -36,7 +36,7 @@ void DirectXMesh::render(const std::shared_ptr<IRenderer>& renderer)
 	}
 
 	// IA setup
-	unsigned int stride = sizeof(graphics::DrawableVertex);
+	unsigned int stride = sizeof(platypus::graphics::DrawableVertex);
 	unsigned int offset = 0;
 
 	auto vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh_res->getVertexBuffer());
@@ -80,7 +80,7 @@ uint64_t DirectXMesh::getVertexCount() const
 	return mesh_res->getIndexCount();
 }
 
-void DirectXMesh::updateVertices(const graphics::Vertex* vertices, uint64_t count)
+void DirectXMesh::updateVertices(const platypus::graphics::Vertex* vertices, uint64_t count)
 {
 	auto renderer = ServiceProvider::getRenderer();
 	auto dx_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
@@ -105,10 +105,11 @@ void DirectXMesh::updateVertices(const graphics::Vertex* vertices, uint64_t coun
 	D3D11_MAPPED_SUBRESOURCE resource;
 	dx_renderer->context()->Map(vertex_buffer, subresource, map_type, map_flags, &resource);
 
-	auto* existing_verticies = reinterpret_cast<graphics::DrawableVertex*>(resource.pData);
+	auto* existing_verticies =
+		reinterpret_cast<platypus::graphics::DrawableVertex*>(resource.pData);
 
 	for (uint64_t i = 0; i < count; ++i)
-		existing_verticies[i] = drawable(vertices[i]);
+		existing_verticies[i] = platypus::graphics::drawable(vertices[i]);
 
 	dx_renderer->context()->Unmap(vertex_buffer, subresource);
 }
@@ -139,9 +140,9 @@ void DirectXMesh::updateVertexTextures(const Vec2* texture_coordinates, uint64_t
 	dx_renderer->context()->Map(vertex_buffer, subresource, map_type, map_flags, &resource);
 
 	memcpy(resource.pData, mesh_res->getVertices().data(),
-		sizeof(graphics::DrawableVertex) * mesh_res->getIndexCount());
+		sizeof(platypus::graphics::DrawableVertex) * mesh_res->getIndexCount());
 
-	auto* vertices = reinterpret_cast<graphics::DrawableVertex*>(resource.pData);
+	auto* vertices = reinterpret_cast<platypus::graphics::DrawableVertex*>(resource.pData);
 
 	for (uint64_t i = 0; i < count; ++i)
 	{

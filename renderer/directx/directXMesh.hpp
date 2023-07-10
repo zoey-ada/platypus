@@ -21,7 +21,7 @@ public:
 	void render(const std::shared_ptr<IRenderer>& renderer) override;
 
 	uint64_t getVertexCount() const override;
-	void updateVertices(const graphics::Vertex* vertices, uint64_t count) override;
+	void updateVertices(const platypus::graphics::Vertex* vertices, uint64_t count) override;
 	void updateVertexTextures(const Vec2* texture_coordinates, uint64_t count) override;
 
 private:

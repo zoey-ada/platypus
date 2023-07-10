@@ -205,7 +205,7 @@ std::shared_ptr<IShaderManager> DirectXRenderer::shaderManager()
 void DirectXRenderer::drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh)
 {
 	// IA setup
-	unsigned int stride = sizeof(graphics::DrawableVertex);
+	unsigned int stride = sizeof(platypus::graphics::DrawableVertex);
 	unsigned int offset = 0;
 
 	auto vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh->getVertexBuffer());
@@ -283,18 +283,18 @@ void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state) const
 	reinterpret_cast<ID3D11SamplerState*>(sampler_state)->Release();
 }
 
-PtTexture DirectXRenderer::createTexture(std::byte* texture_data, const uint64_t data_size,
-	platypus::Extent& dimensions) const
+std::optional<platypus::graphics::Texture> DirectXRenderer::createTexture(
+	const platypus::Data& texture_data) const
 {
-	return (PtTexture)this->_creator->newTexture(texture_data, data_size, dimensions);
+	return this->_creator->newTexture(texture_data);
 }
 
-void DirectXRenderer::destroyTexture(PtTexture texture) const
+void DirectXRenderer::destroyTexture(platypus::graphics::TextureResource texture) const
 {
 	reinterpret_cast<ID3D11ShaderResourceView*>(texture)->Release();
 }
 
-PtVertexBuffer DirectXRenderer::createVertexBuffer(const graphics::Vertex* vertices,
+PtVertexBuffer DirectXRenderer::createVertexBuffer(const platypus::graphics::Vertex* vertices,
 	const uint64_t vertex_count) const
 {
 	return (PtVertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
@@ -344,7 +344,7 @@ std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const 
 	texture_data.resource_id = message;
 	texture_data.store_id = "internal";
 	texture_data.size = 0;
-	texture_data.texture = texture;
+	texture_data.texture = reinterpret_cast<platypus::graphics::TextureResource>(texture);
 	texture_data.sampler_state = sampler_state;
 
 	return std::make_shared<platypus::TextureResource>(&texture_data);

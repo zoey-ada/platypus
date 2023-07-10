@@ -112,8 +112,8 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	return buffer;
 }
 
-[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(const graphics::Vertex* vertices,
-	const uint64_t vertex_count) const
+[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(
+	const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const
 {
 	D3D11_BUFFER_DESC vertex_buffer_desc {};
 	// vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
@@ -122,7 +122,7 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
 	vertex_buffer_desc.MiscFlags = 0;
 	vertex_buffer_desc.ByteWidth =
-		static_cast<UINT>(sizeof(graphics::DrawableVertex) * vertex_count);
+		static_cast<UINT>(sizeof(platypus::graphics::DrawableVertex) * vertex_count);
 
 	D3D11_SUBRESOURCE_DATA vertex_data {};
 	auto drawable_verts = drawable(vertices, vertex_count);
@@ -184,11 +184,10 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const D3D11_TEXTURE2D
 	return texture_view;
 }
 
-ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(std::byte* texture_data,
-	const uint64_t data_size, platypus::Extent& dimensions)
+std::optional<platypus::graphics::Texture> DirectXObjectCreator::newTexture(
+	const platypus::Data& texture_data)
 {
-	auto texture =
-		this->_texture_loader->loadTexture(texture_data, data_size, this->_renderer, dimensions);
+	auto texture = this->_texture_loader->loadTexture(texture_data, this->_renderer);
 	return texture;
 }
 

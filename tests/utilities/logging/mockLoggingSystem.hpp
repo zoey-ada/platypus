@@ -62,6 +62,60 @@ public:
 		this->_error_logs.push_back(std::string(message));
 	}
 
+#ifdef _WIN32
+
+	void debug(const std::string_view& message, const HRESULT hr) override
+	{
+		this->_debug_logs.push_back(std::string(message));
+	}
+	void debug(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override
+	{
+		this->_debug_logs.push_back(std::string(message));
+	}
+
+	void verbose(const std::string_view& message, const HRESULT hr) override
+	{
+		this->_verbose_logs.push_back(std::string(message));
+	}
+	void verbose(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override
+	{
+		this->_verbose_logs.push_back(std::string(message));
+	}
+
+	void info(const std::string_view& message, const HRESULT hr) override
+	{
+		this->_info_logs.push_back(std::string(message));
+	}
+	void info(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override
+	{
+		this->_info_logs.push_back(std::string(message));
+	}
+
+	void warning(const std::string_view& message, const HRESULT hr) override
+	{
+		this->_warning_logs.push_back(std::string(message));
+	}
+	void warning(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override
+	{
+		this->_warning_logs.push_back(std::string(message));
+	}
+
+	void error(const std::string_view& message, const HRESULT hr) override
+	{
+		this->_error_logs.push_back(std::string(message));
+	}
+	void error(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override
+	{
+		this->_error_logs.push_back(std::string(message));
+	}
+
+#endif
+
 	void flush_logs()
 	{
 		this->_debug_logs.clear();

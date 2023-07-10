@@ -36,7 +36,7 @@ std::shared_ptr<platypus::MeshResource> createCommonMesh(const CommonMesh mesh_t
 std::shared_ptr<platypus::MeshResource> createRectangle_uFlipped(
 	const std::shared_ptr<const DirectXRenderer>& renderer, const std::string& resource_id)
 {
-	std::vector<graphics::Vertex> vertices = {
+	std::vector<platypus::graphics::Vertex> vertices = {
 		{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
 		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
 		{Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(0, 1)},
@@ -64,7 +64,7 @@ std::shared_ptr<platypus::MeshResource> createRectangle_uFlipped(
 std::shared_ptr<platypus::MeshResource> createRectangle(
 	const std::shared_ptr<const DirectXRenderer>& renderer, const std::string& resource_id)
 {
-	std::vector<graphics::Vertex> vertices = {
+	std::vector<platypus::graphics::Vertex> vertices = {
 		{Vec3(0, 1, 0), Vec3(1, 1, 0), Vec2(1, 0)},
 		{Vec3(1, 1, 0), Vec3(1, 1, 0), Vec2(0, 0)},
 		{Vec3(0, 0, 0), Vec3(1, 1, 0), Vec2(1, 1)},

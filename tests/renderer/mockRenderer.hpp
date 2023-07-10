@@ -59,13 +59,14 @@ public:
 
 	void destroySamplerState(PtSamplerState sampler_state) const override {}
 
-	PtTexture createTexture(std::byte* shader_data, const uint64_t data_size,
-		Extent& /*dimensions__out*/) const override
+	std::optional<platypus::graphics::Texture> createTexture(
+		const platypus::Data& data) const override
 	{
-		return this->_texture;
+		std::optional<platypus::graphics::Texture> texture;
+		return texture = {this->_texture, {0, 0}, false};
 	}
 
-	void destroyTexture(PtTexture texture) const override {}
+	void destroyTexture(platypus::graphics::TextureResource texture) const override {}
 
 	PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
 		const uint64_t vertex_count) const override
@@ -119,7 +120,7 @@ public:
 
 	PtInputLayout _input_layout;
 	PtSamplerState _sampler_state;
-	PtTexture _texture;
+	platypus::graphics::TextureResource _texture;
 	PtVertexBuffer _vertex_buffer;
 	PtIndexBuffer _index_buffer;
 	PtTextMetrics _text_metrics;

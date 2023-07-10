@@ -1,16 +1,27 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <d3d11.h>
 #include <wincodec.h>
 
-#include "../graphics.hpp"
+#include <utilities/common/data.hpp>
+
 #include "../ptAddressOverscanMode.hpp"
 
 class DirectXRenderer;
 class WicTextureLoader;
 struct PtInputLayoutDesc;
+
+namespace platypus
+{
+namespace graphics
+{
+struct Texture;
+struct Vertex;
+};
+};
 
 class DirectXObjectCreator
 {
@@ -31,14 +42,13 @@ public:
 	[[nodiscard]] ID3D11Buffer* newBuffer(const D3D11_BUFFER_DESC& buffer_desc,
 		const D3D11_SUBRESOURCE_DATA& buffer_data) const;
 
-	[[nodiscard]] ID3D11Buffer* newVertexBuffer(const graphics::Vertex* vertices,
+	[[nodiscard]] ID3D11Buffer* newVertexBuffer(const platypus::graphics::Vertex* vertices,
 		const uint64_t vertex_count) const;
 
 	[[nodiscard]] ID3D11Buffer* newIndexBuffer(const uint32_t* indices,
 		const uint64_t index_count) const;
 
-	[[nodiscard]] ID3D11ShaderResourceView* newTexture(std::byte* texture_data,
-		const uint64_t data_size, platypus::Extent& dimensions);
+	std::optional<platypus::graphics::Texture> newTexture(const platypus::Data& texture_data);
 	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const D3D11_TEXTURE2D_DESC& texture_desc,
 		const D3D11_SUBRESOURCE_DATA texture_data) const;
 	[[nodiscard]] ID3D11ShaderResourceView* newTexture(const char* message, const char* font_family,

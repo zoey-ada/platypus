@@ -1,8 +1,11 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 
 #include <platypus_proto/settings.hpp>
+
+#include <utilities/common/data.hpp>
 
 #include "color.hpp"
 #include "commonMesh.hpp"
@@ -60,11 +63,11 @@ public:
 	virtual PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) const = 0;
 	virtual void destroySamplerState(PtSamplerState sampler_state) const = 0;
 
-	virtual PtTexture createTexture(std::byte* shader_data, const uint64_t data_size,
-		platypus::Extent& dimensions) const = 0;
-	virtual void destroyTexture(PtTexture texture) const = 0;
+	virtual std::optional<platypus::graphics::Texture> createTexture(
+		const platypus::Data& texture_data) const = 0;
+	virtual void destroyTexture(platypus::graphics::TextureResource texture) const = 0;
 
-	virtual PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
+	virtual PtVertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
 		const uint64_t vertex_count) const = 0;
 	virtual void destroyVertexBuffer(PtVertexBuffer buffer) const = 0;
 

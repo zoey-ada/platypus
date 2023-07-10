@@ -54,11 +54,11 @@ public:
 	PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) const override;
 	void destroySamplerState(PtSamplerState sampler_state) const override;
 
-	PtTexture createTexture(std::byte* shader_data, const uint64_t data_size,
-		platypus::Extent& dimensions) const override;
-	void destroyTexture(PtTexture texture) const override;
+	std::optional<platypus::graphics::Texture> createTexture(
+		const platypus::Data& texture_data) const override;
+	void destroyTexture(platypus::graphics::TextureResource texture) const override;
 
-	PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
+	PtVertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
 		const uint64_t vertex_count) const override;
 	void destroyVertexBuffer(PtVertexBuffer buffer) const override;
 

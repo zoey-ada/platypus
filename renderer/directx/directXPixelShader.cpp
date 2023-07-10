@@ -135,7 +135,8 @@ bool DirectXPixelShader::setTexture(const std::string& texture_path)
 	return true;
 }
 
-bool DirectXPixelShader::setTexture(PtTexture texture, PtSamplerState sampler_state)
+bool DirectXPixelShader::setTexture(platypus::graphics::TextureResource texture,
+	PtSamplerState sampler_state)
 {
 	auto temp_texture = reinterpret_cast<ID3D11ShaderResourceView*>(texture);
 	auto temp_sampler = reinterpret_cast<ID3D11SamplerState*>(sampler_state);

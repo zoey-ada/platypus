@@ -60,8 +60,21 @@ struct PtTextMetrics
 	uint32_t max_descender;
 };
 
+namespace platypus
+{
+
 namespace graphics
 {
+
+class _TextureResource;
+using TextureResource = _TextureResource*;
+
+struct Texture
+{
+	TextureResource texture_resource;
+	Extent dimensions;
+	bool has_alpha;
+};
 
 struct Vertex
 {
@@ -87,5 +100,7 @@ struct DrawableVertex
 DrawableVertex drawable(const Vertex& vertex);
 std::vector<DrawableVertex> drawable(const std::vector<Vertex>& vertices);
 std::vector<DrawableVertex> drawable(const Vertex* vertices, const uint64_t vertex_count);
+
+}
 
 }

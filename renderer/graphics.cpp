@@ -1,5 +1,8 @@
 #include "graphics.hpp"
 
+namespace platypus
+{
+
 namespace graphics
 {
 
@@ -34,4 +37,7 @@ std::vector<DrawableVertex> drawable(const Vertex* vertices, const uint64_t vert
 
 	return drawable_verts;
 }
+
+}
+
 }
