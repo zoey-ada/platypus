@@ -98,11 +98,11 @@ std::shared_ptr<Resource> MeshLoader::load(const char* resource_id, const char* 
 	MeshData mesh_data {};
 	mesh_data.resource_id = resource_id;
 	mesh_data.store_id = store_id;
-	mesh_data.primative = PtPrimitiveType::TriangleList;
-	mesh_data.vertex_buffer = vertex_buffer;
+	mesh_data.primative = graphics::PrimitiveType::TriangleList;
 	mesh_data.index_buffer = index_buffer;
 	mesh_data.index_count = indices.size();
 	mesh_data.vertices = std::move(vertices);
+	mesh_data.vertex_buffer = vertex_buffer;
 
 	return std::make_shared<MeshResource>(&mesh_data);
 }

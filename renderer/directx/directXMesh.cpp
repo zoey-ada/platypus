@@ -3,7 +3,10 @@
 #include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <serviceProvider.hpp>
+#include <utilities/logging/iLoggingSystem.hpp>
 
+#include "../scene.hpp"
+#include "../scene_nodes/sceneNode.hpp"
 #include "directXRenderer.hpp"
 
 DirectXMesh::DirectXMesh(std::shared_ptr<platypus::IResourceCache> cache,
@@ -16,7 +19,34 @@ DirectXMesh::DirectXMesh(std::shared_ptr<platypus::IResourceCache> cache,
 		return;
 	}
 
-	this->_mesh = cache->getMesh(resource_id);
+	auto mesh = cache->getMesh(resource_id);
+	this->_mesh = mesh;
+
+	if (!mesh->getTextureResourceId().empty())
+	{
+		auto texture = cache->getTexture(mesh->getTextureResourceId());
+		this->_texture = texture;
+	}
+}
+
+bool DirectXMesh::setupRender(const std::shared_ptr<Scene>& scene,
+	const std::shared_ptr<SceneNode>& /*node*/)
+{
+	auto mesh_res = this->_mesh.lock();
+	if (mesh_res == nullptr)
+	{
+		// error
+		return false;
+	}
+
+	if (mesh_res->getMaterial().has_value())
+	{
+		auto dx_renderer = std::dynamic_pointer_cast<DirectXRenderer>(scene->renderer());
+		auto material_buffer = reinterpret_cast<ID3D11Buffer*>(mesh_res->getMaterialBuffer());
+		dx_renderer->context()->PSSetConstantBuffers(0, 1, &material_buffer);
+	}
+
+	return true;
 }
 
 void DirectXMesh::render(const std::shared_ptr<IRenderer>& renderer)
@@ -48,19 +78,19 @@ void DirectXMesh::render(const std::shared_ptr<IRenderer>& renderer)
 	// render
 	switch (mesh_res->getPrimitiveType())
 	{
-	case PtPrimitiveType::TriangleList:
+	case platypus::graphics::PrimitiveType::TriangleList:
 	{
 		dx_renderer->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		break;
 	}
-	case PtPrimitiveType::TriangleStrip:
+	case platypus::graphics::PrimitiveType::TriangleStrip:
 	{
 		dx_renderer->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		break;
 	}
-	case PtPrimitiveType::Invalid:
+	case platypus::graphics::PrimitiveType::Invalid:
 		// error log
 		return;
 	}
@@ -77,10 +107,97 @@ uint64_t DirectXMesh::getVertexCount() const
 		return 0;
 	}
 
-	return mesh_res->getIndexCount();
+	return mesh_res->getVertexCount();
 }
 
 void DirectXMesh::updateVertices(const platypus::graphics::Vertex* vertices, uint64_t count)
+{
+	auto drawable_vertices = platypus::graphics::drawable(vertices, count);
+	return this->updateVertices(drawable_vertices.data(), count);
+}
+
+void DirectXMesh::updateVertices(const platypus::graphics::DrawableVertex* vertices, uint64_t count)
+{
+	auto mesh_res = this->_mesh.lock();
+	if (mesh_res == nullptr)
+	{
+		// error
+		return;
+	}
+
+	auto current_vertices = mesh_res->getEditableVertices();
+
+	if (count != mesh_res->getVertexCount())
+		current_vertices->resize(count);
+
+	memcpy(current_vertices->data(), vertices, count * sizeof(platypus::graphics::DrawableVertex));
+
+	this->updateVertexBuffer();
+}
+
+void DirectXMesh::updateCoords(const Vec3* coords, uint64_t count)
+{
+	auto mesh_res = this->_mesh.lock();
+	if (mesh_res == nullptr)
+	{
+		// error
+		return;
+	}
+
+	auto current_vertices = mesh_res->getEditableVertices();
+
+	for (uint64_t i = 0; i < count; ++i)
+	{
+		(*current_vertices)[i].coord_x = coords[i].x;
+		(*current_vertices)[i].coord_y = coords[i].y;
+		(*current_vertices)[i].coord_z = coords[i].z;
+	}
+
+	this->updateVertexBuffer();
+}
+
+void DirectXMesh::updateNormals(const Vec3* normals, uint64_t count)
+{
+	auto mesh_res = this->_mesh.lock();
+	if (mesh_res == nullptr)
+	{
+		// error
+		return;
+	}
+
+	auto current_vertices = mesh_res->getEditableVertices();
+
+	for (uint64_t i = 0; i < count; ++i)
+	{
+		(*current_vertices)[i].norm_x = normals[i].x;
+		(*current_vertices)[i].norm_y = normals[i].y;
+		(*current_vertices)[i].norm_z = normals[i].z;
+	}
+
+	this->updateVertexBuffer();
+}
+
+void DirectXMesh::updateTextureCoords(const Vec2* texture_coords, uint64_t count)
+{
+	auto mesh_res = this->_mesh.lock();
+	if (mesh_res == nullptr)
+	{
+		// error
+		return;
+	}
+
+	auto current_vertices = mesh_res->getEditableVertices();
+
+	for (uint64_t i = 0; i < count; ++i)
+	{
+		(*current_vertices)[i].text_coord_x = texture_coords[i].x;
+		(*current_vertices)[i].text_coord_y = texture_coords[i].y;
+	}
+
+	this->updateVertexBuffer();
+}
+
+void DirectXMesh::updateVertexBuffer()
 {
 	auto renderer = ServiceProvider::getRenderer();
 	auto dx_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
@@ -98,6 +215,7 @@ void DirectXMesh::updateVertices(const platypus::graphics::Vertex* vertices, uin
 	}
 
 	auto* vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh_res->getVertexBuffer());
+	auto vertices = mesh_res->getEditableVertices();
 
 	UINT subresource = 0;
 	UINT map_flags = 0;
@@ -105,50 +223,27 @@ void DirectXMesh::updateVertices(const platypus::graphics::Vertex* vertices, uin
 	D3D11_MAPPED_SUBRESOURCE resource;
 	dx_renderer->context()->Map(vertex_buffer, subresource, map_type, map_flags, &resource);
 
-	auto* existing_verticies =
-		reinterpret_cast<platypus::graphics::DrawableVertex*>(resource.pData);
-
-	for (uint64_t i = 0; i < count; ++i)
-		existing_verticies[i] = platypus::graphics::drawable(vertices[i]);
+	auto vert_data_size = mesh_res->getVertexCount() * sizeof(platypus::graphics::DrawableVertex);
+	memcpy(resource.pData, vertices->data(), vert_data_size);
 
 	dx_renderer->context()->Unmap(vertex_buffer, subresource);
 }
 
-void DirectXMesh::updateVertexTextures(const Vec2* texture_coordinates, uint64_t count)
-{
-	auto renderer = ServiceProvider::getRenderer();
-	auto dx_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
-	if (dx_renderer == nullptr)
-	{
-		// error
-		return;
-	}
+// void DirectXMesh::updateMaterial(const Material& material) const
+// {
+// 	auto material_buffer = reinterpret_cast<ID3D11Buffer*>(mesh_res->getMaterialBuffer());
 
-	auto mesh_res = this->_mesh.lock();
-	if (mesh_res == nullptr)
-	{
-		// error
-		return;
-	}
+// 	// material
+// 	D3D11_MAPPED_SUBRESOURCE mapped_resource;
+// 	ZeroMemory(&mapped_resource, sizeof(mapped_resource));
+// 	context->Map(material_buffer, 0, D3D11_MAP::D3D11_MAP_WRITE_DISCARD, 0, &mapped_resource);
 
-	auto vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh_res->getVertexBuffer());
+// 	auto material = (platypus::graphics::ConstantBuffer_Material*)mapped_resource.pData;
+// 	material->_diffuseObjectColor = node->properties()->diffuse().toVec4().load();
+// 	material->_hasTexture = !mesh_res->getTextureResourceId().empty() ? true : false;
+// 	material = nullptr;
 
-	UINT subresource = 0;
-	UINT map_flags = 0;
-	D3D11_MAP map_type = D3D11_MAP::D3D11_MAP_WRITE_DISCARD;
-	D3D11_MAPPED_SUBRESOURCE resource;
-	dx_renderer->context()->Map(vertex_buffer, subresource, map_type, map_flags, &resource);
+// 	context->Unmap(material_buffer, 0);
 
-	memcpy(resource.pData, mesh_res->getVertices().data(),
-		sizeof(platypus::graphics::DrawableVertex) * mesh_res->getIndexCount());
-
-	auto* vertices = reinterpret_cast<platypus::graphics::DrawableVertex*>(resource.pData);
-
-	for (uint64_t i = 0; i < count; ++i)
-	{
-		vertices[i].text_coord_x = texture_coordinates[i].x;
-		vertices[i].text_coord_y = texture_coordinates[i].y;
-	}
-
-	dx_renderer->context()->Unmap(vertex_buffer, subresource);
-}
+// 	context->PSSetConstantBuffers(0, 1, &material_buffer);
+// }

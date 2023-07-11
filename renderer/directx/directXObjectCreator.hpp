@@ -46,6 +46,8 @@ public:
 	[[nodiscard]] ID3D11Buffer* newBuffer(const D3D11_BUFFER_DESC& buffer_desc,
 		const D3D11_SUBRESOURCE_DATA& buffer_data) const;
 
+	[[nodiscard]] ID3D11Buffer* newConstantBuffer(const uint32_t buffer_size) const;
+
 	[[nodiscard]] ID3D11Buffer* newVertexBuffer(const platypus::graphics::Vertex* vertices,
 		const uint64_t vertex_count) const;
 

@@ -52,7 +52,7 @@ std::shared_ptr<platypus::MeshResource> createRectangle_uFlipped(
 	resource_data.resource_id = resource_id.c_str();
 	resource_data.store_id = "internal";
 	resource_data.size = 0;
-	resource_data.primative = PtPrimitiveType::TriangleStrip;
+	resource_data.primative = platypus::graphics::PrimitiveType::TriangleStrip;
 	resource_data.vertex_buffer = vertex_buffer;
 	resource_data.index_buffer = index_buffer;
 	resource_data.index_count = indices.size();
@@ -80,7 +80,7 @@ std::shared_ptr<platypus::MeshResource> createRectangle(
 	resource_data.resource_id = resource_id.c_str();
 	resource_data.store_id = "internal";
 	resource_data.size = 0;
-	resource_data.primative = PtPrimitiveType::TriangleStrip;
+	resource_data.primative = platypus::graphics::PrimitiveType::TriangleStrip;
 	resource_data.vertex_buffer = vertex_buffer;
 	resource_data.index_buffer = index_buffer;
 	resource_data.index_count = indices.size();

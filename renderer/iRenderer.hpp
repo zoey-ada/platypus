@@ -68,13 +68,16 @@ public:
 		const platypus::Data& texture_data) const = 0;
 	virtual void destroyTexture(platypus::graphics::TextureResource texture) const = 0;
 
-	virtual PtVertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
-		const uint64_t vertex_count) const = 0;
-	virtual void destroyVertexBuffer(PtVertexBuffer buffer) const = 0;
+	virtual platypus::graphics::ConstantBuffer createConstantBuffer(uint32_t buffer_size) const = 0;
+	virtual void destroyConstantBuffer(platypus::graphics::ConstantBuffer buffer) const = 0;
 
-	virtual PtIndexBuffer createIndexBuffer(const uint32_t* indices,
+	virtual platypus::graphics::VertexBuffer createVertexBuffer(
+		const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const = 0;
+	virtual void destroyVertexBuffer(platypus::graphics::VertexBuffer buffer) const = 0;
+
+	virtual platypus::graphics::IndexBuffer createIndexBuffer(const uint32_t* indices,
 		const uint64_t index_count) const = 0;
-	virtual void destroyIndexBuffer(PtIndexBuffer buffer) const = 0;
+	virtual void destroyIndexBuffer(platypus::graphics::IndexBuffer buffer) const = 0;
 
 	virtual platypus::TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) = 0;

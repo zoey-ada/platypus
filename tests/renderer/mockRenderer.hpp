@@ -68,21 +68,28 @@ public:
 
 	void destroyTexture(graphics::TextureResource texture) const override {}
 
-	PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
+	graphics::ConstantBuffer createConstantBuffer(const uint32_t buffer_size) const override
+	{
+		return this->_constant_buffer;
+	}
+
+	void destroyConstantBuffer(graphics::ConstantBuffer buffer) const override {}
+
+	graphics::VertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
 		const uint64_t vertex_count) const override
 	{
 		return this->_vertex_buffer;
 	}
 
-	void destroyVertexBuffer(PtVertexBuffer buffer) const override {}
+	void destroyVertexBuffer(graphics::VertexBuffer buffer) const override {}
 
-	PtIndexBuffer createIndexBuffer(const uint32_t* indices,
+	graphics::IndexBuffer createIndexBuffer(const uint32_t* indices,
 		const uint64_t index_count) const override
 	{
 		return this->_index_buffer;
 	}
 
-	void destroyIndexBuffer(PtIndexBuffer buffer) const override {}
+	void destroyIndexBuffer(graphics::IndexBuffer buffer) const override {}
 
 	TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override
@@ -121,8 +128,9 @@ public:
 	PtInputLayout _input_layout;
 	graphics::SamplerState _sampler_state;
 	graphics::TextureResource _texture;
-	PtVertexBuffer _vertex_buffer;
-	PtIndexBuffer _index_buffer;
+	graphics::ConstantBuffer _constant_buffer;
+	graphics::VertexBuffer _vertex_buffer;
+	graphics::IndexBuffer _index_buffer;
 	TextMetrics _text_metrics;
 
 	std::shared_ptr<IShaderManager> _shader_manager;

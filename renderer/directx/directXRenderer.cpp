@@ -217,19 +217,19 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<platypus::MeshResource>& me
 	// render
 	switch (mesh->getPrimitiveType())
 	{
-	case PtPrimitiveType::TriangleList:
+	case platypus::graphics::PrimitiveType::TriangleList:
 	{
 		this->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		break;
 	}
-	case PtPrimitiveType::TriangleStrip:
+	case platypus::graphics::PrimitiveType::TriangleStrip:
 	{
 		this->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		break;
 	}
-	case PtPrimitiveType::Invalid:
+	case platypus::graphics::PrimitiveType::Invalid:
 		// error log
 		return;
 	}
@@ -296,24 +296,35 @@ void DirectXRenderer::destroyTexture(platypus::graphics::TextureResource texture
 	reinterpret_cast<ID3D11ShaderResourceView*>(texture)->Release();
 }
 
-PtVertexBuffer DirectXRenderer::createVertexBuffer(const platypus::graphics::Vertex* vertices,
-	const uint64_t vertex_count) const
+platypus::graphics::ConstantBuffer DirectXRenderer::createConstantBuffer(uint32_t buffer_size) const
 {
-	return (PtVertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
+	return (platypus::graphics::ConstantBuffer)this->_creator->newConstantBuffer(buffer_size);
 }
 
-void DirectXRenderer::destroyVertexBuffer(PtVertexBuffer buffer) const
+void DirectXRenderer::destroyConstantBuffer(platypus::graphics::ConstantBuffer buffer) const
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }
 
-PtIndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
-	const uint64_t index_count) const
+platypus::graphics::VertexBuffer DirectXRenderer::createVertexBuffer(
+	const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const
 {
-	return (PtIndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
+	return (
+		platypus::graphics::VertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
 }
 
-void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer) const
+void DirectXRenderer::destroyVertexBuffer(platypus::graphics::VertexBuffer buffer) const
+{
+	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+platypus::graphics::IndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
+	const uint64_t index_count) const
+{
+	return (platypus::graphics::IndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
+}
+
+void DirectXRenderer::destroyIndexBuffer(platypus::graphics::IndexBuffer buffer) const
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }

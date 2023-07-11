@@ -59,13 +59,16 @@ public:
 		const platypus::Data& texture_data) const override;
 	void destroyTexture(platypus::graphics::TextureResource texture) const override;
 
-	PtVertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
-		const uint64_t vertex_count) const override;
-	void destroyVertexBuffer(PtVertexBuffer buffer) const override;
+	platypus::graphics::ConstantBuffer createConstantBuffer(uint32_t buffer_size) const override;
+	void destroyConstantBuffer(platypus::graphics::ConstantBuffer buffer) const override;
 
-	PtIndexBuffer createIndexBuffer(const uint32_t* indices,
+	platypus::graphics::VertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
+		const uint64_t vertex_count) const override;
+	void destroyVertexBuffer(platypus::graphics::VertexBuffer buffer) const override;
+
+	platypus::graphics::IndexBuffer createIndexBuffer(const uint32_t* indices,
 		const uint64_t index_count) const override;
-	void destroyIndexBuffer(PtIndexBuffer buffer) const override;
+	void destroyIndexBuffer(platypus::graphics::IndexBuffer buffer) const override;
 
 	platypus::TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override;

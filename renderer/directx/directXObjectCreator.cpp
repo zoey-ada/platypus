@@ -112,6 +112,19 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	return buffer;
 }
 
+ID3D11Buffer* DirectXObjectCreator::newConstantBuffer(const uint32_t buffer_size) const
+{
+	D3D11_BUFFER_DESC buffer_desc {};
+	buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+	buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+	buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+	buffer_desc.MiscFlags = 0;
+	buffer_desc.ByteWidth = buffer_size;
+
+	auto constant_buffer = this->newBuffer(buffer_desc);
+	return constant_buffer;
+}
+
 [[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(
 	const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const
 {

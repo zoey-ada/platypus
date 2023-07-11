@@ -79,15 +79,17 @@ void SpriteNode::deinitialize(const std::shared_ptr<Scene>& /*scene*/)
 
 bool SpriteNode::render(const std::shared_ptr<Scene>& scene)
 {
-	if (!this->_pixel_shader->setupRender(scene, this->shared_from_this()) ||
-		!this->_vertex_shader->setupRender(scene, this->shared_from_this()))
+	auto scene_node = this->shared_from_this();
+
+	if (this->_pixel_shader->setupRender(scene, scene_node) &&
+		this->_vertex_shader->setupRender(scene, scene_node) &&
+		this->_mesh->setupRender(scene, scene_node))
 	{
-		// error
-		return false;
+		this->_mesh->render(scene->renderer());
+		return true;
 	}
 
-	this->_mesh->render(scene->renderer());
-	return true;
+	return false;
 }
 
 void SpriteNode::setSprite(const Vec2& coordinate)
@@ -107,7 +109,7 @@ void SpriteNode::setSprite(const Vec2& coordinate)
 	verticies[3].x = sprite_x + this->_sprite_offsets.x;
 	verticies[3].y = sprite_y + this->_sprite_offsets.y;
 
-	this->_mesh->updateVertexTextures(verticies.data(), 4);
+	this->_mesh->updateTextureCoords(verticies.data(), 4);
 }
 
 void SpriteNode::calculateSpriteOffsets(const Extent& texture_dimensions)
