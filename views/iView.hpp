@@ -17,6 +17,10 @@ class IView
 public:
 	virtual ~IView() = default;
 
+	virtual bool initialize() = 0;
+	virtual bool reinitialize() = 0;
+	virtual void deinitialize() = 0;
+
 	virtual bool onRestore() = 0;
 	virtual void onDeviceLost() = 0;
 

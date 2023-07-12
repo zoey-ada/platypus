@@ -8,13 +8,13 @@
 #include "iScreenElement.hpp"
 #include "iView.hpp"
 
-class CameraNode;
 class IRenderer;
 class Scene;
 using ScreenElementList = std::list<std::shared_ptr<IScreenElement>>;
 
 namespace platypus
 {
+class CameraNode;
 class IResourceCache;
 };
 
@@ -24,6 +24,10 @@ public:
 	HumanView(std::shared_ptr<IRenderer> renderer, std::shared_ptr<platypus::IResourceCache> cache,
 		const platypus::Settings& settings);
 	virtual ~HumanView();
+
+	bool initialize() override;
+	bool reinitialize() override;
+	void deinitialize() override;
 
 	bool onRestore() override;
 	void onDeviceLost() override;
@@ -39,6 +43,8 @@ private:
 	std::shared_ptr<IRenderer> _renderer;
 	std::shared_ptr<platypus::IResourceCache> _cache;
 	std::shared_ptr<Scene> _scene;
-	std::shared_ptr<CameraNode> _camera;
+	std::shared_ptr<platypus::CameraNode> _camera;
 	ScreenElementList _screen_elements;
+
+	virtual std::shared_ptr<platypus::CameraNode> createCamera() = 0;
 };

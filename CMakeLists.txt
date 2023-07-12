@@ -242,10 +242,13 @@ endif()
 set(scene_node_srcs
 	renderer/scene_nodes/alphaSceneNode.hpp
 	renderer/scene_nodes/cameraNode.hpp
-	renderer/scene_nodes/cameraNode.cpp
 	renderer/scene_nodes/iSceneNode.hpp
 	renderer/scene_nodes/meshNode.hpp
 	renderer/scene_nodes/meshNode.cpp
+	renderer/scene_nodes/orthographicCameraNode.hpp
+	renderer/scene_nodes/orthographicCameraNode.cpp
+	renderer/scene_nodes/perspectiveCameraNode.hpp
+	renderer/scene_nodes/perspectiveCameraNode.cpp
 	renderer/scene_nodes/renderPass.hpp
 	renderer/scene_nodes/rectangleNode.hpp
 	renderer/scene_nodes/rectangleNode.cpp

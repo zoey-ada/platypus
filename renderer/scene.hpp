@@ -9,7 +9,6 @@
 #include <utilities/time/utils.hpp>
 
 struct AlphaSceneNode;
-class CameraNode;
 class IEvent;
 class IRenderer;
 class ISceneNode;
@@ -17,6 +16,7 @@ class SceneNode;
 
 namespace platypus
 {
+class CameraNode;
 class IResourceCache;
 };
 
@@ -42,8 +42,8 @@ public:
 	void popMatrix();
 	[[nodiscard]] const Mat4x4& getTopMatrix() const;
 
-	void setCamera(std::shared_ptr<CameraNode> camera) { this->_camera = camera; }
-	[[nodiscard]] std::shared_ptr<CameraNode> getCamera() const { return this->_camera; }
+	void setCamera(std::shared_ptr<platypus::CameraNode> camera) { this->_camera = camera; }
+	[[nodiscard]] std::shared_ptr<platypus::CameraNode> getCamera() const { return this->_camera; }
 
 	void addAlphaSceneNode(std::shared_ptr<AlphaSceneNode> node)
 	{
@@ -59,7 +59,7 @@ public:
 
 private:
 	std::shared_ptr<SceneNode> _root {nullptr};
-	std::shared_ptr<CameraNode> _camera {nullptr};
+	std::shared_ptr<platypus::CameraNode> _camera {nullptr};
 	std::shared_ptr<IRenderer> _renderer {nullptr};
 	std::shared_ptr<platypus::IResourceCache> _cache {nullptr};
 

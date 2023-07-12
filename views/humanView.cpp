@@ -15,24 +15,6 @@ HumanView::HumanView(std::shared_ptr<IRenderer> renderer,
 	: _last_draw(0), _frametime(-1), _renderer(renderer), _cache(cache)
 {
 	this->_frametime = frametimeFromFrameRate(settings.renderer_settings().frame_rate());
-
-	auto scene = std::make_shared<ScreenElementScene>(renderer, cache);
-	this->_scene = scene;
-	bool success = this->_scene->initialize();
-	if (!success)
-	{
-		// error log
-	}
-
-	this->_screen_elements.push_back(scene);
-
-	// setup camera
-	Frustum frustum;
-	frustum.initialize(3.1415f / 4.0f, 1.0f, 1.0f, 100.0f);
-	this->_camera = std::make_shared<CameraNode>(Mat4x4::identity(), frustum);
-
-	success = this->_scene->addChild(InvalidEntityId, this->_camera);
-	this->_scene->setCamera(this->_camera);
 }
 
 HumanView::~HumanView()
@@ -40,6 +22,38 @@ HumanView::~HumanView()
 	while (!this->_screen_elements.empty())
 		this->_screen_elements.pop_front();
 }
+
+bool HumanView::initialize()
+{
+	auto scene = std::make_shared<ScreenElementScene>(this->_renderer, this->_cache);
+	this->_scene = scene;
+	if (!this->_scene->initialize())
+	{
+		// error log
+	}
+
+	this->_screen_elements.emplace_back(scene);
+
+	// setup camera
+	this->_camera = this->createCamera();
+
+	if (!this->_scene->addChild(InvalidEntityId, this->_camera))
+	{
+		// error
+		return false;
+	}
+	this->_scene->setCamera(this->_camera);
+
+	return true;
+}
+
+bool HumanView::reinitialize()
+{
+	return true;
+}
+
+void HumanView::deinitialize()
+{}
 
 bool HumanView::onRestore()
 {
