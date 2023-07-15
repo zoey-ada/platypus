@@ -98,8 +98,6 @@ source_group(source\\entities FILES ${entities_srcs})
 
 set(entities_components_srcs
 	entities/components/entityComponent.hpp
-	entities/components/movementComponent2d.hpp
-	entities/components/movementComponent2d.cpp
 	entities/components/physicsComponent.hpp
 	entities/components/physicsComponent.cpp
 	entities/components/renderComponent2d.hpp

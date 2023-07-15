@@ -10,7 +10,6 @@
 #include <utilities/logging/logger.hpp>
 
 #include "components/entityComponent.hpp"
-#include "components/movementComponent2d.hpp"
 #include "components/physicsComponent.hpp"
 #include "components/renderComponent2d.hpp"
 #include "components/renderComponent3d.hpp"
@@ -95,7 +94,6 @@ std::shared_ptr<EntityComponent> EntityFactory::createComponent(std::shared_ptr<
 
 void EntityFactory::registerStandardComponents()
 {
-	this->registerComponent("MovementComponent_2d", createMovementComponent2d);
 	this->registerComponent("PhysicsComponent", createPhysicsComponent);
 	this->registerComponent("RenderComponent_2d", createRenderComponent2d);
 	this->registerComponent("RenderComponent_3d", createRenderComponent3d);
