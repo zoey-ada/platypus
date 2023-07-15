@@ -27,15 +27,20 @@ public:
 
 	[[nodiscard]] std::shared_ptr<SceneNode> getSceneNode();
 
+	void playAnimation(const std::string& animation);
+	void stopAnimation();
+
 private:
 	std::shared_ptr<platypus::RenderComponent_2d> _render_data;
 	std::shared_ptr<SceneNode> _scene_node;
 
 	std::string _current_animation;
 	uint32_t _current_animation_frame = 0;
+	Milliseconds _animation_frame_time = 0;
 
 	std::optional<platypus::SpriteAnimation> getAnimation(std::string action) const;
-	void updateAnimationFrame();
+	void updateAnimationFrame(const Milliseconds delta);
+	void updateSprite();
 };
 
 [[nodiscard]] std::shared_ptr<EntityComponent> createRenderComponent2d();
