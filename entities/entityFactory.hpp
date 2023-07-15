@@ -19,13 +19,18 @@ using Message = google::protobuf::Message;
 
 class EntityComponent;
 
+namespace platypus
+{
+class IResourceCache;
+};
+
 using EntityComponentCreator = std::function<std::shared_ptr<EntityComponent>()>;
 using EntityComponentCreatorMap = std::map<std::string, EntityComponentCreator>;
 
 class EntityFactory
 {
 public:
-	EntityFactory();
+	EntityFactory(std::shared_ptr<platypus::IResourceCache> cache);
 	virtual ~EntityFactory() = default;
 
 	std::shared_ptr<Entity> createEntity(const std::string& entity_resource,
@@ -34,6 +39,7 @@ public:
 	void registerComponent(std::string name, EntityComponentCreator create_function);
 
 private:
+	std::shared_ptr<platypus::IResourceCache> _cache;
 	EntityId _last_entity_id {InvalidEntityId};
 	EntityComponentCreatorMap _entity_component_creators {};
 

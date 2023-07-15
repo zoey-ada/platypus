@@ -7,6 +7,8 @@
 #include <tests/resource_cache/mockResourceCache.hpp>
 #include <tests/utilities/logging/mockLoggingSystem.hpp>
 
+using namespace platypus;
+
 SCENARIO("texture loader can load a texture", "[res_cache]")
 {
 	auto logging = std::make_shared<MockLoggingSystem>();
@@ -97,7 +99,7 @@ SCENARIO("texture loader can load a texture", "[res_cache]")
 		AND_GIVEN("a texture can be created")
 		{
 			std::string mock_texture("texture");
-			renderer->_texture = (PtTexture)&mock_texture;
+			renderer->_texture = (platypus::graphics::TextureResource)&mock_texture;
 
 			AND_GIVEN("a sampler state can not be created")
 			{
@@ -119,7 +121,7 @@ SCENARIO("texture loader can load a texture", "[res_cache]")
 			AND_GIVEN("a sampler state can be created")
 			{
 				std::string mock_sampler_state("sampler_state");
-				renderer->_sampler_state = (PtSamplerState)&mock_sampler_state;
+				renderer->_sampler_state = (platypus::graphics::SamplerState)&mock_sampler_state;
 
 				WHEN("a texture is loaded")
 				{
@@ -136,9 +138,10 @@ SCENARIO("texture loader can load a texture", "[res_cache]")
 
 						auto texture_res = std::dynamic_pointer_cast<TextureResource>(resource);
 						REQUIRE(texture_res != nullptr);
-						REQUIRE(texture_res->getTexture() == (PtTexture)&mock_texture);
-						REQUIRE(
-							texture_res->getSamplerState() == (PtSamplerState)&mock_sampler_state);
+						REQUIRE(texture_res->getTexture() ==
+							(platypus::graphics::TextureResource)&mock_texture);
+						REQUIRE(texture_res->getSamplerState() ==
+							(platypus::graphics::SamplerState)&mock_sampler_state);
 					}
 				}
 			}

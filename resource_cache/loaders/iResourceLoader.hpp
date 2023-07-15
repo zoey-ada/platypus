@@ -4,9 +4,11 @@
 
 #include "../resources/resourceType.hpp"
 
+namespace platypus
+{
+
 class IResourceStore;
 class Resource;
-class ResourceHandle;
 
 class IResourceLoader
 {
@@ -20,4 +22,6 @@ public:
 
 protected:
 	virtual uint8_t* allocate(unsigned int size) = 0;
+};
+
 };

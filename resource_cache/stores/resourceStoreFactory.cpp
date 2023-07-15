@@ -2,8 +2,11 @@
 
 #include "zipResourceStore.hpp"
 
+namespace platypus
+{
+
 std::shared_ptr<IResourceStore> ResourceStoreFactory::createResourceStore(
-	const platypus::ResourceStoreSettings& settings)
+	const ResourceStoreSettings& settings)
 {
 	if (settings.type() == "zip_file")
 	{
@@ -13,3 +16,5 @@ std::shared_ptr<IResourceStore> ResourceStoreFactory::createResourceStore(
 
 	return nullptr;
 }
+
+};

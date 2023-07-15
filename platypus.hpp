@@ -16,7 +16,11 @@ class InputManager;
 class IPhysicsSystem;
 class IPlatform;
 class IRenderer;
-class ResourceCache;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 class Platypus
 {
@@ -39,7 +43,7 @@ protected:
 
 	platypus::Settings _settings;
 	std::shared_ptr<IRenderer> _renderer {nullptr};
-	std::shared_ptr<ResourceCache> _cache {nullptr};
+	std::shared_ptr<platypus::IResourceCache> _cache {nullptr};
 
 private:
 	std::shared_ptr<IClock> _clock {nullptr};

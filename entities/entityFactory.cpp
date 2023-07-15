@@ -5,17 +5,19 @@
 #include <platypus_proto/util.hpp>
 
 #include <google/protobuf/message.h>
+#include <resource_cache/iResourceCache.hpp>
+#include <resource_cache/resources/protobufResource.hpp>
 #include <utilities/logging/logger.hpp>
 
 #include "components/entityComponent.hpp"
-#include "components/movementComponent2d.hpp"
 #include "components/physicsComponent.hpp"
 #include "components/renderComponent2d.hpp"
 #include "components/renderComponent3d.hpp"
 #include "components/transformComponent2d.hpp"
 #include "components/transformComponent3d.hpp"
 
-EntityFactory::EntityFactory()
+EntityFactory::EntityFactory(std::shared_ptr<platypus::IResourceCache> cache)
+	: _cache(std::move(cache))
 {
 	this->registerStandardComponents();
 }
@@ -23,7 +25,8 @@ EntityFactory::EntityFactory()
 std::shared_ptr<Entity> EntityFactory::createEntity(const std::string& entity_resource,
 	std::string tag)
 {
-	auto data = platypus::readProtoFile<platypus::Entity>(entity_resource);
+	auto resource = this->_cache->getProtobuf(entity_resource);
+	auto data = platypus::toProto<platypus::Entity>(resource->getProtobufJson());
 
 	if (tag.empty())
 		tag = std::filesystem::path(entity_resource).stem().string();
@@ -91,7 +94,6 @@ std::shared_ptr<EntityComponent> EntityFactory::createComponent(std::shared_ptr<
 
 void EntityFactory::registerStandardComponents()
 {
-	this->registerComponent("MovementComponent_2d", createMovementComponent2d);
 	this->registerComponent("PhysicsComponent", createPhysicsComponent);
 	this->registerComponent("RenderComponent_2d", createRenderComponent2d);
 	this->registerComponent("RenderComponent_3d", createRenderComponent3d);

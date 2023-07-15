@@ -21,7 +21,7 @@ bool DirectXObjectCreator::initialize(const std::shared_ptr<DirectXRenderer>& re
 
 	this->_renderer = renderer;
 
-	this->_texture_loader = std::make_shared<WicTextureLoader>();
+	this->_texture_loader = std::make_shared<platypus::WicTextureLoader>();
 	return this->_texture_loader->initialize();
 }
 
@@ -112,14 +112,30 @@ ID3D11Buffer* DirectXObjectCreator::newBuffer(const D3D11_BUFFER_DESC& buffer_de
 	return buffer;
 }
 
-[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(const graphics::Vertex* vertices,
-	const uint64_t vertex_count) const
+ID3D11Buffer* DirectXObjectCreator::newConstantBuffer(const uint32_t buffer_size) const
+{
+	D3D11_BUFFER_DESC buffer_desc {};
+	buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+	buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_CONSTANT_BUFFER;
+	buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
+	buffer_desc.MiscFlags = 0;
+	buffer_desc.ByteWidth = buffer_size;
+
+	auto constant_buffer = this->newBuffer(buffer_desc);
+	return constant_buffer;
+}
+
+[[nodiscard]] ID3D11Buffer* DirectXObjectCreator::newVertexBuffer(
+	const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const
 {
 	D3D11_BUFFER_DESC vertex_buffer_desc {};
-	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
-	vertex_buffer_desc.ByteWidth =
-		static_cast<UINT>(sizeof(graphics::DrawableVertex) * vertex_count);
+	// vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DEFAULT;
+	vertex_buffer_desc.Usage = D3D11_USAGE::D3D11_USAGE_DYNAMIC;
+	vertex_buffer_desc.CPUAccessFlags = D3D11_CPU_ACCESS_FLAG::D3D11_CPU_ACCESS_WRITE;
 	vertex_buffer_desc.BindFlags = D3D11_BIND_FLAG::D3D11_BIND_VERTEX_BUFFER;
+	vertex_buffer_desc.MiscFlags = 0;
+	vertex_buffer_desc.ByteWidth =
+		static_cast<UINT>(sizeof(platypus::graphics::DrawableVertex) * vertex_count);
 
 	D3D11_SUBRESOURCE_DATA vertex_data {};
 	auto drawable_verts = drawable(vertices, vertex_count);
@@ -181,16 +197,18 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const D3D11_TEXTURE2D
 	return texture_view;
 }
 
-ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(std::byte* texture_data,
-	const uint64_t data_size)
+std::optional<platypus::graphics::Texture> DirectXObjectCreator::newTexture(
+	const platypus::Data& texture_data)
 {
-	auto texture = this->_texture_loader->loadTexture(texture_data, data_size, this->_renderer);
+	auto texture = this->_texture_loader->loadTexture(texture_data, this->_renderer);
 	return texture;
 }
 
-ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
+std::optional<platypus::graphics::Texture> DirectXObjectCreator::newTexture(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
+	std::optional<platypus::graphics::Texture> texture;
+
 	auto text_metrics = this->_renderer->measureText(message, font_family, point_size);
 	auto pixel_buffer = this->_renderer->_text_renderer->rasterizeText(message, &text_metrics);
 
@@ -215,7 +233,12 @@ ID3D11ShaderResourceView* DirectXObjectCreator::newTexture(const char* message,
 	image_data.SysMemPitch = static_cast<UINT>(stride);
 	image_data.SysMemSlicePitch = static_cast<UINT>(image_data_size);
 
-	auto texture = this->newTexture(desc, image_data);
+	auto texture_resource =
+		reinterpret_cast<platypus::graphics::TextureResource>(this->newTexture(desc, image_data));
+
+	if (texture_resource != nullptr)
+		texture = {texture_resource, text_metrics.size, true};
+
 	return texture;
 }
 
@@ -236,30 +259,31 @@ ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
 	return sampler_state;
 }
 
-D3D11_TEXTURE_ADDRESS_MODE toDxAddressMode(const PtAddressOverscanMode overscan_mode)
+D3D11_TEXTURE_ADDRESS_MODE toDxAddressMode(const platypus::TexelOverscanMode overscan_mode)
 {
 	switch (overscan_mode)
 	{
-	case PtAddressOverscanMode::Border:
+	case platypus::TexelOverscanMode::Border:
 		return D3D11_TEXTURE_ADDRESS_BORDER;
-	case PtAddressOverscanMode::Mirror:
+	case platypus::TexelOverscanMode::Mirror:
 		return D3D11_TEXTURE_ADDRESS_MIRROR;
-	case PtAddressOverscanMode::MirrorOnce:
+	case platypus::TexelOverscanMode::MirrorOnce:
 		return D3D11_TEXTURE_ADDRESS_MIRROR_ONCE;
-	case PtAddressOverscanMode::Wrap:
+	case platypus::TexelOverscanMode::Wrap:
 		return D3D11_TEXTURE_ADDRESS_WRAP;
-	case PtAddressOverscanMode::Clamp:
+	case platypus::TexelOverscanMode::Clamp:
 	default:
 		return D3D11_TEXTURE_ADDRESS_CLAMP;
 	}
 }
 
 ID3D11SamplerState* DirectXObjectCreator::newSamplerState(
-	const PtAddressOverscanMode overscan_mode) const
+	const platypus::TexelOverscanMode overscan_mode) const
 {
 	D3D11_SAMPLER_DESC sampler_desc;
 	ZeroMemory(&sampler_desc, sizeof(sampler_desc));
-	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	// sampler_desc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	sampler_desc.AddressU = toDxAddressMode(overscan_mode);
 	sampler_desc.AddressV = toDxAddressMode(overscan_mode);
 	sampler_desc.AddressW = toDxAddressMode(overscan_mode);

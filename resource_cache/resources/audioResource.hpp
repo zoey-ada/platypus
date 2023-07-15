@@ -2,7 +2,10 @@
 
 #include "resource.hpp"
 
-struct PtAudioData: public PtResourceData
+namespace platypus
+{
+
+struct AudioData: public ResourceData
 {
 	uint8_t channels;
 	uint32_t sample_rate;
@@ -14,7 +17,7 @@ struct PtAudioData: public PtResourceData
 class AudioResource: public Resource
 {
 public:
-	explicit AudioResource(PtAudioData* resource_data);
+	explicit AudioResource(AudioData* resource_data);
 	virtual ~AudioResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::Audio; }
@@ -31,4 +34,6 @@ private:
 	uint16_t _bits_per_sample;
 	std::byte* _audio_data {nullptr};
 	uint32_t _audio_data_size;
+};
+
 };

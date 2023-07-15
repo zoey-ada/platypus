@@ -16,8 +16,8 @@ struct PtSceneNodeData
 	std::string name;
 	EntityId entity_id = InvalidEntityId;
 	RenderPass render_pass = RenderPass::Entity;
-	const Mat4x4* to = Mat4x4::identity();
 	Color diffuse_color = Color::white;
+	const Mat4x4* to = Mat4x4::identity();
 	const Mat4x4* from = nullptr;
 };
 
@@ -32,7 +32,9 @@ public:
 
 	std::shared_ptr<SceneNodeProperties> properties() const override { return _properties; }
 
-	[[nodiscard]] bool initialize(const std::shared_ptr<Scene>& scene) override;
+	bool initialize(const std::shared_ptr<Scene>& scene) override;
+	bool reinitialize(const std::shared_ptr<Scene>& scene) override;
+	void deinitialize(const std::shared_ptr<Scene>& scene) override;
 
 	bool onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta) override;
 	[[nodiscard]] bool isVisible(const std::shared_ptr<Scene>& scene) const override;

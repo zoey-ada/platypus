@@ -7,6 +7,8 @@
 #include <tests/resource_cache/mockResourceCache.hpp>
 #include <tests/utilities/logging/mockLoggingSystem.hpp>
 
+using namespace platypus;
+
 struct RiffChunk
 {
 	uint32_t riff_tag;

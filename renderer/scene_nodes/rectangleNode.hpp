@@ -5,6 +5,7 @@
 #include "sceneNode.hpp"
 
 class IEvent;
+class IMesh;
 class IPixelShader;
 class IVertexShader;
 class Scene;
@@ -21,16 +22,22 @@ class RectangleNode: public SceneNode, public std::enable_shared_from_this<Recta
 public:
 	RectangleNode(PtSceneNodeData* base_node_data, PtRectangleNodeData* rect_node_data);
 
-	virtual ~RectangleNode() = default;
+	virtual ~RectangleNode();
 
 	bool initialize(const std::shared_ptr<Scene>& scene) override;
+	bool reinitialize(const std::shared_ptr<Scene>& scene) override;
+	void deinitialize(const std::shared_ptr<Scene>& scene) override;
+
 	// bool onLostDevice(std::shared_ptr<Scene> /*scene*/) override { return true; }
 	bool render(const std::shared_ptr<Scene>& scene) override;
 
 private:
-	std::string _texture_path;
-	std::string _pixel_shader_path;
-	std::string _vertex_shader_path;
-	std::shared_ptr<IPixelShader> _pixel_shader;
-	std::shared_ptr<IVertexShader> _vertex_shader;
+	std::string _vertex_shader_resource_id;
+	std::string _pixel_shader_resource_id;
+	std::string _texture_resource_id;
+	std::string _mesh_resource_id;
+
+	std::unique_ptr<IVertexShader> _vertex_shader;
+	std::unique_ptr<IPixelShader> _pixel_shader;
+	std::unique_ptr<IMesh> _mesh;
 };

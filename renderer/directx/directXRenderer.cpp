@@ -2,13 +2,16 @@
 
 #include <array>
 
+#include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/meshResource.hpp>
 #include <resource_cache/resources/resource.hpp>
 #include <resource_cache/resources/resourceType.hpp>
+#include <resource_cache/resources/textureResource.hpp>
 #include <utilities/common/safeRelease.hpp>
 
 #include "../textRenderer.hpp"
 #include "directXAlphaPass.hpp"
+#include "directXMesh.hpp"
 #include "directXPixelShader.hpp"
 #include "directXVertexShader.hpp"
 #include "dxCommonMeshes.hpp"
@@ -27,7 +30,7 @@ DirectXRenderer::DirectXRenderer(HWND hwnd, HINSTANCE hinstance)
 {}
 
 bool DirectXRenderer::initialize(const platypus::RendererSettings& settings,
-	const std::weak_ptr<ResourceCache>& cache)
+	const std::weak_ptr<platypus::IResourceCache>& cache)
 {
 	this->_cache = cache;
 
@@ -199,10 +202,10 @@ std::shared_ptr<IShaderManager> DirectXRenderer::shaderManager()
 	return this->_shader_manager;
 }
 
-void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
+void DirectXRenderer::drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh)
 {
 	// IA setup
-	unsigned int stride = sizeof(graphics::DrawableVertex);
+	unsigned int stride = sizeof(platypus::graphics::DrawableVertex);
 	unsigned int offset = 0;
 
 	auto vertex_buffer = reinterpret_cast<ID3D11Buffer*>(mesh->getVertexBuffer());
@@ -214,28 +217,35 @@ void DirectXRenderer::drawMesh(const std::shared_ptr<MeshResource>& mesh)
 	// render
 	switch (mesh->getPrimitiveType())
 	{
-	case PtPrimitiveType::TriangleList:
+	case platypus::graphics::PrimitiveType::TriangleList:
 	{
 		this->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 		break;
 	}
-	case PtPrimitiveType::TriangleStrip:
+	case platypus::graphics::PrimitiveType::TriangleStrip:
 	{
 		this->context()->IASetPrimitiveTopology(
 			D3D11_PRIMITIVE_TOPOLOGY::D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 		break;
 	}
-	case PtPrimitiveType::Invalid:
+	case platypus::graphics::PrimitiveType::Invalid:
 		// error log
 		return;
 	}
 	this->context()->DrawIndexed((UINT)mesh->getIndexCount(), 0, 0);
 }
 
-std::shared_ptr<MeshResource> DirectXRenderer::createCommonMesh(const CommonMesh mesh_type)
+std::shared_ptr<platypus::MeshResource> DirectXRenderer::createCommonMesh(
+	const CommonMesh mesh_type) const
 {
 	return ::createCommonMesh(mesh_type, this->shared_from_this());
+}
+
+std::shared_ptr<platypus::MeshResource> DirectXRenderer::createCommonMesh(
+	const CommonMesh mesh_type, const std::string& resource_id) const
+{
+	return ::createCommonMesh(mesh_type, this->shared_from_this(), resource_id);
 }
 
 std::shared_ptr<IRendererState> DirectXRenderer::prepareAlphaPass()
@@ -252,60 +262,74 @@ void DirectXRenderer::setWorldTransform(const Mat4x4& /*world*/)
 {}
 
 PtInputLayout DirectXRenderer::createInputLayout(std::byte* shader_data, const uint64_t data_size,
-	PtInputLayoutDesc* layout_elements, const uint64_t element_count)
+	PtInputLayoutDesc* layout_elements, const uint64_t element_count) const
 {
 	return (PtInputLayout)this->_creator->newInputLayout(shader_data, data_size, layout_elements,
 		element_count);
 }
 
-void DirectXRenderer::destroyInputLayout(PtInputLayout layout)
+void DirectXRenderer::destroyInputLayout(PtInputLayout layout) const
 {
 	reinterpret_cast<ID3D11InputLayout*>(layout)->Release();
 }
 
-PtSamplerState DirectXRenderer::createSamplerState(const PtAddressOverscanMode overscan_mode)
+platypus::graphics::SamplerState DirectXRenderer::createSamplerState(
+	const platypus::TexelOverscanMode overscan_mode) const
 {
-	return (PtSamplerState)this->_creator->newSamplerState(overscan_mode);
+	return reinterpret_cast<platypus::graphics::SamplerState>(
+		this->_creator->newSamplerState(overscan_mode));
 }
 
-void DirectXRenderer::destroySamplerState(PtSamplerState sampler_state)
+void DirectXRenderer::destroySamplerState(platypus::graphics::SamplerState sampler_state) const
 {
 	reinterpret_cast<ID3D11SamplerState*>(sampler_state)->Release();
 }
 
-PtTexture DirectXRenderer::createTexture(std::byte* texture_data, const uint64_t data_size)
+std::optional<platypus::graphics::Texture> DirectXRenderer::createTexture(
+	const platypus::Data& texture_data) const
 {
-	return (PtTexture)this->_creator->newTexture(texture_data, data_size);
+	return this->_creator->newTexture(texture_data);
 }
 
-void DirectXRenderer::destroyTexture(PtTexture texture)
+void DirectXRenderer::destroyTexture(platypus::graphics::TextureResource texture) const
 {
 	reinterpret_cast<ID3D11ShaderResourceView*>(texture)->Release();
 }
 
-PtVertexBuffer DirectXRenderer::createVertexBuffer(const graphics::Vertex* vertices,
-	const uint64_t vertex_count)
+platypus::graphics::ConstantBuffer DirectXRenderer::createConstantBuffer(uint32_t buffer_size) const
 {
-	return (PtVertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
+	return (platypus::graphics::ConstantBuffer)this->_creator->newConstantBuffer(buffer_size);
 }
 
-void DirectXRenderer::destroyVertexBuffer(PtVertexBuffer buffer)
-{
-	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
-}
-
-PtIndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
-	const uint64_t index_count)
-{
-	return (PtIndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
-}
-
-void DirectXRenderer::destroyIndexBuffer(PtIndexBuffer buffer)
+void DirectXRenderer::destroyConstantBuffer(platypus::graphics::ConstantBuffer buffer) const
 {
 	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
 }
 
-PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font_family,
+platypus::graphics::VertexBuffer DirectXRenderer::createVertexBuffer(
+	const platypus::graphics::Vertex* vertices, const uint64_t vertex_count) const
+{
+	return (
+		platypus::graphics::VertexBuffer)this->_creator->newVertexBuffer(vertices, vertex_count);
+}
+
+void DirectXRenderer::destroyVertexBuffer(platypus::graphics::VertexBuffer buffer) const
+{
+	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+platypus::graphics::IndexBuffer DirectXRenderer::createIndexBuffer(const uint32_t* indices,
+	const uint64_t index_count) const
+{
+	return (platypus::graphics::IndexBuffer)this->_creator->newIndexBuffer(indices, index_count);
+}
+
+void DirectXRenderer::destroyIndexBuffer(platypus::graphics::IndexBuffer buffer) const
+{
+	reinterpret_cast<ID3D11Buffer*>(buffer)->Release();
+}
+
+platypus::TextMetrics DirectXRenderer::measureText(const char* message, const char* font_family,
 	const uint16_t point_size)
 {
 	if (!this->_text_renderer->loadFont(font_family) ||
@@ -317,39 +341,61 @@ PtTextMetrics DirectXRenderer::measureText(const char* message, const char* font
 	return this->_text_renderer->measureText(message);
 }
 
-std::shared_ptr<TextureResource> DirectXRenderer::rasterizeText(const char* message,
+std::shared_ptr<platypus::TextureResource> DirectXRenderer::rasterizeText(const char* message,
 	const char* font_family, const uint16_t point_size)
 {
-	auto texture = (PtTexture)this->_creator->newTexture(message, font_family, point_size);
-	if (texture == nullptr)
+	auto texture = this->_creator->newTexture(message, font_family, point_size);
+	if (!texture.has_value() || texture.value().texture_resource == nullptr)
 	{
 		// log error
 		return nullptr;
 	}
 
-	auto sampler_state = this->createSamplerState(PtAddressOverscanMode::Clamp);
+	auto sampler_state = this->createSamplerState(platypus::TexelOverscanMode::Clamp);
 
-	PtTextureData texture_data {};
+	platypus::TextureData texture_data {};
 	texture_data.resource_id = message;
 	texture_data.store_id = "internal";
 	texture_data.size = 0;
-	texture_data.texture = texture;
+	texture_data.texture = texture.value().texture_resource;
 	texture_data.sampler_state = sampler_state;
+	texture_data.dimensions = texture.value().dimensions;
+	texture_data.has_alpha = texture.value().has_alpha;
 
-	return std::make_shared<TextureResource>(&texture_data);
+	return std::make_shared<platypus::TextureResource>(&texture_data);
 }
 
-std::shared_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path)
+std::unique_ptr<IVertexShader> DirectXRenderer::loadVertexShader(std::string path) const
 {
-	return std::make_shared<DirectXVertexShader>(this->shared_from_this(), this->_cache.lock(),
+	return std::make_unique<DirectXVertexShader>(this->shared_from_this(), this->_cache.lock(),
 		path);
 }
 
-std::shared_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
-	std::string texture)
+std::unique_ptr<IPixelShader> DirectXRenderer::loadPixelShader(std::string path,
+	std::string texture) const
 {
-	return std::make_shared<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(), path,
+	return std::make_unique<DirectXPixelShader>(this->shared_from_this(), this->_cache.lock(), path,
 		texture);
+}
+
+std::unique_ptr<IMesh> DirectXRenderer::loadMesh(const std::string& resource_id) const
+{
+	return std::make_unique<DirectXMesh>(this->_cache.lock(), resource_id);
+}
+
+std::unique_ptr<IMesh> DirectXRenderer::loadCommonMesh(const CommonMesh mesh_type,
+	const std::string& resource_id) const
+{
+	auto cache = this->_cache.lock();
+	if (cache == nullptr)
+	{
+		// error
+		return nullptr;
+	}
+
+	auto resource = this->createCommonMesh(mesh_type, resource_id);
+	cache->addResource(resource);
+	return std::make_unique<DirectXMesh>(cache, resource_id);
 }
 
 // std::shared_ptr<ITexture> DirectXRenderer::loadTexture(std::string path)

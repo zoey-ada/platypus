@@ -3,7 +3,7 @@
 #include <list>
 
 #include <mmdeviceapi.h>
-#include <resource_cache/resourceCache.hpp>
+#include <resource_cache/iResourceCache.hpp>
 #include <resource_cache/resources/audioResource.hpp>
 #include <utilities/logging/logger.hpp>
 
@@ -18,7 +18,7 @@ CoreAudioSystem::~CoreAudioSystem()
 const CLSID CLSID_MMDeviceEnumerator = __uuidof(MMDeviceEnumerator);
 const IID IID_IMMDeviceEnumerator = __uuidof(IMMDeviceEnumerator);
 
-bool CoreAudioSystem::initialize(const std::shared_ptr<ResourceCache>& resource_cache)
+bool CoreAudioSystem::initialize(const std::shared_ptr<platypus::IResourceCache>& resource_cache)
 {
 	if (resource_cache == nullptr)
 	{

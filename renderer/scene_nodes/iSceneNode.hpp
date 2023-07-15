@@ -17,6 +17,8 @@ public:
 	virtual std::shared_ptr<SceneNodeProperties> properties() const = 0;
 
 	[[nodiscard]] virtual bool initialize(const std::shared_ptr<Scene>& scene) = 0;
+	[[nodiscard]] virtual bool reinitialize(const std::shared_ptr<Scene>& scene) = 0;
+	virtual void deinitialize(const std::shared_ptr<Scene>& scene) = 0;
 
 	virtual bool onUpdate(const std::shared_ptr<Scene>& scene, const Milliseconds delta) = 0;
 	[[nodiscard]] virtual bool isVisible(const std::shared_ptr<Scene>& scene) const = 0;

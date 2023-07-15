@@ -5,7 +5,10 @@
 
 #include <utilities/time/utils.hpp>
 
-class ResourceCache;
+namespace platypus
+{
+class IResourceCache;
+};
 
 using ChannelId = uint32_t;
 const ChannelId InvalidChannelId = 0;
@@ -15,7 +18,7 @@ class IAudioSystem
 public:
 	virtual ~IAudioSystem() = default;
 
-	virtual bool initialize(const std::shared_ptr<ResourceCache>& resource_cache) = 0;
+	virtual bool initialize(const std::shared_ptr<platypus::IResourceCache>& resource_cache) = 0;
 	virtual void deinitialize() = 0;
 
 	virtual void update(const Milliseconds delta) = 0;

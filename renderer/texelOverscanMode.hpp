@@ -1,6 +1,9 @@
 #pragma once
 
-enum class PtAddressOverscanMode
+namespace platypus
+{
+
+enum class TexelOverscanMode
 {
 	Border,
 	Clamp,
@@ -8,3 +11,5 @@ enum class PtAddressOverscanMode
 	MirrorOnce,
 	Wrap,
 };
+
+}

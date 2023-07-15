@@ -2,6 +2,8 @@
 
 #include <resource_cache/stores/iResourceStore.hpp>
 
+using namespace platypus;
+
 class MockResourceStore: public IResourceStore
 {
 public:

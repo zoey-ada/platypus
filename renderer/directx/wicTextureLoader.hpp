@@ -2,22 +2,22 @@
 
 #include <map>
 #include <memory>
+#include <optional>
 
 #include <wincodec.h>
 
+#include <utilities/common/data.hpp>
+#include <utilities/common/ptExtent.hpp>
+
+#include "../graphics.hpp"
+
 class DirectXRenderer;
-class TextureResource;
+class ILoggingSystem;
 
 struct ID3D11ShaderResourceView;
-// struct IWICBitmapFrameDecode;
-// struct GUID;
 
-// using REFGUID = const GUID&;
-
-struct compareGuid
+namespace platypus
 {
-	bool operator()(REFGUID rguid1, REFGUID rguid2) const;
-};
 
 class WicTextureLoader
 {
@@ -28,34 +28,28 @@ public:
 	bool initialize();
 	void deinitialize();
 
-	[[nodiscard]] ID3D11ShaderResourceView* loadTexture(std::byte* image_data,
-		const uint64_t data_size, const std::shared_ptr<DirectXRenderer>& renderer);
-
-	[[nodiscard]] ID3D11ShaderResourceView* createTextTexture(const char* message,
-		const char* font_family, const uint16_t point_size,
+	std::optional<graphics::Texture> loadTexture(const Data& image_data,
 		const std::shared_ptr<DirectXRenderer>& renderer);
 
 private:
+	std::shared_ptr<ILoggingSystem> _log;
+	const char* _log_channel {"render"};
+
+	bool _has_been_initialized {false};
 	IWICImagingFactory* _wic_factory {nullptr};
 
-	std::map<const GUID, DXGI_FORMAT, compareGuid> _wic_to_dxgi_format_mappings;
-	std::map<GUID, GUID, compareGuid> _wic_format_to_supported_format_mappings;
+	IWICBitmapFrameDecode* getWicFrame(IWICStream* stream);
+	Extent getDimensions(IWICBitmapSource* source);
+	bool hasAlphaChannel(const WICPixelFormatGUID& pixel_format);
+	WICPixelFormatGUID getPixelFormat(IWICBitmapSource* source);
 
-	[[nodiscard]] IWICStream* newWicStream() const;
-	[[nodiscard]] IWICFormatConverter* newWicFormatConverter() const;
-	[[nodiscard]] IWICBitmapDecoder* newWicBitmapDecoder(IWICStream* stream) const;
-	[[nodiscard]] IWICComponentInfo* newWicComponentInfo(
-		const WICPixelFormatGUID& pixel_format) const;
+	IWICBitmapSource* convertTo32bitRgba(IWICBitmapSource* source);
 
-	[[nodiscard]] IWICBitmapFrameDecode* createTextureFromWic(std::byte* image_data,
-		const uint64_t image_data_size);
+	graphics::TextureResource createTextureFromWic(IWICBitmapSource* source,
+		const std::shared_ptr<DirectXRenderer>& renderer, const Extent& dimensions);
 
-	[[nodiscard]] ID3D11ShaderResourceView* createWicTexture(IWICBitmapFrameDecode* frame,
-		const std::shared_ptr<DirectXRenderer>& renderer);
-
-	[[nodiscard]] DXGI_FORMAT toDxgiFormat(WICPixelFormatGUID& pixel_format) const;
-	[[nodiscard]] uint64_t getBitsPerPixel(const WICPixelFormatGUID& pixel_format) const;
-
-	void loadWicDxgiMappings();
-	void loadSupportedWicMappings();
+	IWICStream* newWicStreamFromMemory(const Data& image_data) const;
+	IWICBitmapDecoder* newWicBitmapDecoder(IWICStream* stream) const;
 };
+
+}

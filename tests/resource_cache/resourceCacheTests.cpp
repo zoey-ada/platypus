@@ -8,6 +8,8 @@
 #include <tests/resource_cache/stores/mockResourceStore.hpp>
 #include <tests/utilities/logging/mockLoggingSystem.hpp>
 
+using namespace platypus;
+
 SCENARIO("resource cache can load a resource", "[res_cache]")
 {
 	auto logging = std::make_shared<MockLoggingSystem>();

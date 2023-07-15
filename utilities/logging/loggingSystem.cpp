@@ -99,3 +99,92 @@ void LoggingSystem::forEachLogger(
 	for (const auto& l : this->_attachedLoggers)
 		func(l);
 }
+
+#ifdef _WIN32
+
+void LoggingSystem::debug(const std::string_view& message, const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->debug(message);
+		l->debug("Windows Error Code: " + std::to_string(hr));
+	});
+}
+
+void LoggingSystem::debug(const std::string_view& channel, const std::string_view& message,
+	const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->debug(message, channel);
+		l->debug("Windows Error Code: " + std::to_string(hr), channel);
+	});
+}
+
+void LoggingSystem::verbose(const std::string_view& message, const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->verbose(message);
+		l->verbose("Windows Error Code: " + std::to_string(hr));
+	});
+}
+
+void LoggingSystem::verbose(const std::string_view& channel, const std::string_view& message,
+	const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->verbose(message, channel);
+		l->verbose("Windows Error Code: " + std::to_string(hr), channel);
+	});
+}
+
+void LoggingSystem::info(const std::string_view& message, const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->info(message);
+		l->info("Windows Error Code: " + std::to_string(hr));
+	});
+}
+
+void LoggingSystem::info(const std::string_view& channel, const std::string_view& message,
+	const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->info(message, channel);
+		l->info("Windows Error Code: " + std::to_string(hr), channel);
+	});
+}
+
+void LoggingSystem::warning(const std::string_view& message, const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->warning(message);
+		l->warning("Windows Error Code: " + std::to_string(hr));
+	});
+}
+
+void LoggingSystem::warning(const std::string_view& channel, const std::string_view& message,
+	const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->warning(message, channel);
+		l->warning("Windows Error Code: " + std::to_string(hr), channel);
+	});
+}
+
+void LoggingSystem::error(const std::string_view& message, const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->error(message);
+		l->error("Windows Error Code: " + std::to_string(hr));
+	});
+}
+
+void LoggingSystem::error(const std::string_view& channel, const std::string_view& message,
+	const HRESULT hr)
+{
+	this->forEachLogger([&](auto l) {
+		l->error(message, channel);
+		l->error("Windows Error Code: " + std::to_string(hr), channel);
+	});
+}
+
+#endif

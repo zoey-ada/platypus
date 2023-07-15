@@ -5,6 +5,10 @@
 #include "iResourceLoader.hpp"
 
 class ILoggingSystem;
+
+namespace platypus
+{
+
 class IResourceCache;
 
 class AudioLoader: public IResourceLoader
@@ -26,4 +30,6 @@ protected:
 private:
 	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<ILoggingSystem> _logging;
+};
+
 };

@@ -7,6 +7,9 @@
 #include "../resourceCache.hpp"
 #include "../resources/audioResource.hpp"
 
+namespace platypus
+{
+
 struct RiffChunk
 {
 	uint32_t riff_tag;
@@ -58,7 +61,7 @@ std::shared_ptr<Resource> AudioLoader::load(const char* resource_id, const char*
 	auto data_chunk =
 		reinterpret_cast<DataChunk*>(resource_data + sizeof(RiffChunk) + sizeof(WaveChunk));
 
-	PtAudioData audio_data;
+	AudioData audio_data;
 	audio_data.audio_data_size = data_chunk->size;
 	audio_data.bits_per_sample = wave_chunk->bits_per_sample;
 	audio_data.channels = static_cast<uint8_t>(wave_chunk->channels);
@@ -77,3 +80,5 @@ uint8_t* AudioLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
+
+};

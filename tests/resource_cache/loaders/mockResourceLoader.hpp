@@ -2,6 +2,8 @@
 
 #include <resource_cache/loaders/iResourceLoader.hpp>
 
+using namespace platypus;
+
 class MockResourceLoader: public IResourceLoader
 {
 public:

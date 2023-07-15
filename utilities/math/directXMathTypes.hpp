@@ -23,7 +23,7 @@ class Frustum;
 class Vec2: public dx::XMFLOAT2
 {
 public:
-	inline explicit Vec2(const float _x = 0.0f, const float _y = 0.0f): dx::XMFLOAT2(_x, _y) {}
+	inline Vec2(const float _x = 0.0f, const float _y = 0.0f): dx::XMFLOAT2(_x, _y) {}
 	inline explicit Vec2(const platypus::Vector2& v): Vec2(v.x(), v.y()) {}
 	inline explicit Vec2(const platypus::Vector3& v): Vec2(v.x(), v.y()) {}
 	inline explicit Vec2(const Vec3& v);
@@ -108,7 +108,7 @@ class Vec4: public dx::XMFLOAT4
 	friend class Mat4x4;
 
 public:
-	inline explicit Vec4(const float _x = 0.0f, const float _y = 0.0f, const float _z = 0.0f,
+	inline Vec4(const float _x = 0.0f, const float _y = 0.0f, const float _z = 0.0f,
 		const float _w = 0.0f)
 		: dx::XMFLOAT4(_x, _y, _z, _w)
 	{}

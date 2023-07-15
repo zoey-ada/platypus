@@ -4,7 +4,10 @@
 
 #include "resource.hpp"
 
-struct PtPixelShaderData: public PtResourceData
+namespace platypus
+{
+
+struct PixelShaderData: public ResourceData
 {
 	PtPixelShader pixel_shader;
 };
@@ -12,7 +15,7 @@ struct PtPixelShaderData: public PtResourceData
 class PixelShaderResource: public Resource
 {
 public:
-	explicit PixelShaderResource(PtPixelShaderData* resource_data);
+	explicit PixelShaderResource(PixelShaderData* resource_data);
 	virtual ~PixelShaderResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::PixelShader; }
@@ -21,4 +24,6 @@ public:
 
 private:
 	PtPixelShader _shader {nullptr};
+};
+
 };

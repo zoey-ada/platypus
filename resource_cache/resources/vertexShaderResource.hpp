@@ -4,7 +4,10 @@
 
 #include "resource.hpp"
 
-struct PtVertexShaderData: public PtResourceData
+namespace platypus
+{
+
+struct VertexShaderData: public ResourceData
 {
 	PtVertexShader vertex_shader;
 	PtInputLayout input_layout;
@@ -13,7 +16,7 @@ struct PtVertexShaderData: public PtResourceData
 class VertexShaderResource: public Resource
 {
 public:
-	explicit VertexShaderResource(PtVertexShaderData* resource_data);
+	explicit VertexShaderResource(VertexShaderData* resource_data);
 	virtual ~VertexShaderResource();
 
 	[[nodiscard]] ResourceType type() const override { return ResourceType::VertexShader; }
@@ -24,4 +27,6 @@ public:
 private:
 	PtVertexShader _shader {nullptr};
 	PtInputLayout _input_layout {nullptr};
+};
+
 };

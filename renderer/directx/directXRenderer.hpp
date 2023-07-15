@@ -8,6 +8,13 @@
 class DxShaderManager;
 class TextRenderer;
 
+namespace platypus
+{
+class IResourceCache;
+class MeshResource;
+class TextureResource;
+};
+
 class DirectXRenderer: public IRenderer, public std::enable_shared_from_this<DirectXRenderer>
 {
 	friend class DirectXObjectCreator;
@@ -18,7 +25,7 @@ public:
 	virtual ~DirectXRenderer() { DirectXRenderer::deinitialize(); }
 
 	bool initialize(const platypus::RendererSettings& settings,
-		const std::weak_ptr<ResourceCache>& cache) override;
+		const std::weak_ptr<platypus::IResourceCache>& cache) override;
 	void deinitialize() override;
 
 	bool preRender() override;
@@ -28,8 +35,11 @@ public:
 
 	std::shared_ptr<IShaderManager> shaderManager() override;
 
-	void drawMesh(const std::shared_ptr<MeshResource>& mesh) override;
-	std::shared_ptr<MeshResource> createCommonMesh(const CommonMesh mesh_type) override;
+	void drawMesh(const std::shared_ptr<platypus::MeshResource>& mesh) override;
+	std::shared_ptr<platypus::MeshResource> createCommonMesh(
+		const CommonMesh mesh_type) const override;
+	std::shared_ptr<platypus::MeshResource> createCommonMesh(const CommonMesh mesh_type,
+		const std::string& resource_id) const override;
 
 	std::shared_ptr<IRendererState> prepareAlphaPass() override;
 
@@ -38,36 +48,46 @@ public:
 	void setWorldTransform(const Mat4x4& world) override;
 
 	PtInputLayout createInputLayout(std::byte* shader_data, const uint64_t data_size,
-		PtInputLayoutDesc* layout_elements, const uint64_t element_count) override;
-	void destroyInputLayout(PtInputLayout layout) override;
+		PtInputLayoutDesc* layout_elements, const uint64_t element_count) const override;
+	void destroyInputLayout(PtInputLayout layout) const override;
 
-	PtSamplerState createSamplerState(const PtAddressOverscanMode overscan_mode) override;
-	void destroySamplerState(PtSamplerState sampler_state) override;
+	platypus::graphics::SamplerState createSamplerState(
+		const platypus::TexelOverscanMode overscan_mode) const override;
+	void destroySamplerState(platypus::graphics::SamplerState sampler_state) const override;
 
-	PtTexture createTexture(std::byte* shader_data, const uint64_t data_size) override;
-	void destroyTexture(PtTexture texture) override;
+	std::optional<platypus::graphics::Texture> createTexture(
+		const platypus::Data& texture_data) const override;
+	void destroyTexture(platypus::graphics::TextureResource texture) const override;
 
-	PtVertexBuffer createVertexBuffer(const graphics::Vertex* vertices,
-		const uint64_t vertex_count) override;
-	void destroyVertexBuffer(PtVertexBuffer buffer) override;
+	platypus::graphics::ConstantBuffer createConstantBuffer(uint32_t buffer_size) const override;
+	void destroyConstantBuffer(platypus::graphics::ConstantBuffer buffer) const override;
 
-	PtIndexBuffer createIndexBuffer(const uint32_t* indices, const uint64_t index_count) override;
-	void destroyIndexBuffer(PtIndexBuffer buffer) override;
+	platypus::graphics::VertexBuffer createVertexBuffer(const platypus::graphics::Vertex* vertices,
+		const uint64_t vertex_count) const override;
+	void destroyVertexBuffer(platypus::graphics::VertexBuffer buffer) const override;
 
-	PtTextMetrics measureText(const char* message, const char* font_family,
+	platypus::graphics::IndexBuffer createIndexBuffer(const uint32_t* indices,
+		const uint64_t index_count) const override;
+	void destroyIndexBuffer(platypus::graphics::IndexBuffer buffer) const override;
+
+	platypus::TextMetrics measureText(const char* message, const char* font_family,
 		const uint16_t point_size) override;
-	std::shared_ptr<TextureResource> rasterizeText(const char* message, const char* font_family,
-		const uint16_t point_size) override;
+	std::shared_ptr<platypus::TextureResource> rasterizeText(const char* message,
+		const char* font_family, const uint16_t point_size) override;
 
-	std::shared_ptr<IVertexShader> loadVertexShader(std::string path) override;
-	std::shared_ptr<IPixelShader> loadPixelShader(std::string path,
-		std::string texture = std::string()) override;
+	std::unique_ptr<IVertexShader> loadVertexShader(std::string path) const override;
+	std::unique_ptr<IPixelShader> loadPixelShader(std::string path,
+		std::string texture = std::string()) const override;
+
+	std::unique_ptr<IMesh> loadMesh(const std::string& resource_id) const override;
+	std::unique_ptr<IMesh> loadCommonMesh(const CommonMesh mesh_type,
+		const std::string& resource_id) const override;
 
 	// std::shared_ptr<ITexture> loadTexture(std::string path) override;
 
 	bool doesFormatSupport(DXGI_FORMAT format, D3D11_FORMAT_SUPPORT resource_type) const;
 
-	std::shared_ptr<DirectXObjectCreator> create() { return this->_creator; }
+	std::shared_ptr<DirectXObjectCreator> create() const { return this->_creator; }
 
 	ID3D11DeviceContext* context() const { return this->_context; }
 	ID3D11Device* device() const { return this->_device; }
@@ -86,7 +106,7 @@ private:
 
 	Color _backgroundColor;
 
-	std::weak_ptr<ResourceCache> _cache;
+	std::weak_ptr<platypus::IResourceCache> _cache;
 	std::shared_ptr<DirectXObjectCreator> _creator;
 	std::shared_ptr<DxShaderManager> _shader_manager;
 	std::shared_ptr<TextRenderer> _text_renderer;

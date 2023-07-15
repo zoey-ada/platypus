@@ -4,7 +4,10 @@
 #include <renderer/iShaderManager.hpp>
 #include <serviceProvider.hpp>
 
-PixelShaderResource::PixelShaderResource(PtPixelShaderData* resource_data)
+namespace platypus
+{
+
+PixelShaderResource::PixelShaderResource(PixelShaderData* resource_data)
 	: Resource(resource_data), _shader(resource_data->pixel_shader)
 {}
 
@@ -15,4 +18,6 @@ PixelShaderResource::~PixelShaderResource()
 		ServiceProvider::getRenderer()->shaderManager()->destroyPixelShader(this->_shader);
 		this->_shader = nullptr;
 	}
+};
+
 };

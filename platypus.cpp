@@ -14,9 +14,11 @@
 #include <resource_cache/loaders/audioLoader.hpp>
 #include <resource_cache/loaders/meshLoader.hpp>
 #include <resource_cache/loaders/pixelShaderLoader.hpp>
+#include <resource_cache/loaders/stringLoader.hpp>
 #include <resource_cache/loaders/textureLoader.hpp>
 #include <resource_cache/loaders/vertexShaderLoader.hpp>
 #include <resource_cache/resourceCache.hpp>
+#include <resource_cache/resources/protobufResource.hpp>
 #include <resource_cache/stores/resourceStoreFactory.hpp>
 #include <utilities/logging/logger.hpp>
 #include <utilities/logging/loggingSystem.hpp>
@@ -63,6 +65,7 @@ bool Platypus::initialize()
 	assert(this->_renderer->initialize(this->_settings.renderer_settings(), this->_cache));
 	// this->_renderer->enableDebugMode();
 	ServiceProvider::registerRenderer(this->_renderer);
+	ServiceProvider::registerResourceCache(this->_cache);
 
 	// requires settings and renderer to be initialized
 	this->_logic = this->createLogicAndView();
@@ -102,19 +105,24 @@ void Platypus::deinitialize()
 
 void Platypus::registerResourceLoaders()
 {
-	this->_cache->registerLoader(
-		std::make_shared<VertexShaderLoader>(this->_cache, this->_renderer, this->_logging));
+	this->_cache->registerLoader(std::make_shared<platypus::VertexShaderLoader>(this->_cache,
+		this->_renderer, this->_logging));
+
+	this->_cache->registerLoader(std::make_shared<platypus::PixelShaderLoader>(this->_cache,
+		this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<PixelShaderLoader>(this->_cache, this->_renderer, this->_logging));
+		std::make_shared<platypus::TextureLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<TextureLoader>(this->_cache, this->_renderer, this->_logging));
+		std::make_shared<platypus::MeshLoader>(this->_cache, this->_renderer, this->_logging));
 
 	this->_cache->registerLoader(
-		std::make_shared<MeshLoader>(this->_cache, this->_renderer, this->_logging));
+		std::make_shared<platypus::AudioLoader>(this->_cache, this->_logging));
 
-	this->_cache->registerLoader(std::make_shared<AudioLoader>(this->_cache, this->_logging));
+	this->_cache->registerLoader(
+		std::make_shared<platypus::StringLoader<platypus::ProtobufResource>>(this->_cache,
+			this->_logging, platypus::ResourceType::Protobuf));
 }
 
 UpdateFunction Platypus::getUpdateFunction() const
@@ -143,12 +151,12 @@ bool Platypus::createCache()
 		auto cache_settings = this->_settings.resource_cache_settings();
 		auto cache_size = cache_settings.cache_size_in_mb();
 
-		this->_cache = std::make_shared<ResourceCache>(cache_size, this->_logging);
+		this->_cache = std::make_shared<platypus::ResourceCache>(cache_size, this->_logging);
 
-		std::list<std::shared_ptr<IResourceStore>> res_stores;
+		std::list<std::shared_ptr<platypus::IResourceStore>> res_stores;
 		for (const auto& res_store : cache_settings.resource_stores())
 		{
-			auto store = ResourceStoreFactory::createResourceStore(res_store);
+			auto store = platypus::ResourceStoreFactory::createResourceStore(res_store);
 			res_stores.push_back(store);
 		}
 		if (!this->_cache->initialize(res_stores))

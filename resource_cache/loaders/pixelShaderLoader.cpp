@@ -8,6 +8,9 @@
 #include "../resourceCache.hpp"
 #include "../resources/pixelShaderResource.hpp"
 
+namespace platypus
+{
+
 PixelShaderLoader::PixelShaderLoader(std::shared_ptr<IResourceCache> cache,
 	std::shared_ptr<IRenderer> renderer, std::shared_ptr<ILoggingSystem> logging)
 	: _cache(std::move(cache)), _renderer(std::move(renderer)), _logging(std::move(logging))
@@ -37,7 +40,7 @@ std::shared_ptr<Resource> PixelShaderLoader::load(const char* resource_id, const
 		return nullptr;
 	}
 
-	PtPixelShaderData shader_data {};
+	PixelShaderData shader_data {};
 	shader_data.resource_id = resource_id;
 	shader_data.store_id = store_id;
 	shader_data.pixel_shader = shader;
@@ -48,3 +51,5 @@ uint8_t* PixelShaderLoader::allocate(unsigned int size)
 {
 	return this->_cache->allocate(size);
 }
+
+};

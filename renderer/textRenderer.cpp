@@ -107,17 +107,17 @@ bool TextRenderer::setFontSize(uint16_t point_size)
 	return true;
 }
 
-PtTextMetrics TextRenderer::measureText(const char* message, uint16_t point_size)
+platypus::TextMetrics TextRenderer::measureText(const char* message, uint16_t point_size)
 {
 	if (!this->setFontSize(point_size))
 	{
-		return PtTextMetrics {};
+		return platypus::TextMetrics {};
 	}
 
 	return this->measureText(message);
 }
 
-PtTextMetrics TextRenderer::measureText(const char* message)
+platypus::TextMetrics TextRenderer::measureText(const char* message)
 {
 	uint32_t width = 0;
 	uint32_t highest_ascender = 0;
@@ -151,7 +151,7 @@ PtTextMetrics TextRenderer::measureText(const char* message)
 
 	uint32_t height = highest_ascender + lowest_descender;
 
-	PtTextMetrics metrics {};
+	platypus::TextMetrics metrics {};
 	metrics.size = {height, width};
 	metrics.message = message;
 	metrics.max_ascender = highest_ascender;
@@ -175,7 +175,7 @@ std::byte* TextRenderer::rasterizeText(const char* message, const uint16_t point
 	return this->rasterizeText(message, &text_metrics);
 }
 
-std::byte* TextRenderer::rasterizeText(const char* message, PtTextMetrics* text_metrics,
+std::byte* TextRenderer::rasterizeText(const char* message, platypus::TextMetrics* text_metrics,
 	const uint16_t point_size)
 {
 	if (!this->setFontSize(point_size))
@@ -185,7 +185,7 @@ std::byte* TextRenderer::rasterizeText(const char* message, PtTextMetrics* text_
 	return this->rasterizeText(message, text_metrics);
 }
 
-std::byte* TextRenderer::rasterizeText(const char* message, PtTextMetrics* text_metrics)
+std::byte* TextRenderer::rasterizeText(const char* message, platypus::TextMetrics* text_metrics)
 {
 	uint64_t stride = text_metrics->size.width * 4;
 	uint64_t image_data_size = stride * text_metrics->size.height;

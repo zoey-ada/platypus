@@ -5,10 +5,6 @@
 #include <utilities/common/ptExtent.hpp>
 #include <utilities/math/mathTypes.hpp>
 
-class _PtVertexBuffer;
-class _PtIndexBuffer;
-class _PtSamplerState;
-class _PtTexture;
 class _PtInputLayout;
 
 class _PtComputeShader;
@@ -25,18 +21,7 @@ using PtHullShader = _PtHullShader*;
 using PtPixelShader = _PtPixelShader*;
 using PtVertexShader = _PtVertexShader*;
 
-using PtVertexBuffer = _PtVertexBuffer*;
-using PtIndexBuffer = _PtIndexBuffer*;
-using PtSamplerState = _PtSamplerState*;
-using PtTexture = _PtTexture*;
 using PtInputLayout = _PtInputLayout*;
-
-enum class PtPrimitiveType
-{
-	TriangleList,
-	TriangleStrip,
-	Invalid
-};
 
 enum class PtInputFormat
 {
@@ -52,16 +37,48 @@ struct PtInputLayoutDesc
 	PtInputFormat format;
 };
 
-struct PtTextMetrics
+namespace platypus
+{
+
+struct TextMetrics
 {
 	const char* message;
-	PtExtent size;
+	Extent size;
 	uint32_t max_ascender;
 	uint32_t max_descender;
 };
 
 namespace graphics
 {
+
+class _TextureResource;
+using TextureResource = _TextureResource*;
+
+class _SamplerState;
+using SamplerState = _SamplerState*;
+
+class _ConstantBuffer;
+using ConstantBuffer = _ConstantBuffer*;
+
+class _VertexBuffer;
+using VertexBuffer = _VertexBuffer*;
+
+class _IndexBuffer;
+using IndexBuffer = _IndexBuffer*;
+
+enum class PrimitiveType
+{
+	TriangleList,
+	TriangleStrip,
+	Invalid
+};
+
+struct Texture
+{
+	TextureResource texture_resource;
+	Extent dimensions;
+	bool has_alpha;
+};
 
 struct Vertex
 {
@@ -87,5 +104,13 @@ struct DrawableVertex
 DrawableVertex drawable(const Vertex& vertex);
 std::vector<DrawableVertex> drawable(const std::vector<Vertex>& vertices);
 std::vector<DrawableVertex> drawable(const Vertex* vertices, const uint64_t vertex_count);
+
+struct ConstantBuffer_Material
+{
+	DirectX::XMVECTOR _diffuseObjectColor;
+	bool _hasTexture;
+};
+
+}
 
 }

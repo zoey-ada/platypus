@@ -26,7 +26,7 @@ public:
 		// TODO: have each logger deinitialize here
 	}
 
-	void update(Milliseconds /*delta*/) override {}
+	void update(const Milliseconds /*delta*/) override {}
 
 	void pause() override { this->_is_paused = true; }
 	void resume() override { this->_is_paused = false; }
@@ -45,6 +45,30 @@ public:
 
 	void error(const std::string_view& message) override;
 	void error(const std::string_view& channel, const std::string_view& message) override;
+
+#ifdef _WIN32
+
+	void debug(const std::string_view& message, const HRESULT hr) override;
+	void debug(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override;
+
+	void verbose(const std::string_view& message, const HRESULT hr) override;
+	void verbose(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override;
+
+	void info(const std::string_view& message, const HRESULT hr) override;
+	void info(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override;
+
+	void warning(const std::string_view& message, const HRESULT hr) override;
+	void warning(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override;
+
+	void error(const std::string_view& message, const HRESULT hr) override;
+	void error(const std::string_view& channel, const std::string_view& message,
+		const HRESULT hr) override;
+
+#endif
 
 private:
 	std::shared_ptr<IClock> _clock;

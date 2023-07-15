@@ -8,10 +8,14 @@
 #include <mmeapi.h>
 #include <utilities/time/utils.hpp>
 
-class AudioResource;
 struct IAudioClient;
 struct IAudioRenderClient;
 struct IMMDevice;
+
+namespace platypus
+{
+class AudioResource;
+};
 
 class WasapiChannel
 {
@@ -19,7 +23,7 @@ public:
 	explicit WasapiChannel() = default;
 	virtual ~WasapiChannel();
 
-	bool initialize(IMMDevice* device, std::shared_ptr<AudioResource> resource);
+	bool initialize(IMMDevice* device, std::shared_ptr<platypus::AudioResource> resource);
 	void deinitialize();
 
 	void startUpdateLoop() { this->_should_run = true; }
@@ -37,7 +41,7 @@ public:
 private:
 	IAudioClient* _audio_client {nullptr};
 	IAudioRenderClient* _audio_render_client {nullptr};
-	std::shared_ptr<AudioResource> _resource {nullptr};
+	std::shared_ptr<platypus::AudioResource> _resource {nullptr};
 	uint32_t _buffer_frame_count {0};
 	uint8_t _frame_size {0};
 	WAVEFORMATEX _format;

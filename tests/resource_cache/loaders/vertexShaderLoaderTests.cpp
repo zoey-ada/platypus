@@ -8,6 +8,8 @@
 #include <tests/resource_cache/mockResourceCache.hpp>
 #include <tests/utilities/logging/mockLoggingSystem.hpp>
 
+using namespace platypus;
+
 SCENARIO("vertex shader loader can load a vertex shader", "[res_cache]")
 {
 	auto logging = std::make_shared<MockLoggingSystem>();

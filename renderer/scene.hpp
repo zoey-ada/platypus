@@ -9,19 +9,24 @@
 #include <utilities/time/utils.hpp>
 
 struct AlphaSceneNode;
-class CameraNode;
 class IEvent;
 class IRenderer;
 class ISceneNode;
-class ResourceCache;
 class SceneNode;
+
+namespace platypus
+{
+class CameraNode;
+class IResourceCache;
+};
 
 using SceneEntityMap = std::map<EntityId, std::shared_ptr<ISceneNode>>;
 
 class Scene: public std::enable_shared_from_this<Scene>
 {
 public:
-	explicit Scene(std::shared_ptr<IRenderer> renderer, std::shared_ptr<ResourceCache> cache);
+	explicit Scene(std::shared_ptr<IRenderer> renderer,
+		std::shared_ptr<platypus::IResourceCache> cache);
 	virtual ~Scene() = default;
 
 	[[nodiscard]] bool initialize();
@@ -37,8 +42,8 @@ public:
 	void popMatrix();
 	[[nodiscard]] const Mat4x4& getTopMatrix() const;
 
-	void setCamera(std::shared_ptr<CameraNode> camera) { this->_camera = camera; }
-	[[nodiscard]] std::shared_ptr<CameraNode> getCamera() const { return this->_camera; }
+	void setCamera(std::shared_ptr<platypus::CameraNode> camera) { this->_camera = camera; }
+	[[nodiscard]] std::shared_ptr<platypus::CameraNode> getCamera() const { return this->_camera; }
 
 	void addAlphaSceneNode(std::shared_ptr<AlphaSceneNode> node)
 	{
@@ -46,7 +51,7 @@ public:
 	}
 
 	[[nodiscard]] std::shared_ptr<IRenderer> renderer() const { return this->_renderer; }
-	[[nodiscard]] std::shared_ptr<ResourceCache> cache() const { return this->_cache; }
+	[[nodiscard]] std::shared_ptr<platypus::IResourceCache> cache() const { return this->_cache; }
 
 	void registerEventSinks();
 	void onNewRenderComponent(std::shared_ptr<IEvent> event);
@@ -54,9 +59,9 @@ public:
 
 private:
 	std::shared_ptr<SceneNode> _root {nullptr};
-	std::shared_ptr<CameraNode> _camera {nullptr};
+	std::shared_ptr<platypus::CameraNode> _camera {nullptr};
 	std::shared_ptr<IRenderer> _renderer {nullptr};
-	std::shared_ptr<ResourceCache> _cache {nullptr};
+	std::shared_ptr<platypus::IResourceCache> _cache {nullptr};
 
 	std::stack<Mat4x4> _matrix_stack {};
 	std::list<std::shared_ptr<AlphaSceneNode>> _alpha_scene_nodes;

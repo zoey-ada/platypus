@@ -29,14 +29,14 @@ struct ConstantBuffer_Material
 	uint32_t _hasTexture;
 };
 
-DirectXVertexShader::DirectXVertexShader(std::shared_ptr<IRenderer> renderer,
-	std::weak_ptr<ResourceCache> cache, std::string path)
+DirectXVertexShader::DirectXVertexShader(std::shared_ptr<const IRenderer> renderer,
+	std::weak_ptr<platypus::IResourceCache> cache, std::string path)
 	: _path(std::move(path)), _resource_cache(cache)
 {
 	if (this->_path.empty())
 		this->_path = "assets.zip/shaders/simple_vertex.cso";
 
-	_renderer = std::dynamic_pointer_cast<DirectXRenderer>(renderer);
+	_renderer = std::dynamic_pointer_cast<const DirectXRenderer>(renderer);
 	if (_renderer == nullptr)
 		logWarning(
 			"attempting to create DirectX vertex shader when not using DirectX "

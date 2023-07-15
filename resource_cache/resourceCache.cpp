@@ -8,11 +8,15 @@
 #include "resources/audioResource.hpp"
 #include "resources/meshResource.hpp"
 #include "resources/pixelShaderResource.hpp"
+#include "resources/protobufResource.hpp"
 #include "resources/resource.hpp"
 #include "resources/resourceType.hpp"
 #include "resources/textureResource.hpp"
 #include "resources/vertexShaderResource.hpp"
 #include "stores/iResourceStore.hpp"
+
+namespace platypus
+{
 
 const unsigned int bytes_in_kilobyte = 1024;
 const unsigned int bytes_in_megabyte = bytes_in_kilobyte * 1024;
@@ -92,6 +96,12 @@ std::shared_ptr<AudioResource> ResourceCache::getAudio(const std::string& path)
 	return std::dynamic_pointer_cast<AudioResource>(this->getResource(ResourceType::Audio, path));
 }
 
+std::shared_ptr<ProtobufResource> ResourceCache::getProtobuf(const std::string& path)
+{
+	return std::dynamic_pointer_cast<ProtobufResource>(
+		this->getResource(ResourceType::Protobuf, path));
+}
+
 bool ResourceCache::exists(const ResourceType& type, const std::string& path) const
 {
 	return this->tryShareResource(type, path) != nullptr;
@@ -110,6 +120,22 @@ bool ResourceCache::addResource(const std::shared_ptr<Resource>& resource)
 	this->_recently_used.push_front(resource);
 
 	return true;
+}
+
+void ResourceCache::touchResource(const ResourceType& type, const std::string& resource_id)
+{
+	this->_logging->debug("resource_cache", "attempting to touch resource " + resource_id);
+	auto resource = this->tryShareResource(type, resource_id);
+
+	if (resource != nullptr)
+	{
+		this->_logging->debug("resource_cache", "resource was found in the cache");
+		this->updateResource(resource);
+	}
+	else
+	{
+		this->_logging->warning("resource_cache", "resource was not in the cache");
+	}
 }
 
 void ResourceCache::flush()
@@ -313,3 +339,5 @@ void ResourceCache::memoryHasBeenFreed(const uint64_t size)
 	this->_logging->debug("resource_cache", std::to_string(size) + " bytes freed");
 	this->_allocated -= size;
 }
+
+};

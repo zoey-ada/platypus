@@ -4,11 +4,16 @@
 
 #include "scene.hpp"
 
+namespace platypus
+{
+class IResourceCache;
+};
+
 class ScreenElementScene: public IScreenElement, public Scene
 {
 public:
 	explicit ScreenElementScene(std::shared_ptr<IRenderer> renderer,
-		std::shared_ptr<ResourceCache> cache)
+		std::shared_ptr<platypus::IResourceCache> cache)
 		: Scene(renderer, cache)
 	{}
 	virtual ~ScreenElementScene() = default;

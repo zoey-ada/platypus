@@ -2,7 +2,7 @@
 
 #include "color.hpp"
 
-struct PtMaterialDesc
+struct MaterialDesc
 {
 	Color ambient;
 	Color diffuse;
@@ -15,7 +15,7 @@ class Material
 {
 public:
 	Material() = default;
-	explicit Material(PtMaterialDesc* material_desc)
+	explicit Material(MaterialDesc* material_desc)
 		: _ambient(std::move(material_desc->ambient)),
 		  _diffuse(std::move(material_desc->diffuse)),
 		  _specular(std::move(material_desc->specular)),

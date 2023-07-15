@@ -11,16 +11,10 @@
 #include "resources/resourceType.hpp"
 
 class IRenderer;
-class IResourceStore;
-class IResourceLoader;
 class ILoggingSystem;
 
-class Resource;
-class PixelShaderResource;
-class VertexShaderResource;
-class TextureResource;
-class MeshResource;
-class AudioResource;
+namespace platypus
+{
 
 using ResourceList = std::list<std::shared_ptr<Resource>>;
 using ResourceMap = std::map<std::string, std::shared_ptr<Resource>>;
@@ -35,21 +29,24 @@ public:
 
 	virtual ~ResourceCache();
 
-	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores);
+	bool initialize(const std::list<std::shared_ptr<IResourceStore>>& resource_stores) override;
 
-	void registerLoader(const std::shared_ptr<IResourceLoader>& loader);
+	void registerLoader(const std::shared_ptr<IResourceLoader>& loader) override;
 
-	std::shared_ptr<Resource> getResource(const ResourceType& type, const std::string& path);
-	std::shared_ptr<PixelShaderResource> getPixelShader(const std::string& path);
-	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path);
-	std::shared_ptr<TextureResource> getTexture(const std::string& path);
-	std::shared_ptr<MeshResource> getMesh(const std::string& path);
-	std::shared_ptr<AudioResource> getAudio(const std::string& path);
+	std::shared_ptr<Resource> getResource(const ResourceType& type,
+		const std::string& path) override;
+	std::shared_ptr<PixelShaderResource> getPixelShader(const std::string& path) override;
+	std::shared_ptr<VertexShaderResource> getVertexShader(const std::string& path) override;
+	std::shared_ptr<TextureResource> getTexture(const std::string& path) override;
+	std::shared_ptr<MeshResource> getMesh(const std::string& path) override;
+	std::shared_ptr<AudioResource> getAudio(const std::string& path) override;
+	std::shared_ptr<ProtobufResource> getProtobuf(const std::string& path) override;
 
-	bool exists(const ResourceType& type, const std::string& path) const;
-	bool addResource(const std::shared_ptr<Resource>& resource);
+	bool exists(const ResourceType& type, const std::string& path) const override;
+	bool addResource(const std::shared_ptr<Resource>& resource) override;
+	void touchResource(const ResourceType& type, const std::string& resource_id) override;
 
-	void flush();
+	void flush() override;
 	uint8_t* allocate(const uint64_t size) override;
 
 protected:
@@ -79,4 +76,6 @@ private:
 
 	uint64_t _cache_size;
 	uint64_t _allocated {0};
+};
+
 };

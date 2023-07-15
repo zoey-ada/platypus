@@ -6,9 +6,14 @@
 
 #include "iResourceStore.hpp"
 
+namespace platypus
+{
+
 class ResourceStoreFactory
 {
 public:
 	static std::shared_ptr<IResourceStore> createResourceStore(
-		const platypus::ResourceStoreSettings& settings);
+		const ResourceStoreSettings& settings);
+};
+
 };

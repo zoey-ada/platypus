@@ -2,6 +2,9 @@
 
 #include <string>
 
+namespace platypus
+{
+
 class IResourceStore
 {
 public:
@@ -15,4 +18,6 @@ public:
 	[[nodiscard]] virtual uint64_t getResourceCount() const = 0;
 	[[nodiscard]] virtual int64_t getResourceIndex(const std::string& name) const = 0;
 	[[nodiscard]] virtual std::string getResourceName(const int64_t index) const = 0;
+};
+
 };

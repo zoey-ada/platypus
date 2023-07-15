@@ -7,8 +7,13 @@
 #include <entities/iEntityManager.hpp>
 #include <utilities/time/utils.hpp>
 
-class IView;
 class EntityFactory;
+class IView;
+
+namespace platypus
+{
+class IResourceCache;
+};
 
 enum class GameState
 {
@@ -27,7 +32,7 @@ public:
 	BaseGameLogic() = default;
 	virtual ~BaseGameLogic() = default;
 
-	virtual bool initialize();
+	virtual bool initialize(std::shared_ptr<platypus::IResourceCache> cache);
 	virtual void deinitialize() {};
 
 	virtual void addView(const std::shared_ptr<IView>& view,

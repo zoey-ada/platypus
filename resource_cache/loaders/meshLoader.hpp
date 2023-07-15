@@ -6,6 +6,10 @@
 
 class ILoggingSystem;
 class IRenderer;
+
+namespace platypus
+{
+
 class IResourceCache;
 
 class MeshLoader: public IResourceLoader
@@ -28,4 +32,6 @@ private:
 	std::shared_ptr<IResourceCache> _cache;
 	std::shared_ptr<IRenderer> _renderer;
 	std::shared_ptr<ILoggingSystem> _logging;
+};
+
 };
